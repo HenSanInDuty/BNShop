@@ -40,8 +40,11 @@ INSTALLED_APPS = [
     'user.apps.UserConfig',
     'product.apps.ProductConfig',
     'api.apps.ApiConfig',
+    'address.apps.AddressConfig',
+    'permission.apps.PermissionConfig',
     'rest_framework',
-    'rest_framework_simplejwt'
+    'rest_framework_simplejwt',
+    
 ]
 
 MIDDLEWARE = [
