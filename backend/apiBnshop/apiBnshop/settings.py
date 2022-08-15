@@ -15,7 +15,7 @@ from datetime import timedelta
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
+ALLOWED_HOSTS = ["*", "bnshop.herokuapp.com"]
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
@@ -23,9 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-3vj$pvbr4-l_#)*&y&_%!wqieqk_*f58tovul((6av2bg&jo-*'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = []
+DEBUG = False
 
 
 # Application definition
@@ -44,7 +42,7 @@ INSTALLED_APPS = [
     'permission.apps.PermissionConfig',
     'rest_framework',
     'rest_framework_simplejwt',
-    
+
 ]
 
 MIDDLEWARE = [
@@ -83,8 +81,12 @@ WSGI_APPLICATION = 'apiBnshop.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'd9c5dis4k19kg5',
+        'USER': 'ogfzgrfphkapga',
+        'PASSWORD': 'c738d9b686114897158393bac3eb4cde79fedbe0112f4556217fd3b1eda7847a',
+        'HOST': 'ec2-54-85-56-210.compute-1.amazonaws.com',
+        'PORT': '5432',
     }
 }
 
