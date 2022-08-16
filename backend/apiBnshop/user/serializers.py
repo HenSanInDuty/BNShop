@@ -6,7 +6,7 @@ class MyTokenObtainPairViewSerializer(TokenObtainPairSerializer):
     def get_token(cls, user):
         token = super().get_token(user)
         
-        token['role'] = user.profile.role
+        token['role'] = user.accountProfile.role
         
         return token
 

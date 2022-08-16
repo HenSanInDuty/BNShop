@@ -6,10 +6,10 @@ from django.dispatch import receiver
 class AccountProfile(models.Model):
     user = models.OneToOneField(User,on_delete=models.CASCADE, related_name='accountProfile')
     role = models.CharField(max_length=20,null=False)
-    #Signals when user create then userprofile create too
+    #Signals when user created then userprofile created too
     @receiver(post_save, sender=User)
     def createProfileWhenUserCreated(sender,instance,created,**kwargs):
         if created:
             AccountProfile.objects.create(user=instance)
-        instance.profile.save()
+        instance.accountProfile.save()
     

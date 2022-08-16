@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'api.apps.ApiConfig',
     'address.apps.AddressConfig',
     'permission.apps.PermissionConfig',
+    'angency.apps.AngencyConfig',
     'rest_framework',
     'rest_framework_simplejwt',
 

@@ -1,6 +1,7 @@
 from dataclasses import field
 from django import forms
 from django.contrib.auth.models import User
+from angency.models import AgencyProfile
 from django.contrib.auth.forms import UserCreationForm
 
 class UserRegisterForm(UserCreationForm):
@@ -10,9 +11,7 @@ class UserRegisterForm(UserCreationForm):
         model=User
         fields= ['username','password1','password2','role']
 
-class AgencyRegisterForm(forms.Form):
-    
-    
+class AgencyRegisterForm(forms.ModelForm):
     class Meta:
-        model=User
-        fields= ['username','password1','password2','role']
+        model=AgencyProfile
+        fields= ['dl_name','dl_avatar','dl_email','dl_sdt','dl_cmnd']
