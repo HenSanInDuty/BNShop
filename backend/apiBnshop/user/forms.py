@@ -14,4 +14,4 @@ class UserRegisterForm(UserCreationForm):
 class AgencyRegisterForm(forms.ModelForm):
     class Meta:
         model=AgencyProfile
-        fields= ['dl_name','dl_avatar','dl_email','dl_sdt','dl_cmnd']
+        fields= ['dl_name','dl_avatar','dl_email','dl_cmnd']
