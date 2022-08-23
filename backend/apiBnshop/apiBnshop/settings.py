@@ -24,7 +24,7 @@ SECRET_KEY = 'django-insecure-3vj$pvbr4-l_#)*&y&_%!wqieqk_*f58tovul((6av2bg&jo-*
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
-
+DEBUG_PROPAGATE_EXCEPTIONS = False
 
 # Application definition
 
@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'address.apps.AddressConfig',
     'permission.apps.PermissionConfig',
     'angency.apps.AngencyConfig',
+    'customer.apps.CustomerConfig',
     'rest_framework',
     'rest_framework_simplejwt',
 
