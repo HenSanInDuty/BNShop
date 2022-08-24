@@ -1,6 +1,12 @@
+from math import perm
+from xmlrpc.client import ResponseError
+from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
+from rest_framework.decorators import api_view,permission_classes
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework_simplejwt.authentication import JWTAuthentication
+
+from django.contrib.auth.models import User
 
 from address.forms import AddressForm
 from address.models import AddressProfile
@@ -9,18 +15,34 @@ from .forms import AgencyRegisterForm, UserRegisterForm
 from customer.forms import CustomerForm
 from customer.models import CustomerProfile
 from angency.models import AgencyProfile
-from django.contrib.auth.models import User
+from permission.permission import OwnerPermission
 import sys
 # Create your views here.
 
+rolesValid = ('Admin', 'Customer', 'Agency')
+
+def getRoleOfUser(request):
+    return JWTAuthentication().authenticate(request)[1]['role']
+
 def getValueInForm(form, key):
     return form.cleaned_data.get(key)    
+
+def getAddressOfUser(user):
+    listAddress = list(user.address.all())
+    result = []
+    for address in listAddress:
+        record = {}
+        record['dc_tinh']=address.dc_tinh
+        record['dc_quan']=address.dc_quan
+        record['dc_phuong']=address.dc_phuong
+        record['dc_chitiet']=address.dc_chitiet
+        result.append(record)
+    return result
 
 @api_view(['POST'])
 def register(request):
     try:
         #Init some form
-        rolesValid = ('Admin', 'Customer', 'Agency')
         form = UserRegisterForm(request.data)
         subform = AgencyRegisterForm(request.data)
         cusform = CustomerForm(request.data)
@@ -38,12 +60,13 @@ def register(request):
                 #Form register for agency
                 if (role == 'Agency'):
                     if subform.is_valid():
-                        AgencyProfile.objects.create(user=user)
-                        user.profile.dl_name = getValueInForm(subform,'dl_name')
-                        user.profile.dl_avatar = getValueInForm(subform,'dl_avatar')
-                        user.profile.dl_email = getValueInForm(subform,'dl_email')
-                        user.profile.dl_sdt = user.username
-                        user.profile.dl_cmnd = getValueInForm(subform,'dl_cmnd')
+                        AgencyProfile.objects.create(user=user,
+                                                     dl_name=getValueInForm(subform,'dl_name'),
+                                                     dl_email=getValueInForm(subform,'dl_email'),
+                                                     dl_sdt=user.username,
+                                                     dl_cmnd=getValueInForm(subform,'dl_cmnd'))
+                        if (getValueInForm(subform,'dl_avatar')!=""):
+                            user.profile.dl_avatar = getValueInForm(subform,'dl_avatar')
                         user.profile.save()
                     else:
                         user.delete()
@@ -54,11 +77,12 @@ def register(request):
                         CustomerProfile.objects.create(user=user,
                                                        kh_ho=getValueInForm(cusform,'kh_ho'),
                                                        kh_ten=getValueInForm(cusform,'kh_ten'),
-                                                       kh_avatar=getValueInForm(cusform,'kh_avatar'),
                                                        kh_email=getValueInForm(cusform,'kh_email'),
                                                        kh_sdt=user.username,
                                                        kh_ngay_sinh=getValueInForm(cusform,'kh_ngay_sinh'),
                                                        kh_gioi_tinh=getValueInForm(cusform,'kh_gioi_tinh'))
+                        if (getValueInForm(cusform,'kh_avatar')!=""):
+                            user.cus_profile.kh_avatar=getValueInForm(cusform,'kh_avatar')
                         user.cus_profile.save()
                     else:
                         user.delete()
@@ -77,9 +101,85 @@ def register(request):
                 user.save()
                 token = get_tokens_for_user(user)
             #Token with access and refresh
-            return Response(token)
+            return Response({'data':{'id':user.id,'phoneNumber':user.username},**token})
         return Response(form.errors)
     except Exception:
         print(sys.exc_info()[0])
         #Roll back when have exception
         user.delete()
+        
+        
+class Profile(GenericAPIView):
+    permission_classes = (IsAuthenticated,OwnerPermission)
+    
+    def get(self,request,id):
+        role = getRoleOfUser(request)
+        try:
+            user = User.objects.get(id=id)
+        except User.DoesNotExist:
+            return Response({'message':'Not found this user'})
+        if (role == 'Customer'):
+            return Response({
+                'kh_ho': user.cus_profile.kh_ho,
+                'kh_ten': user.cus_profile.kh_ten,
+                'kh_sdt': user.username,
+                'kh_avatar': user.cus_profile.kh_avatar,
+                'kh_email': user.cus_profile.kh_email,
+                'kh_ngay_sinh': user.cus_profile.kh_ngay_sinh,
+                'kh_gioi_tinh': user.cus_profile.kh_gioi_tinh,
+                'dc':getAddressOfUser(user)
+            })
+        else:
+            return Response({
+                'dl_name':user.profile.dl_name,
+                'dl_avatar':user.profile.dl_avatar,
+                'dl_email':user.profile.dl_email,
+                'dl_cmnd':user.profile.dl_cmnd,
+                'dc':getAddressOfUser(user)
+            })
+        
+    def patch(self,request,id):
+        role = getRoleOfUser(request)
+        try:
+            user = User.objects.get(id=id)
+        except User.DoesNotExist:
+            return Response({'message':'Not found this user'})
+        if (role == 'Customer'):
+            cusform = CustomerForm(request.data)
+            
+            if cusform.is_valid():
+                
+                user.cus_profile.kh_ho = getValueInForm(cusform,'kh_ho')
+                user.cus_profile.kh_ten = getValueInForm(cusform,'kh_ten')
+                user.cus_profile.kh_avatar = getValueInForm(cusform,'kh_avatar')
+                user.cus_profile.kh_email = getValueInForm(cusform,'kh_email')
+                user.cus_profile.kh_ngay_sinh = getValueInForm(cusform,'kh_ngay_sinh')
+                
+                return Response({
+                    'kh_ho': user.cus_profile.kh_ho,
+                    'kh_ten': user.cus_profile.kh_ten,
+                    'kh_sdt': user.username,
+                    'kh_avatar': user.cus_profile.kh_avatar,
+                    'kh_email': user.cus_profile.kh_email,
+                    'kh_ngay_sinh': user.cus_profile.kh_ngay_sinh,
+                    'kh_gioi_tinh': user.cus_profile.kh_gioi_tinh,
+                    'dc':getAddressOfUser(user)
+                })
+            else:
+                return Response(cusform.errors)
+        else:
+            subform = AgencyRegisterForm(request.data)
+            
+            if subform.is_valid():
+                user.profile.dl_avatar = getValueInForm(cusform,'dl_avatar')
+                
+                return Response({
+                    'dl_name':user.profile.dl_name,
+                    'dl_avatar':user.profile.dl_avatar,
+                    'dl_email':user.profile.dl_email,
+                    'dl_cmnd':user.profile.dl_cmnd,
+                    'dc':getAddressOfUser(user)
+                })
+            else:
+                return Response(subform.errors)
+
