@@ -1,5 +1,11 @@
+from importlib.metadata import requires
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework import serializers
+from rest_framework_simplejwt.tokens import RefreshToken, TokenError
+
+from django.contrib.auth.models import User
+
 
 class MyTokenObtainPairViewSerializer(TokenObtainPairSerializer):
     @classmethod
@@ -19,11 +25,34 @@ class MyTokenObtainPairViewSerializer(TokenObtainPairSerializer):
             'id':self.user.id,
             'phoneNumber':self.user.username
         }
-        return data
-    
-    
+        return data                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
 
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairViewSerializer
     
+
+class LogoutSerializer(serializers.Serializer):
+    refresh = serializers.CharField()
+
+    default_error_message = {
+        'bad_token': ('Token is expired or invalid')
+    }
+
+    def validate(self, attrs):
+        self.token = attrs['refresh']
+        return attrs
+
+    def save(self, **kwargs):
+
+        try:
+            RefreshToken(self.token).blacklist()
+
+        except TokenError:
+            self.fail('bad_token')
+            
+class ChangePasswordSerializer(serializers.Serializer):
+    model = User
     
+    old_password = serializers.CharField(required=True)
+    new_password1 = serializers.CharField(required=True)
+    new_password2 = serializers.CharField(required=True)
