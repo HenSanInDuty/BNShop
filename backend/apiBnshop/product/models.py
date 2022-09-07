@@ -1,10 +1,14 @@
 from pyexpat import model
 from wsgiref.handlers import format_date_time
+from datetime import datetime
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 # Create your models here.
 
 class Product(models.Model):
+    #Agency
     user = models.ForeignKey(User,on_delete=models.CASCADE,related_name='product')
     sp_ten = models.CharField(max_length=1000)
     sp_moTaSanPham = models.TextField()
@@ -14,6 +18,8 @@ class ProductDetail(models.Model):
     product = models.ForeignKey(Product,on_delete=models.CASCADE,related_name='detail')
     ctsp_tieuDe = models.CharField(max_length=100)
     ctsp_noiDung = models.TextField()
+        
+    
     
 class ProductPrice(models.Model):
     product = models.ForeignKey(Product,on_delete=models.CASCADE,related_name='price')

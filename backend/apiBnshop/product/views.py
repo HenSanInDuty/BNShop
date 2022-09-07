@@ -26,13 +26,54 @@ class ProductTypeViews(generics.GenericAPIView):
         return Response(serializer.data)
     
     def post(self,request,*args):
-        typesExists = self.model.objects.all().values_list('loai_ten',flat=True)
+        types_exists = self.model.objects.all().values_list('loai_ten',flat=True)
         serializer = self.serializer_class(data = request.data)
         if serializer.is_valid():
-            if (serializer.validated_data.get('loai_ten') in typesExists):
+            if (serializer.validated_data.get('loai_ten') in types_exists):
                 return Response({'message':'Đã có loại này rồi'})
             else:
                 serializer.save()
                 return Response(serializer.data)
         else:
             return Response(serializer.errors)
+
+class ProductViewsAll(generics.GenericAPIView):
+    model = productModels.Product
+    serializer_class = productSerializers.ProductSerializer
+    
+    
+    def get_permissions(self):
+        if self.request.method != 'GET':
+            return [IsAuthenticated(),permission.AgencyPermission()]
+        else:
+            return []
+    
+    def get(self,request,*arg):
+        all_product = self.model.objects.all()
+        serializer = self.serializer_class(all_product,many=True)
+        return Response(serializer.data)
+        
+    def post(self,request,*arg):
+        #serializers
+        data = request.data
+        data['user'] = request.user.id
+        serializer = self.serializer_class(data=data)
+        
+        
+        
+        if (serializer.is_valid()):
+            serializer.save()
+            id_product = serializer.validated_data.get('id')
+            data['product'] = id_product
+            serializerPrice = productSerializers.ProductPriceSerializer
+            serializerDetail = productSerializers.ProductDetailSerializer
+            return Response(serializer.data)
+        else:
+            return Response(serializer.errors)
+            
+        
+    
+
+
+
+
