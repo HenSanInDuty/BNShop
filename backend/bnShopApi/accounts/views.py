@@ -1,11 +1,11 @@
-import re
+import re,sys
 from rest_framework import generics,status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view
 
 from accounts.models import Account
-from .serializers import AgencySerializer, CustomerSerializer, LogoutSerializer, AccountSerializer, UserSerializer
+from .serializers import AgencySerializer, CustomerSerializer, LogoutSerializer, AccountSerializer, UserSerializer, ChangePasswordSerializer
 from django.db.utils import IntegrityError
 
 from .utilities import get_tokens_for_user
@@ -104,6 +104,45 @@ class LogoutAPIView(generics.GenericAPIView):
             return Response({'message':'Log out success'},status=status.HTTP_204_NO_CONTENT)
         except AssertionError:
             return Response({"message":"This token isn't exist"})
+
+class ChangePasswordView(generics.UpdateAPIView):
+    
+    serializer_class = ChangePasswordSerializer
+    model = Account
+    permission_classes = [IsAuthenticated]
+    
+    def get_object(self, queryset = None):
+        obj = self.request.user
+        return obj
+    
+    def patch(self,request,*arg,**kwargs):
+        try:
+            #Get user
+            self.object = self.get_object()
+            serializer = self.get_serializer(data = request.data)
+            if serializer.is_valid():
+                if not self.object.check_password(serializer.data.get("old_password")):
+                    return Response({"old_password":"Wrong password"},status=status.HTTP_400_BAD_REQUEST)
+
+                if serializer.data.get("new_password1") != serializer.data.get("new_password2"):
+                    return Response({"new_password":"New Password is not match"},status=status.HTTP_400_BAD_REQUEST)
+                
+                self.object.set_password(serializer.data.get("new_password1"))
+                self.object.save()
+                response = {
+                    'status': 'success',
+                    'code': status.HTTP_200_OK,
+                    'message': 'Password updated successfully',
+                    'data': []
+                }
+                
+                return Response(response)
+        except Exception:
+            print(sys.exc_info()[0])
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 
 
 
