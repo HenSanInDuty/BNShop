@@ -94,7 +94,7 @@ class Customer(models.Model):
     follow = models.ManyToManyField(Agency,blank=True,related_name='followed')
     visit = models.ManyToManyField(Agency,blank=True,through='Visit',related_name='visited')
     nickname = models.CharField(max_length=100,null=True,blank=True)
-    birthday = models.DateTimeField(auto_now_add=True)
+    birthday = models.DateField(auto_now_add=True)
 
 class Visit(models.Model):
     customer = models.ForeignKey(Customer,on_delete=models.CASCADE,related_name='customer_visit')

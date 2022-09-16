@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view
 
-from accounts.models import Account
+from .models import Account, Users
 from .serializers import AgencySerializer, CustomerSerializer, LogoutSerializer, AccountSerializer, UserSerializer, ChangePasswordSerializer
 from django.db.utils import IntegrityError
 
@@ -143,6 +143,58 @@ class ChangePasswordView(generics.UpdateAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class ProfileView(generics.GenericAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = AccountSerializer
+    model = Users
+    
+    def get_profile_user(self,user):
+        return_result = {
+            'id':user.id,
+            'name':user.name,
+            'email':user.email,
+            'avatar':user.avatar,
+            'nationality':user.nationality
+        }
+        if user.account.is_customer:
+            return_result['nickname']=user.customer.nickname
+            return_result['birthday']=user.customer.birthday
+        if user.account.is_agency:
+            return_result['main_industry'] = user.agency.main_industry
+            return_result['identify'] = user.agency.identify
+        return return_result
+    
+    def get(self,request):
+        user = self.model.objects.get(id=request.user.user.id)
+        return_result = self.get_profile_user(user)
+        
+        return Response(return_result)
 
-
+    def patch(self,request):
+        user = self.model.objects.get(id=request.user.user.id)
+        if user.account.is_agency:
+            return Response({"message":"You can't perform this action, please contact admin"})
+        data = request.data
+        data['account'] = user.account.id
+        data['user'] = user.id
+        
+        #Check email unique
+        if 'email' in data:
+            email = data['email']
+            user_with_this_email = self.model.objects.filter(email=email)
+            if user_with_this_email.count > 0:
+                return Response({"email":"That email has used"})
+        
+        general_profile = UserSerializer(user,data= data)
+        specific_profile = CustomerSerializer(user.customer,data=data)
+        if general_profile.is_valid():
+            if specific_profile.is_valid():
+                general_profile.save()
+                specific_profile.save()
+                user = self.model.objects.get(id=request.user.user.id)
+                return Response(self.get_profile_user(user))
+            else:
+                return Response(specific_profile.errors)
+        else:
+            return Response(general_profile.errors)
 
