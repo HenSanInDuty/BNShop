@@ -62,8 +62,6 @@ def register(request):
             data['user'] = new_user.id
             #Create Customer or Agency
             if role == "Customer":
-                new_account.is_customer = True
-                new_account.save()
                 customer_serializer = CustomerSerializer(data=data)
                 if customer_serializer.is_valid():
                     new_customer = customer_serializer.save()
@@ -71,8 +69,6 @@ def register(request):
                     new_account.delete()
                     return Response(customer_serializer.errors,status=status.HTTP_400_BAD_REQUEST)
             else:
-                new_account.is_agency = True
-                new_account.save()
                 agency_serializer = AgencySerializer(data=data)
                 if agency_serializer.is_valid():
                     new_agency = agency_serializer.save()

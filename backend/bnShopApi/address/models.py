@@ -8,3 +8,5 @@ class Address(models.Model):
     ward = models.CharField(max_length=100)
     detail = models.TextField(blank=True,null=True)
     type = models.CharField(max_length=100)
+    is_approved = models.BooleanField(blank=True,default=True)
+    is_default = models.BooleanField(blank=True,default=False)
