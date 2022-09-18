@@ -1,6 +1,7 @@
 from django.db import models
 
 from accounts.models import Customer
+from orders.models import OrderDetail
 
 # Create your models here.
 class Type(models.Model):
@@ -11,6 +12,7 @@ class Type(models.Model):
 class Voucher(models.Model):
     customer = models.ManyToManyField(Customer,related_name='voucher',through='VoucherCustomer')
     type = models.ForeignKey(Type,related_name='voucher',on_delete=models.CASCADE)
+    order_detail = models.ForeignKey(OrderDetail,related_name='voucher',on_delete=models.CASCADE,blank=True)
     code = models.CharField(max_length=40)
     qty = models.IntegerField()
     title = models.CharField(max_length=100)
@@ -20,6 +22,7 @@ class Voucher(models.Model):
     reduce_price = models.FloatField(null=True,blank=True)
     reduce_persent = models.FloatField(null=True,blank=True)
     end_date = models.DateTimeField()
+    
     
 class VoucherCustomer(models.Model):
     customer = models.ForeignKey(Customer,related_name='customer_voucher',on_delete=models.CASCADE)

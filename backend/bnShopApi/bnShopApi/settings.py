@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     'permissions.apps.PermissionsConfig',
     'voucher.apps.VoucherConfig',
     'products.apps.ProductsConfig',
+    'orders.apps.OrdersConfig',
+    'rating.apps.RatingConfig',
     'rest_framework',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',

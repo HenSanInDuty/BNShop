@@ -10,3 +10,4 @@ class Address(models.Model):
     type = models.CharField(max_length=100)
     is_approved = models.BooleanField(blank=True,default=True)
     is_default = models.BooleanField(blank=True,default=False)
+    is_delete = models.BooleanField(blank=True,default=False)
