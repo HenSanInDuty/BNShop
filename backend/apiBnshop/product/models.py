@@ -21,7 +21,7 @@ class ProductPrice(models.Model):
     g_tuNgay = models.DateField(blank=True,default=timezone.now().date())
     g_gia = models.FloatField()
     
-class ProductImage(models.Model):
+class ProductImage(models.Model):   
     product = models.ForeignKey(Product,on_delete=models.CASCADE,related_name='image')
     hinh_url = models.CharField(max_length=1000)
     

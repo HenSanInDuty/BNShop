@@ -16,7 +16,6 @@ class Detail(models.Model):
     title = models.CharField(max_length=100)
     content = models.CharField(max_length=100)
 
-
 class Describe(models.Model):
     content = models.TextField()
 
@@ -46,9 +45,9 @@ class Quantity(models.Model):
     from_date = models.DateTimeField(auto_now_add=True)
     product = models.ForeignKey(Product,related_name="quantity",on_delete=models.CASCADE)
         
-class Image(models.Model):
-    image_url = models.CharField(max_length=100)
-    type = models.IntegerField(blank=True,default=2)
+class Attachment(models.Model):
+    url = models.CharField(max_length=100)
+    type = models.CharField(max_length=100)
     product = models.ForeignKey(Product,on_delete=models.CASCADE,related_name='image',blank=True)
     
     
