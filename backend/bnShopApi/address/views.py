@@ -6,16 +6,16 @@ from . import serializers,models
 TYPE_ADDRESS_CHOICES = ['home','company','brand']
 # Create your views here.
 class AddressViewAll(generics.GenericAPIView):
-    serializer = serializers.AddressSerializer
+    serializer_class = serializers.AddressSerializer
     model = models.Address
     permission_classes = [IsAuthenticated]
     
-    def get(self,request):
+    def get(self,request,*arg,**kwargs):
         address = request.user.user.address
-        serializer = self.serializer(address.all(),many=True)
+        serializer = self.serializer_class(address.all(),many=True)
         return Response(serializer.data)
     
-    def post(self,request):
+    def post(self,request,*arg,**kwargs):
         data = request.data
         data['user'] = request.user.id
         #Check user have any address ?
@@ -33,7 +33,7 @@ class AddressViewAll(generics.GenericAPIView):
             data['is_approved'] = False
         #Address have 3 type: home, company and brand
         if data['type'].lower() in TYPE_ADDRESS_CHOICES:
-            serializer = self.serializer(data=data)
+            serializer = self.serializer_class(data=data)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data)
@@ -42,26 +42,26 @@ class AddressViewAll(generics.GenericAPIView):
         else:
             return Response({"message":"Something wrong"})
     
-    def patch(self,request):
+    def patch(self,request,*arg,**kwargs):
         data = request.data
         data['user'] = request.user.id
         if request.user.is_agency:
             return Response({"message":"You can't perform this action, please contact admin"})
         address = self.model.objects.get(id=data['id'])
-        serializer = self.serializer(address,data)
+        serializer = self.serializer_class(address,data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         else:
             return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
-        
-    def delete(self,request):
+
+    def delete(self,request,*arg,**kwargs): 
         data = request.data
         data['user'] = request.user.id
         if request.user.is_agency:
             return Response({"message":"You can't perform this action, please contact admin"},status=status.HTTP_400_BAD_REQUEST)
         address = self.model.objects.get(id=data['id'])
-        serializer = self.serializer(address)
+        serializer = self.serializer_class(address)
         try:
             if address.is_default:
                 return Response({"message":"Can't delete default address"})
