@@ -83,11 +83,15 @@ class Users(models.Model):
     nationality = models.CharField(max_length=100,null=True,blank=True)
     gender = models.CharField(max_length=1,blank=True,default='M')
     time_visited = models.FloatField(default=0,blank=True)
+    def __str__(self):
+        return self.name
     
 class Agency(models.Model):
     user = models.OneToOneField(Users,on_delete=models.CASCADE,related_name='agency')
     main_industry = models.CharField(max_length=100)
     identify = models.CharField(max_length=12)
+    def __str__(self):
+        return self.user.name
     
 class Customer(models.Model):
     user = models.OneToOneField(Users,on_delete=models.CASCADE,related_name='customer')
@@ -95,6 +99,8 @@ class Customer(models.Model):
     visit = models.ManyToManyField(Agency,blank=True,through='Visit',related_name='visited')
     nickname = models.CharField(max_length=100,null=True,blank=True)
     birthday = models.DateField(auto_now_add=True)
+    def __str__(self):
+        return self.user.name
 
 class Visit(models.Model):
     customer = models.ForeignKey(Customer,on_delete=models.CASCADE,related_name='customer_visit')
@@ -102,4 +108,6 @@ class Visit(models.Model):
     time_visited = models.FloatField(blank=True,default=0)
     number_product = models.IntegerField(blank=True,default=0)
     lasted_visited = models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return self.customer.user.name + " meet " + self.agency.user.name + " " + self.time_visited/60 + " minutes"
 
