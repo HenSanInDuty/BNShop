@@ -3,18 +3,20 @@ from rest_framework import generics,status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
 
 from .models import Account, Users
-from .serializers import AgencySerializer, CustomerSerializer, LogoutSerializer, AccountSerializer, UserSerializer, ChangePasswordSerializer
+from .serializers import AgencyRegister, AgencySerializer, CustomerRegister, CustomerSerializer, LogoutSerializer, AccountSerializer, UserSerializer, ChangePasswordSerializer
 from django.db.utils import IntegrityError
 
 from .utilities import get_tokens_for_user
 # Create your views here.
 
-@api_view(['POST'])
-def register(request):
+def register(request,role):
     model = Account
     data = request.data
+    data['role'] = role
     serializer = AccountSerializer(data=data)
     #Account create
     if (serializer.is_valid()):
@@ -64,14 +66,14 @@ def register(request):
             if role == "Customer":
                 customer_serializer = CustomerSerializer(data=data)
                 if customer_serializer.is_valid():
-                    new_customer = customer_serializer.save()
+                    customer_serializer.save()
                 else:
                     new_account.delete()
                     return Response(customer_serializer.errors,status=status.HTTP_400_BAD_REQUEST)
             else:
                 agency_serializer = AgencySerializer(data=data)
                 if agency_serializer.is_valid():
-                    new_agency = agency_serializer.save()
+                    agency_serializer.save()
                 else:
                     new_account.delete()
                     return Response(agency_serializer.errors,status=status.HTTP_400_BAD_REQUEST)
@@ -89,6 +91,18 @@ def register(request):
         })
     else:
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+
+@swagger_auto_schema(method='post',request_body=AgencyRegister)
+@api_view(['POST'])
+def register_agency(request):
+    register(request,'Agency')
+
+@swagger_auto_schema(method='post',request_body=CustomerRegister)
+@api_view(['POST'])
+def register_customer(request):
+    register(request,'Customer')
+
+
     
 class LogoutAPIView(generics.GenericAPIView):
     serializer_class = LogoutSerializer
