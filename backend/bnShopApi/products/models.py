@@ -17,7 +17,8 @@ class Brand(models.Model):
     origin_brand = models.CharField(max_length=100)
     
     def __str__(self) -> str:
-        return self.origin + ' : ' + self.origin_brand
+        if self.name:
+            return self.name+' from23 '+self.origin + ' : ' + self.origin_brand
     
     class Meta:
         unique_together = [('origin','origin_brand')]
