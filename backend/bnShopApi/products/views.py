@@ -1,10 +1,11 @@
 from rest_framework import generics,status
 from rest_framework.decorators import api_view,permission_classes
 from rest_framework.response import Response
-from rest_framework.permissions import IsAdminUser
+from rest_framework.permissions import IsAdminUser,IsAuthenticated
 
 from products.serializers import AttachmentSerializer, CategorySerializer, ProductSerializer
 from .models import Brand, Category, Product
+from permissions.permissions import AgencyPermission
 import json
 
 # Create your views here.
@@ -35,7 +36,23 @@ class ProductViewAll(generics.GenericAPIView):
 class CategoryViewAll(generics.GenericAPIView):
     serializer_class = CategorySerializer
     model = Category
+    permission_classes = (IsAuthenticated,AgencyPermission)
     
     def get(self,request):
-        return Response(self.serializer_class(self.model.objects.all(),many=True).data)
+        agency = request.user.user.agency
+        return Response(self.serializer_class(
+            self.model.objects.filter(agency = agency),
+            many=True).data)
     
+    def post(self,request):
+        data = request.data
+        data['agency'] = request.user.user.agency.id
+        serializer = self.serializer_class(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data,status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+        
+class CategoryViewDetail(generics.GenericAPIView):
+    pass
