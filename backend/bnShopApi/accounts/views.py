@@ -95,12 +95,12 @@ def register(request,role):
 @swagger_auto_schema(method='post',request_body=AgencyRegister)
 @api_view(['POST'])
 def register_agency(request):
-    register(request,'Agency')
+    return register(request,'Agency')
 
 @swagger_auto_schema(method='post',request_body=CustomerRegister)
 @api_view(['POST'])
 def register_customer(request):
-    register(request,'Customer')
+    return register(request,'Customer')
 
 
     
