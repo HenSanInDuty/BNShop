@@ -12,6 +12,7 @@ class Type(models.Model):
         return self.name
 
 class Brand(models.Model):
+    name = models.CharField(max_length=100,null=True,blank=True)
     origin = models.CharField(max_length=100)
     origin_brand = models.CharField(max_length=100)
     
