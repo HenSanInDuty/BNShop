@@ -55,4 +55,32 @@ class CategoryViewAll(generics.GenericAPIView):
             return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
         
 class CategoryViewDetail(generics.GenericAPIView):
-    pass
+    serializer_class = CategorySerializer
+    model = Category
+    permission_classes = (IsAuthenticated,AgencyPermission)
+    
+    def patch(self,request,id):
+        agency_id = request.user.user.agency.id
+        data = request.data
+        data['agency'] = request.user.user.agency.id
+        try:
+            instance = self.model.objects.get(id=id,agency=agency_id)
+            serializer = self.serializer_class(instance,data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            else:
+                return Response(serializer.errors)
+        except:
+            return Response({"message":"Not found"},status=status.HTTP_404_NOT_FOUND)
+    
+    def delete(self,request,id):
+        agency_id = request.user.user.agency.id
+        try:
+            instance = self.model.objects.get(id=id,agency=agency_id)
+            serializer = self.serializer_class(instance)
+            instance.delete()
+            return Response(serializer.data)
+        except:
+            return Response({"message":"Not found"},status=status.HTTP_404_NOT_FOUND)
+        
