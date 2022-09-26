@@ -1,3 +1,4 @@
+from unicodedata import category
 from rest_framework import generics,status
 from rest_framework.decorators import api_view,permission_classes
 from rest_framework.response import Response
@@ -20,7 +21,7 @@ def init_countries(request):
             for origin_brand in data:
                 Brand.objects.create(origin=origin['name'],origin_brand=origin_brand['name'])
         return Response({"message":"Add countries successful"})
-    except:
+    except Exception:
         return Response({"message":"Add countries unsuccessful"},status=status.HTTP_400_BAD_REQUEST)
 
 class ProductViewAll(generics.GenericAPIView):
@@ -48,12 +49,30 @@ class CategoryViewAll(generics.GenericAPIView):
         data = request.data
         data['agency'] = request.user.user.agency.id
         serializer = self.serializer_class(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data,status=status.HTTP_201_CREATED)
+        categories = self.model.objects.filter(name=data['name'])
+        if categories:
+            return Response({"message":"This category name has exists"})
         else:
-            return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
-        
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data,status=status.HTTP_201_CREATED)
+            else:
+                return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+            
+    def delete(self,request):
+        data = request.data
+        agency_id = request.user.user.agency.id
+        try:
+            instance_delete = []
+            for i in data['id']:
+                instance = self.model.objects.get(id=i,agency=agency_id)
+                serializer = self.serializer_class(instance)
+                instance.delete()
+                instance_delete.append(serializer.data)
+            return Response(instance_delete)
+        except Exception:
+            return Response({"message":"Something wrong"},status=status.HTTP_400_BAD_REQUEST)
+                  
 class CategoryViewDetail(generics.GenericAPIView):
     serializer_class = CategorySerializer
     model = Category
@@ -71,7 +90,7 @@ class CategoryViewDetail(generics.GenericAPIView):
                 return Response(serializer.data)
             else:
                 return Response(serializer.errors)
-        except:
+        except Exception:
             return Response({"message":"Not found"},status=status.HTTP_404_NOT_FOUND)
     
     def delete(self,request,id):
@@ -81,6 +100,6 @@ class CategoryViewDetail(generics.GenericAPIView):
             serializer = self.serializer_class(instance)
             instance.delete()
             return Response(serializer.data)
-        except:
+        except Exception:
             return Response({"message":"Not found"},status=status.HTTP_404_NOT_FOUND)
         

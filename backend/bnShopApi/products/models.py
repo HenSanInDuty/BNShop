@@ -7,6 +7,8 @@ class Category(models.Model):
     name = models.CharField(max_length=100)
     agency = models.ForeignKey(
         Agency, on_delete=models.CASCADE, related_name="agency")
+    class Meta:
+        unique_together = [('name','agency')]
 
 
 class Type(models.Model):

@@ -48,7 +48,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
-    'rest_framework_swagger',
     'drf_yasg'
 ]
 
@@ -86,9 +85,17 @@ WSGI_APPLICATION = 'bnShopApi.wsgi.application'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
 DATABASES = {
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
+    # }
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'd9c5dis4k19kg5',
+        'USER': 'ogfzgrfphkapga',
+        'PASSWORD': 'c738d9b686114897158393bac3eb4cde79fedbe0112f4556217fd3b1eda7847a',
+        'HOST': 'ec2-54-85-56-210.compute-1.amazonaws.com',
+        'PORT': '5432',
     }
 }
 
