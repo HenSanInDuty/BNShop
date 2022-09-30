@@ -3,9 +3,10 @@ from rest_framework import generics,status
 from rest_framework.decorators import api_view,permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser,IsAuthenticated
+from drf_yasg.utils import swagger_auto_schema
 
-from products.serializers import AttachmentSerializer, CategorySerializer, ProductSerializer
-from .models import Brand, Category, Product
+from products.serializers import AttachmentSerializer, CategorySerializer, DetailSerializer, ProductRegisterSerializer, ProductSerializer, CategorySwagger
+from .models import Brand, Category, Detail, Product
 from permissions.permissions import AgencyPermission
 import json
 
@@ -45,6 +46,7 @@ class CategoryViewAll(generics.GenericAPIView):
             self.model.objects.filter(agency = agency),
             many=True).data)
     
+    @swagger_auto_schema(request_body=CategorySwagger)
     def post(self,request):
         data = request.data
         data['agency'] = request.user.user.agency.id
@@ -78,6 +80,7 @@ class CategoryViewDetail(generics.GenericAPIView):
     model = Category
     permission_classes = (IsAuthenticated,AgencyPermission)
     
+    @swagger_auto_schema(request_body=CategorySwagger)
     def patch(self,request,id):
         agency_id = request.user.user.agency.id
         data = request.data
@@ -103,3 +106,15 @@ class CategoryViewDetail(generics.GenericAPIView):
         except Exception:
             return Response({"message":"Not found"},status=status.HTTP_404_NOT_FOUND)
         
+class DetailViewAll(generics.GenericAPIView):
+    model = Detail
+    serializer_class = DetailSerializer
+    
+    
+class TestSomethingelse(generics.GenericAPIView):
+    @swagger_auto_schema(request_body=ProductRegisterSerializer)
+    def post(self,request):
+        serializer = ProductRegisterSerializer(data=request.data)
+        if serializer.is_valid():
+            print(serializer.validated_data.get('category'))
+        return Response()

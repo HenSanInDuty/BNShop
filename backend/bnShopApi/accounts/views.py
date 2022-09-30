@@ -78,7 +78,7 @@ def register(request,role):
                     new_account.delete()
                     return Response(agency_serializer.errors,status=status.HTTP_400_BAD_REQUEST)
                 
-        except:
+        except Exception:
             return Response({
                     'message':"Something wrong"
                 },status=status.HTTP_400_BAD_REQUEST)

@@ -4,6 +4,6 @@
 -py -m venv venv
 -Type "./venv/Scripts/activate"
 -pip install -r requirements.txt
--py manage.py makemigrations
--py manage.py migrate
--py manage.py runserver
+-py manage.py makemigrations #Tao csdl
+-py manage.py migrate #Tao csdl
+-py manage.py runserver #Chay server
