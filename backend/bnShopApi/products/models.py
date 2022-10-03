@@ -28,7 +28,7 @@ class Brand(models.Model):
             return self.name + ' from ' + self.origin + ' : ' + self.origin_brand
 
     class Meta:
-        unique_together = [('origin', 'origin_brand')]
+        unique_together = [('origin', 'origin_brand','name')]
 
 
 class Detail(models.Model):
@@ -79,4 +79,4 @@ class Attachment(models.Model):
     url = models.CharField(max_length=100)
     type = models.CharField(max_length=100)
     product = models.ForeignKey(
-        Product, on_delete=models.CASCADE, related_name='image', blank=True)
+        Product, on_delete=models.CASCADE, related_name='attachment', blank=True)

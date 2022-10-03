@@ -26,6 +26,7 @@ class MyTokenObtainPairViewSerializer(TokenObtainPairSerializer):
             'phoneNumber': self.user.phone
         }
         return data
+    
 
 
 class MyTokenObtainPairView(TokenObtainPairView):
