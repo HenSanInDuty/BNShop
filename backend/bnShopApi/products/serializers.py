@@ -1,4 +1,5 @@
 from django.forms import ValidationError
+from pkg_resources import require
 from rest_framework import serializers
 from rest_framework.fields import CurrentUserDefault
 
@@ -153,25 +154,53 @@ class ProductRegisterSerializer(serializers.Serializer):
     
 
 class ProductUpdateSerializer(serializers.Serializer):
-    display_image = serializers.CharField(max_length=100)
-    price = serializers.FloatField()
-    quantity = serializers.IntegerField(required=True)
-    category = serializers.ListField(required = False,write_only=True)
+    display_image = serializers.CharField(max_length=100,required=False)
+    price = serializers.FloatField(required=False)
+    price_end_datetime = serializers.DateTimeField(required=False)
+    quantity = serializers.IntegerField(required=False)
+    quantity_note = serializers.CharField(max_length=300,required=False)
+    category = serializers.ListField(write_only=True,required=False)
     
     def update(self,instance,validated_data):
         agency = self.context.get('request').user.user.agency
         instance.display_image = validated_data.get('display_image')
         #Update category
-        instance.category.all().delete()
+        instance.category.clear()
         for cate in validated_data['category']:
-                try:
-                    c = Category.objects.get(id=int(cate),agency=agency)
-                    instance.category.add(c)
-                    instance.save()
-                except ValueError:
-                    raise serializers.ValidationError({"category":"category id must be a number"})
-                except Exception:
-                    raise serializers.ValidationError({"category":"can't find this category"})
+            try:
+                c = Category.objects.get(id=int(cate),agency=agency)
+                instance.category.add(c)
+                instance.save()
+            except ValueError:
+                raise serializers.ValidationError({"category":"category id must be a number"})
+            except Exception:
+                raise serializers.ValidationError({"category":"can't find this category"})
         #Add quantity
-        
+        if validated_data.get('quantity'):
+            note = validated_data.get('quantity_note')
+            if not note:
+                old_quantity = Quantity.objects.filter(product = instance).last()
+                print(old_quantity)
+                if old_quantity < validated_data.get('quantity'):
+                    note = "Add "+str(validated_data.get('quantity')-old_quantity)+" items"
+                if old_quantity > validated_data.get('quantity'):
+                    note = "Sub "+str(validated_data.get('quantity')-old_quantity)+" items"
+                                                       
+            new_quantity = Quantity.objects.create(quantity=validated_data.get('quantity'),
+                                                   note=note,)
+            instance.quantity.add(new_quantity)
+            instance.save()
+        #Add price
+        if validated_data.get('price'):
+            price_end_datetime=None
+            if validated_data.get('price_end_datetime'):
+                price_end_datetime = validated_data.get('price_end_datetime')
+            new_price = Price.objects.create(price=validated_data.get('price'),
+                                             product=instance)
+            if price_end_datetime:
+                new_price.end_datetime = price_end_datetime
+                new_price.save()
+            instance.price.add(new_price)
+            instance.save()
+            
         return instance

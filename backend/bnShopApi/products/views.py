@@ -116,7 +116,7 @@ def get_info_product(p):
     #Get price which are last and pre to compare price 
     last_price = None
     pre_price = None
-    for price in p.price.all():    
+    for price in list_price:    
         #When pre_price not present and last_price have value
         if not pre_price and last_price and not price.end_datetime:
             pre_price = price
@@ -205,11 +205,10 @@ class ProductViewDetail(generics.GenericAPIView):
         
     @swagger_auto_schema(request_body=ProductUpdateSerializer)
     def patch(self,request ,id):
-        
         agency = request.user.user.agency
-        prod = Product.objects.filter(id=id,agency=agency,is_delete=False,context={'request':request})
+        prod = Product.objects.filter(id=id,agency=agency,is_delete=False)
         if prod:
-            p = ProductUpdateSerializer(prod[0],data=request.data)
+            p = ProductUpdateSerializer(prod[0],data=request.data,context={'request':request})
             if p.is_valid():
                 p.save()
                 return Response(get_info_product(prod[0]))
