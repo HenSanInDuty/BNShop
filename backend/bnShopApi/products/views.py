@@ -226,3 +226,37 @@ class ProductViewDetail(generics.GenericAPIView):
             return Response(MESSAGE['delete'],status=status.HTTP_200_OK)
         except Product.DoesNotExist:
             return Response(MESSAGE['notfind'],status=status.HTTP_400_BAD_REQUEST)
+        
+@swagger_auto_schema()
+class WishList(generics.GenericAPIView):
+    permission_classes = [IsAuthenticated]
+    
+    def post(self,request,pid,**kwargs):
+        customer = request.user.user.customer
+        product = Product.objects.filter(id=pid)
+        if customer and product and product not in customer.favorite_product.all():
+            customer.favorite_product.add(product[0])
+            return Response({"message":"Add successful"})
+        else:
+            return Response(MESSAGE['notfind'],status=status.HTTP_400_BAD_REQUEST)
+            
+    def delete(self,request,pid,**kwargs):
+        customer = request.user.user.customer
+        product = Product.objects.filter(id=pid)
+        if customer and product:
+            p = customer.favorite_product.remove(product[0])
+            return Response({"message":"Delete succesful"})
+        else:
+            return Response(MESSAGE['notfind'])
+        
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+@swagger_auto_schema(method='get')
+def get_wish_list(request):
+    customer = request.user.user.customer
+    product = customer.favorite_product.all()
+    result = []
+    for p in product:
+        instance = get_info_product(p)
+        result.append(instance)
+    return Response(result)
