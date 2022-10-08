@@ -19,7 +19,7 @@ class Order(models.Model):
     qty = models.IntegerField(default=1)
     amount = models.FloatField(default=1)
     product = models.ForeignKey(Product,on_delete=models.CASCADE,related_name='order')
-    detail = models.ForeignKey(OrderDetail,on_delete=models.CASCADE, related_name='order')
+    order_detail = models.ForeignKey(OrderDetail,on_delete=models.CASCADE, related_name='order', null=True)
     customer = models.ForeignKey(Customer,on_delete=models.CASCADE,related_name='order')
     
 

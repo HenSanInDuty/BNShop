@@ -33,7 +33,8 @@ def init_countries(request):
         return Response({"message":"Add countries successful"})
     except Exception:
         return Response({"message":"Add countries unsuccessful"},status=status.HTTP_400_BAD_REQUEST)
-
+    
+@swagger_auto_schema()
 class CategoryViewAll(generics.GenericAPIView):
     serializer_class = CategorySerializer
     model = Category
@@ -73,7 +74,8 @@ class CategoryViewAll(generics.GenericAPIView):
             return Response(instance_delete)
         except Exception:
             return Response({"message":"Something wrong"},status=status.HTTP_400_BAD_REQUEST)
-                  
+        
+@swagger_auto_schema()     
 class CategoryViewDetail(generics.GenericAPIView):
     serializer_class = CategorySerializer
     model = Category
@@ -179,7 +181,8 @@ class ProductViewAll(generics.GenericAPIView):
             return Response(serializer.data)
         else:
             return Response(serializer.errors)
-
+        
+@swagger_auto_schema()
 class ProductViewDetail(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = ProductRegisterSerializer
@@ -193,10 +196,9 @@ class ProductViewDetail(generics.GenericAPIView):
     
     def get(self,request,id):
         try:
-            agency = request.user.user.agency
-            product = Product.objects.filter(agency=agency,id=id)
+            product = Product.objects.filter(id=id)
             instance = get_info_product(product[0])
-            if product.is_delete:
+            if product[0].is_delete or not product[0].is_approved:
                 return Response(MESSAGE['notfind'],status=status.HTTP_400_BAD_REQUEST)
             else:
                 return Response(instance)
@@ -230,7 +232,7 @@ class ProductViewDetail(generics.GenericAPIView):
 @swagger_auto_schema()
 class WishList(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
-    
+    serializer_class = ProductSerializer
     def post(self,request,pid,**kwargs):
         customer = request.user.user.customer
         product = Product.objects.filter(id=pid)
@@ -244,7 +246,7 @@ class WishList(generics.GenericAPIView):
         customer = request.user.user.customer
         product = Product.objects.filter(id=pid)
         if customer and product:
-            p = customer.favorite_product.remove(product[0])
+            customer.favorite_product.remove(product[0])
             return Response({"message":"Delete succesful"})
         else:
             return Response(MESSAGE['notfind'])
@@ -260,3 +262,4 @@ def get_wish_list(request):
         instance = get_info_product(p)
         result.append(instance)
     return Response(result)
+
