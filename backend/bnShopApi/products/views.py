@@ -153,6 +153,16 @@ def get_info_product(p):
             }
     return instance
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def product_agency(request,agencyid):
+    product = Product.objects.filter(agency = agencyid)
+    result = []
+    for p in product:
+        instance = get_info_product(p)
+        result.append(instance)
+    return Response(result)
+
 @swagger_auto_schema()
 class ProductViewAll(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
@@ -166,8 +176,7 @@ class ProductViewAll(generics.GenericAPIView):
             return per
     
     def get(self,request):
-        agency = request.user.user.agency
-        product = Product.objects.filter(agency=agency)
+        product = Product.objects.all()
         result = []
         for p in product:
             instance = get_info_product(p)
