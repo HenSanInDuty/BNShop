@@ -177,7 +177,7 @@ class ProductUpdateSerializer(serializers.Serializer):
                 raise serializers.ValidationError({"category":"can't find this category"})
         #Add quantity
         if validated_data.get('quantity'):
-            note = validated_data.get('quantity_note')
+            note = validated_data.get('quantity_note')  
             if not note:
                 old_quantity = Quantity.objects.filter(product = instance).last()
                 print(old_quantity)

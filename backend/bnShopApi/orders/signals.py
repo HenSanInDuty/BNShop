@@ -1,6 +1,6 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from .models import Order
+from .models import Order, OrderDetail
 from products.views import get_info_product
 
 @receiver(post_save,sender=Order)
