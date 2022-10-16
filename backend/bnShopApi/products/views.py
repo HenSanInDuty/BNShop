@@ -165,13 +165,13 @@ def product_agency(request,agencyid):
 
 @swagger_auto_schema()
 class ProductViewAll(generics.GenericAPIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = []
     serializer_class = ProductRegisterSerializer
     
     def get_permissions(self):
         per = super().get_permissions()
         if self.request.method != "GET":
-            return [*per,AgencyPermission()]
+            return [*per,IsAuthenticated(),AgencyPermission()]
         else:
             return per
     
@@ -193,13 +193,13 @@ class ProductViewAll(generics.GenericAPIView):
         
 @swagger_auto_schema()
 class ProductViewDetail(generics.GenericAPIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = []
     serializer_class = ProductRegisterSerializer
     
     def get_permissions(self):
         per = super().get_permissions()
         if self.request.method != "GET":
-            return [*per,AgencyPermission()]
+            return [*per,IsAuthenticated(),AgencyPermission()]
         else:
             return per
     
