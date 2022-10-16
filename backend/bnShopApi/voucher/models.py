@@ -5,9 +5,18 @@ from orders.models import OrderDetail
 
 # Create your models here.
 class Type(models.Model):
-    condition = models.CharField(max_length=100)
-    type = models.CharField(max_length=100)
+    CONDITION_TYPE = (
+        (1,'Price'),
+        (2,'Number')
+    )
     
+    TYPE_REDUCE = (
+        (1,'Reduce Price'),
+        (2,'Reduce Percent')
+    )
+    
+    condition = models.IntegerField(default=1,choices = CONDITION_TYPE)
+    type = models.IntegerField(default=1,choices = TYPE_REDUCE)
 
 class Voucher(models.Model):
     customer = models.ManyToManyField(Customer,related_name='voucher',through='VoucherCustomer')
