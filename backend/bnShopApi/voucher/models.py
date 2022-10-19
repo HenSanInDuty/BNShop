@@ -6,31 +6,37 @@ from orders.models import OrderDetail
 # Create your models here.
 class Type(models.Model):
     CONDITION_TYPE = (
-        (1,'Price'),
-        (2,'Number')
+        (0,'Price'),
+        (1,'Number')
     )
     
     TYPE_REDUCE = (
-        (1,'Reduce Price'),
-        (2,'Reduce Percent')
+        (0,'Reduce Price'),
+        (1,'Reduce Percent')
     )
     
-    condition = models.IntegerField(default=1,choices = CONDITION_TYPE)
-    type = models.IntegerField(default=1,choices = TYPE_REDUCE)
+    condition = models.IntegerField(default=0,choices = CONDITION_TYPE)
+    type = models.IntegerField(default=0,choices = TYPE_REDUCE)
 
 class Voucher(models.Model):
+    SCOPE_VOUCHER = (
+        (0,'All'),
+        (1,'Special')
+    )
+    
     customer = models.ManyToManyField(Customer,related_name='voucher',through='VoucherCustomer')
     type = models.ForeignKey(Type,related_name='voucher',on_delete=models.CASCADE)
     order_detail = models.ForeignKey(OrderDetail,related_name='voucher',on_delete=models.CASCADE,blank=True)
     code = models.CharField(max_length=40)
-    qty = models.IntegerField()
+    qty = models.IntegerField(null=True,blank=True)
     title = models.CharField(max_length=100)
     content = models.CharField(max_length=100,null=True,blank=True)
     from_price = models.FloatField(null=True,blank=True)
     from_product = models.IntegerField(null=True,blank=True)
     reduce_price = models.FloatField(null=True,blank=True)
     reduce_persent = models.FloatField(null=True,blank=True)
-    end_date = models.DateTimeField()
+    end_date = models.DateTimeField(null=True,blank=True)
+    scope = models.IntegerField(default = 0,choices=SCOPE_VOUCHER)
     
     
 class VoucherCustomer(models.Model):
