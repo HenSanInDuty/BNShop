@@ -22,10 +22,31 @@ class CreateVoucherSerializer(serializers.Serializer):
     end_date = serializers.DateTimeField(required=False)
     scope = serializers.ChoiceField(default=0, choices=SCOPE_VOUCHER)
     
+    def validate(self, attrs):
+        content = super().validate(attrs)
+        if not Type.objects.filter(id = content['type']):
+            raise serializers.ValidationError({"Type":"Type not found"})
+        else:
+            content['type'] = Type.objects.filter(id = content['type']).first()
+        return content
+    
     def create(self, validated_data):
-        
         result = {}
-        return super().create(validated_data)
+        type = validated_data['type'].type
+        condition = validated_data['type'].condition
+        #Init content and title 
+        if condition == 0:
+            content = "Order from "+validated_data['from_price']+" VND"
+        else:
+            content = "Order from"+validated_data['from_product']+" products"
+        
+        if type == 0:
+            title = "Reduce "+validated_data['reduce_price']+" VND"
+        else:
+            title = "Reduce "+validated_data['reduce_percent']+"%"
+            
+        
+        return result
 
 
 class VoucherTypeSerializer(serializers.ModelSerializer):
