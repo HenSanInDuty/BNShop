@@ -13,8 +13,7 @@ class CreateVoucherSerializer(serializers.Serializer):
     order_detail = serializers.ListField(required=False)
     code = serializers.CharField(max_length=40, required=False)
     qty = serializers.IntegerField(required=False)
-    title = serializers.CharField(max_length=100, required=False)
-    content = serializers.CharField(max_length=100, required=False)
+    subcontent = serializers.CharField(max_length=100, required=False)
     from_price = serializers.FloatField(required=False)
     from_product = serializers.IntegerField(required=False)
     reduce_price = serializers.FloatField(required=False)
@@ -31,22 +30,37 @@ class CreateVoucherSerializer(serializers.Serializer):
         return content
     
     def create(self, validated_data):
-        result = {}
-        type = validated_data['type'].type
+        type_vou = validated_data['type'].type
         condition = validated_data['type'].condition
         #Init content and title 
         if condition == 0:
-            content = "Order from "+validated_data['from_price']+" VND"
+            content = "Order from "+str(validated_data['from_price'])+" VND"
         else:
-            content = "Order from"+validated_data['from_product']+" products"
+            content = "Order from"+str(validated_data['from_product'])+" products"
         
-        if type == 0:
-            title = "Reduce "+validated_data['reduce_price']+" VND"
+        if type_vou == 0:
+            title = "Reduce "+str(validated_data['reduce_price'])+" VND"
         else:
-            title = "Reduce "+validated_data['reduce_percent']+"%"
-            
-        
-        return result
+            title = "Reduce "+str(validated_data['reduce_percent'])+"%"
+        validated_data['content'] = content
+        validated_data['title'] = title
+        new_voucher = Voucher.objects.create(**validated_data)
+        print(new_voucher.__dict__)
+        return {
+            "id" : "2",
+    "type" :  "2",
+    "customer" :  "2",
+    "order_detail" :  "2",
+    "code" :  "2",
+    "qty" :  "2",
+    "subcontent" :  "2",
+    "from_price" :  "2",
+    "from_product" :  "2",
+    "reduce_price" : "2",
+    "reduce_persent" :  "2",
+    "end_date" :  "2",
+    "scope" :  "2"
+        }
 
 
 class VoucherTypeSerializer(serializers.ModelSerializer):

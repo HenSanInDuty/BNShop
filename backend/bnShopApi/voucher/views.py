@@ -29,7 +29,7 @@ class VoucherViewAll(generics.GenericAPIView):
             return per
         
     def post(self,request,*kwargs):
-        serializer = self.serializer_class(request.data)
+        serializer = self.serializer_class(data= request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)

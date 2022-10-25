@@ -26,7 +26,6 @@ class Voucher(models.Model):
     
     customer = models.ManyToManyField(Customer,related_name='voucher',through='VoucherCustomer',blank=True)
     type = models.ForeignKey(Type,related_name='voucher',on_delete=models.CASCADE)
-    order_detail = models.ForeignKey(OrderDetail,related_name='voucher',on_delete=models.CASCADE,blank=True)
     code = models.CharField(max_length=40)
     qty = models.IntegerField(null=True,blank=True)
     title = models.CharField(max_length=100)
