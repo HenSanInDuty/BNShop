@@ -1,0 +1,33 @@
+<div class="text-heading-2 w-full text-center mb-8">Đặt lại mật khẩu</div>
+<div class="form-group w-full mb-6">
+ 
+  <div class="relative flex flex-wrap items-stretch flex-grow-0">
+    <tds-form-field class="w-full items-center">
+      <tds-label>Số điện thoại</tds-label>
+      <input autocomplete="off" tdsInput placeholder="" 
+           [required]='true' class="font-medium text-body-2 mb-2 w-full" />
+      <span tdsPrefix> 
+        <div class="flex items-center">
+          <div class="">
+            <img src="../../../../../assets/Frame 11143.png" alt="" class="" />
+          </div>
+        <select
+        class="focus:text-gray-700 focus:bg-white focus:border-primary-1 border-transparent focus:ring-0"
+      >
+        <option selected>+84</option>
+        <option value="1">One</option>
+        <option value="2">Two</option>
+        <option value="3">Three</option>
+      </select>
+        </div>
+    </span>
+      
+  </tds-form-field>
+  </div>
+</div>
+<button
+  routerLink="/account/quen-mat-khau/"
+  class="py-2 w-full text-center bg-primary-1 text-white rounded-md"
+>
+  Tiếp tục
+</button>

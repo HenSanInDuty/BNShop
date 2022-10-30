@@ -1,0 +1,3 @@
+-- Cai dat Node Js phien ban nao cung duoc 
+-- Cai dat cac thu vien can thiet npm i 
+-- khoi chay du an ng s --o

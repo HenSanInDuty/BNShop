@@ -1,0 +1,305 @@
+<div class="py-2.5 px-4 border-b border-neutral-2-100">able
+    <div class="flex justify-between items-center">
+        <div class="flex flex-col">
+            <div class="text-caption-1 font-regular text-neutral-1-400 flex items-center">
+            <tds-breadcrumb>
+            <tds-breadcrumb-item><a [routerLink]="['/admin/product']">Đơn hàng</a></tds-breadcrumb-item>
+            <tds-breadcrumb-item>Danh sách đơn hàng</tds-breadcrumb-item>
+            </tds-breadcrumb>
+            </div>
+            <span class="text-header-1 text-neutral-1-900 font-semibold">INV01238551</span>
+        </div>
+       <div class="flex gap-2">
+        <button tds-button color="primary">Gửi thông tin đơn hàng</button>
+        <button tds-button class="border !border-neutral-2-200 !bg-white !text-neutral-1-900" >Đóng</button>
+       </div>
+    </div>
+</div>
+<div class="overflow-auto w-full h-full tds-custom-scroll p-4  bg-neutral-3-50">
+        <div class="flex gap-2">
+            <div class="w-3/4 flex flex-col  h-full ">
+                <div class=" flex flex-col gap-4">
+                    <div class="bg-white flex flex-col border border-neutral-2-200 rounded-md w-full ">
+                            <div class="px-8 py-3 text-header-1 font-semibold text-neutral-1-900 border-b">Trạng thái đơn hàng</div>
+                            <div class="p-8 w-full flex justify-between">
+                                <div class="w-1/2 flex items-center justify-start">
+                                    <div class="flex flex-col gap-4 w-1/3">
+                                            <div class="text-body-2 font-regular text-neutral-1-900">Nhà vận chuyển</div>
+                                            <div class="text-body-2 font-regular text-neutral-1-900">Giao trước ngày</div>
+                                            <div class="text-body-2 font-regular text-neutral-1-900">Trạng thái đơn hàng</div>
+                                            <div class="text-body-2 font-regular text-neutral-1-900">Trạng thái thanh toán</div>
+                                    </div>  
+                                    <div class="flex flex-col gap-4 w-2/3">
+                                        <div class="text-body-2 font-medium text-neutral-1-900">Giao hàng tiết kiệm</div>
+                                        <div class="text-body-2 font-medium text-neutral-1-900">3/07/2021, 13:08</div>
+                                        <tds-tag status='info' type="outline">Đang giao hàng</tds-tag>
+                                        <div class="text-body-2 font-medium text-success-400">Đã thanh toán</div>
+                                    </div>
+                                </div>    
+                                <div class="w-1/2 flex items-start justify-start">
+                                    <div class="flex flex-col gap-4 w-1/3">
+                                        <div class="text-body-2 font-regular text-neutral-1-900">ID đơn hàng</div>
+                                        <div class="text-body-2 font-regular text-neutral-1-900">Địa chỉ nhận hàng</div>
+                                        <div class="text-body-2 font-regular text-neutral-1-900">Trạng thái vận chuyển</div>
+                                </div>
+                                <div class="flex flex-col gap-4 w-2/3">
+                                    <div class="text-body-2 font-medium text-neutral-1-900">INV01238551</div>
+                                    <div class="text-body-2 font-medium text-neutral-1-900">12 Cn1 Tân Phú, Tp Hồ Chí Minh</div>    
+                                </div>
+                                </div>
+                            </div>
+                    </div>               
+                    <div class="bg-white flex flex-col border-neutral-2-200 border rounded-md w-full">
+                            <div class="flex justify-between  border-b items-center px-8 py-3">
+                                <div class=" text-header-1 font-semibold text-neutral-1-900">Thông tin khách hàng</div>
+                                <button tds-button color="primary">
+                                    <span class="flex items-center">
+                                    <i class="tdsi-send-fill text-lg leading-none mr-2"></i>Chat ngay
+                                    </span>
+                                </button>
+                            </div>
+                            <div class="p-8 w-full flex justify-between items-center">
+                                <div class="w-7/12 flex items-center justify-start">
+                                    <img src="../../../../../assets/AvatarTobu.png" alt="" class="mr-12">
+                                    <div class="flex flex-col gap-4 w-1/2">
+                                            <div class="text-body-2 font-regular text-neutral-1-900">Điện thoại</div>
+                                            <div class="text-body-2 font-regular text-neutral-1-900">Tên khách hàng</div>
+                                            <div class="text-body-2 font-regular text-neutral-1-900">Sinh nhật</div>
+                                    </div>  
+                                    <div class="flex flex-col gap-4 w-1/2">
+                                        <div class="text-body-2 font-medium text-neutral-1-900">+84 912346215</div>
+                                        <div class="text-body-2 font-medium text-neutral-1-900">Nguyễn Minh Tiến</div>
+                                        <div class="text-body-2 font-medium text-neutral-1-900">06/02/1997</div>
+                                    </div>
+                                </div>    
+                                <div class="w-5/12 flex items-start justify-start">
+                                    <div class="flex flex-col gap-4 w-1/3">
+                                        <div class="text-body-2 font-regular text-neutral-1-900">Email</div>
+                                        <div class="text-body-2 font-regular text-neutral-1-900">Facebook</div>
+                                        <div class="text-body-2 font-regular text-neutral-1-900">Địa chỉ</div>
+                                        
+                                    </div>
+                                    <div class="flex flex-col gap-4 w-2/3">
+                                        <div class="text-body-2 font-medium text-neutral-1-900">loser123154@gmail.com</div>
+                                        <div class="text-body-2 font-medium text-info-400">fb.com/10007816161671</div>    
+                                        <div class="text-body-2 font-medium text-neutral-1-900">12cn, Tân Phú Tp Hồ Chí Minh</div>    
+                                    </div>
+                                </div>
+                            </div>   
+                    </div>   
+                    <div class="bg-white flex flex-col border-neutral-2-200 border rounded-md w-full ">
+                        <div class="px-8 py-3 text-header-1 font-semibold text-neutral-1-900 border-b">Lịch sử mua hàng của khách hàng</div>
+                        <div class="p-8 w-full flex flex-col gap-4">
+                            <div class="font-regular text-body-1 text-neutral-1-900">Với người mua có số đơn giao hàng thành công thấp,hãy liên hệ xác nhận đơn hàng với họ trước khi gửi hàng</div>
+                            <div class="grid grid-cols-3 divide-x border-neutral-1-50">
+                                <div class="flex flex-col gap-2.5">
+                                    <div class=" text-heading-4 text-success-400 font-semibold">12</div>
+                                    <div class="flex text-caption-1 gap-2 items-center text-neutral-1-300">
+                                        <i class="tdsi-bag-success-line "></i>
+                                        Đơn hàng giao thành công
+                                    </div>
+                                </div>
+                                <div class="flex flex-col gap-2.5 px-8">
+                                    <div class="text-heading-4 text-error-400 font-semibold">0</div>
+                                    <div class="flex text-caption-1 gap-2 items-center text-neutral-1-300">
+                                        <i class="tdsi-warning-line "></i>
+                                        Đơn hàng giao không thành công
+                                    </div>
+                                </div>
+                                <div class="flex flex-col gap-2.5 px-8">
+                                    <div class="text-heading-4 text-warning-400 font-semibold">12</div>
+                                    <div class="flex text-caption-1 gap-2 items-center text-neutral-1-300">
+                                        <i class="tdsi-star-line "></i>
+                                        Đánh giá hài lòng
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                            
+                
+                    </div>   
+                    <div class="bg-white border border-neutral-2-200 rounded-md w-full flex flex-col ">
+                        <tds-table #borderedTable  [listData]="productData"  [title]="title"    [showPagination]="false"  >
+                            <thead>
+                                <tr>
+                                <th width="76px">Ảnh</th>
+                                <th width="160px">Mã đơn hàng</th>
+                                <th width="242px">Tên sản phẩm</th>
+                                <th width="160px">Mã code</th>
+                                <th width="142px">Đơn giá</th>
+                                <th width="130px">Số lượng</th>
+                                <th width="154px">Thành tiền</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let data of borderedTable.data">
+                                <td><img src="../../../../assets/Rectangle 1671.png" alt=""></td>
+                                <td class="text-body-2 font-regular text-neutral-1-900">{{ data.IdOrder }}</td>
+                                <td class="text-body-2 font-regular text-neutral-1-900">{{ data.NameProduct }}</td>
+                                <td class="text-body-2 font-regular text-neutral-1-900">{{ data.IdProduct }}</td>
+                                <td><div class="flex gap-1 items-center">
+                                    <u  class="text-neutral-1-400 font-regular">đ</u>
+                                    <div class="text-body-2 font-regular text-neutral-1-900">{{ data.Price }}</div>
+                                </div></td>
+                                <td>{{ data.SL }}</td>
+                                <td><div class="flex gap-1 items-center">
+                                    <u class="text-neutral-1-400 font-regular">đ</u>
+                                    <div class="text-body-2 font-regular text-neutral-1-900">{{ data.total }}</div>
+                                </div></td>
+                                </tr>
+                            </tbody>
+                        </tds-table>
+                        <div class="flex justify-end pr-14 pb-4 pt-3">
+                        <div class="flex flex-col gap-4">
+                            <div class="flex justify-between">
+                            <div class="mr-20 text-body-2 font-regular text-neutral-1-900">2 sản phẩm </div>
+                            <div class="flex gap-1 text-body-2 font-medium text-neutral-1-900"> <u  class="text-neutral-1-400 font-regular">đ</u>
+                                2.400.000</div>
+                            </div>
+                            <div class="flex justify-between">
+                            <div class="text-body-2 font-regular text-neutral-1-900">Phí giao hàng</div>
+                            <div class="flex gap-1  text-body-2 font-medium text-neutral-1-900"> <u  class="text-neutral-1-400 font-regular">đ</u> 2.400.000</div>
+                            </div>
+                            <div class="flex justify-between">
+                            <div class="text-title-1 font-medium text-neutral-1-900">Tổng tiền </div>
+                            <div class="flex gap-1 text-header-1 text-primary-1 font-semibold"> <u  >đ</u> 2.700.000</div>
+                            </div>
+                        </div>
+                        </div>
+                        <ng-template #title  [ngOutletContext]="context" >
+                        <div class="flex justify-between ">
+                            <div class="text-header-1 text-neutral-1-900 font-semibold">Thông tin đơn hàng</div>
+                        </div>
+                        </ng-template>
+                    </div>     
+                </div>   
+            </div>
+            <div class="w-1/4 h-full flex flex-col  ">
+                <div class="bg-white rounded-md border border-neutral-2-200 flex flex-col mb-4">
+                    <div class="flex justify-between border-b py-3.5 pl-8 pr-3 ">
+                        <div class=" flex items-center gap-2 text-header-1 font-semibold text-neutral-1-900">
+                            <i class="tdsi-edit-paper-fill text-xl text-neutral-1-300"></i>
+                            Ghi chú
+                        </div>
+                        <button tds-button-outline-icon class="text-neutral-1-300 border  !border-neutral-2-200"  size="sm">
+                            <i class="tdsi-edit-fill"></i>
+                          </button>
+                    </div>
+                    <div class="py-3.5 px-8 text-body-2 text-neutral-1-400 font-regular">
+                        Không có ghi chú nào
+                    </div>
+                </div>
+                <div class="bg-white rounded-md border border-neutral-2-100 flex flex-col">
+                    <div class="py-3.5 px-8 border-b flex items-center gap-2 text-header-1 font-semibold text-neutral-1-900">
+                        <i class="tdsi-edit-paper-fill text-xl text-neutral-1-300"></i>
+                        Lịch sử đơn hàng
+                    </div>
+                    <div class="py-3.5 px-8">
+                        <tds-steps direction="vertical" labelPlacement="vertical" [current]="1" [borderStyle]="'border-dashed'">
+                            <tds-step [tdsTitle]="titleTemplate" [icon]="iconTemplate" [description]="descriptionTemplate">
+                            </tds-step>
+                            <ng-template #titleTemplate>
+                                <div class="flex items-center justify-center text-primary-1 text-body-2">
+                                    Giao hàng thành công
+                                </div>
+                            </ng-template>
+                            <ng-template #iconTemplate>
+                                <div class="w-8 h-8 bg-white  flex items-center justify-center">
+                                    <span class="tdsi-bag-success-line text-2xl leading-6  text-primary-1"></span>
+                                </div>
+                            </ng-template>
+                            <ng-template #descriptionTemplate>
+                                <div class="flex items-center pt-1">
+                                    <div class="flex items-center pr-4 text-caption-2 font-regular text-primary-1">
+                                        <span><i class="tdsi-time-line mr-1 text-primary-1"></i></span> 19/12/2021
+                                    </div>
+                                    <div class="text-caption-2 font-regular text-primary-1">
+                                        20:21
+                                    </div>
+                                </div>  
+                            </ng-template>
+                          
+                            <tds-step tdsTitle="Đơn hàng đang giao" [icon]="iconTemplate2" [description]="descriptionTemplate2">
+                            </tds-step>
+                            <ng-template #iconTemplate2>
+                                <div class="w-8 h-8 bg-white  flex items-center justify-center">
+                                    <span class="tdsi-shipper-line text-2xl leading-6  text-neutral-1-400"></span>
+                                </div>
+                            </ng-template>
+                            <ng-template #descriptionTemplate2>
+                                <div class="flex items-center pt-1">
+                                    <div class="flex items-center pr-4 text-caption-2 font-regular ">
+                                        <span><i class="tdsi-time-line mr-1 "></i></span> 19/12/2021
+                                    </div>
+                                    <div class="text-caption-2 font-regular">
+                                        20:21
+                                    </div>
+                                </div>
+                            </ng-template>
+                          
+                            <tds-step tdsTitle="Đơn hàng đang vận chuyển" [icon]="iconTemplate3" [description]="descriptionTemplate2">
+                            </tds-step>
+                            <ng-template #iconTemplate3>
+                                <div class="w-8 h-8 bg-white  flex items-center justify-center">
+                                    <span class="tdsi-truck-line text-2xl leading-6  text-neutral-1-400"></span>
+                                </div>
+                            </ng-template>
+                          
+                            <tds-step tdsTitle="Đơn hàng đang được phân tuyến" [icon]="iconTemplate4" [description]="descriptionTemplate2">
+                            </tds-step>
+                            <ng-template #iconTemplate4>
+                                <div class="w-8 h-8 bg-white  flex items-center justify-center">
+                                    <span class="tdsi-group-product-line text-2xl leading-6  text-neutral-1-400"></span>
+                                </div>
+                            </ng-template>
+                          
+                            <tds-step tdsTitle="Đã lấy hàng thành công" [icon]="iconTemplate5" [description]="descriptionTemplate2">
+                            </tds-step>
+                            <ng-template #iconTemplate5>
+                                <div class="w-8 h-8 bg-white  flex items-center justify-center">
+                                    <span class="tdsi-product-success-line text-2xl leading-6  text-neutral-1-400"></span>
+                                </div>
+                            </ng-template>
+                          
+                            <tds-step tdsTitle="Đang lấy hàng" [icon]="iconTemplate6" [description]="descriptionTemplate2">
+                            </tds-step>
+                            <ng-template #iconTemplate6>
+                                <div class="w-8 h-8 bg-white  flex items-center justify-center">
+                                    <span class="tdsi-product-line text-2xl leading-6  text-neutral-1-400"></span>
+                                </div>
+                            </ng-template>
+                          
+                          
+                            <tds-step tdsTitle="Xác nhận thành công" [icon]="iconTemplate7" [description]="descriptionTemplate2">
+                            </tds-step>
+                            <ng-template #iconTemplate7>
+                                <div class="w-8 h-8 bg-white  flex items-center justify-center">
+                                    <span class="tdsi-success-line text-2xl leading-6  text-neutral-1-400"></span>
+                                </div>
+                            </ng-template>
+                          
+                          
+                            <tds-step tdsTitle="Yêu cầu xác nhận đơn hàng" [icon]="iconTemplate8" [description]="descriptionTemplate2">
+                            </tds-step>
+                            <ng-template #iconTemplate8>
+                                <div class="w-8 h-8 bg-white  flex items-center justify-center">
+                                    <span class="tdsi-confirm-page-line text-2xl leading-6  text-neutral-1-400"></span>
+                                </div>
+                            </ng-template>
+                          
+                            <tds-step tdsTitle="Tạo đơn hàng nháp thành công" [icon]="iconTemplate9" [description]="descriptionTemplate2">
+                            </tds-step>
+                            <ng-template #iconTemplate9>
+                                <div class="w-8 h-8 bg-white  flex items-center justify-center">
+                                    <span class="tdsi-success-page-line text-2xl leading-6  text-neutral-1-400"></span>
+                                </div>
+                            </ng-template>
+                        </tds-steps>
+                    </div>    
+                </div>
+            </div>
+        </div>
+    
+   
+</div>

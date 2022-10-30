@@ -1,0 +1,40 @@
+<!-- header -->
+<div class="p-8 flex flex-col  overflow-hidden">
+  <div class="text-heading-2  font-semibold text-neutral-1-900 truncate">
+    Chọn của hàng của bạn
+  </div>
+  <div class="text-neutral-1-700 font-medium text-title-1 mt-2 mb-8">
+    Có vẻ như tài khoản này được dùng cho nhiều cửa hàng. Hãy chọn cửa hàng bạn
+    muốn truy cập
+  </div>
+  <!-- body -->
+  <div class="rounded-xl shadow-2xl bg-white tds-custom-scroll  overflow-auto flex flex-col">
+    <div let *ngFor="let store of stores; let i=index;" class="flex justify-between items-center p-4 border-b border-neutral-2-300" >
+      <div class="flex justify-center items-center">
+        <img src="../../../../assets/Avatar.png" alt="" />
+        <div class="flex flex-col ml-3 justify-between">
+          <div class="text-title-1 font-medium text-neutral-1-900 truncate" >
+           {{store.name}}
+          </div>
+          <div class="font-regular text-caption-2 truncate gap-x-1">
+            <span class="text-primary-1">{{store.phone}} </span>
+            <span class="text-neutral-1-300">- Truy cập lần cuối:</span>
+            <span class="text-primary-1"> {{store.id}}</span>
+          </div>
+        </div>
+      </div>
+     
+      
+      <button (click)="getId(store.id)" tds-button-flat-icon color="secondary" rounded="!rounded-full"  class="mr-2 p-2 flex items-center" [routerLink]="['/nhan-tin/chat']">
+        <i class="tdsi-arrow-right-line"></i>
+      </button>
+    </div>
+  </div>
+  <!-- footer -->
+  <button tds-button color="primary" [routerLink]="['/account/register-store']"   class="mt-10  bg-primary-1 rounded-md py-2.5 px-auto flex items-center justify-center gap-x-2 w-full">
+    <span class="flex items-center font-medium text-white text-body-2">
+      <i class="tdsi-plus-circle-fill text-lg leading-none mr-2"></i>Đăng kí shop mới
+    </span>
+  </button>
+
+</div>

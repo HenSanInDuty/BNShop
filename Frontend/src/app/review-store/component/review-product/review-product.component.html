@@ -1,0 +1,168 @@
+<div class="flex flex-col gap-2.5 divide-y border-neutral-2-100 ">
+    <div class="px-4  pt-2.5 flex flex-col w-full ">
+      <div class="text-caption-1 font-regular text-neutral-1-400 flex items-center">
+        <tds-breadcrumb>
+          <tds-breadcrumb-item><a [routerLink]="['/admin/product']">Đánh giá</a></tds-breadcrumb-item>
+          <tds-breadcrumb-item>Đánh giá sản phẩm</tds-breadcrumb-item>
+        </tds-breadcrumb>
+        </div>
+        <span class="text-header-1 text-neutral-1-900 font-semibold">Đánh giá sản phẩm</span>
+    </div>     
+   <div class="flex justify-between px-4 items-center">  
+          <tds-filter-status  (ngModelChange)="onModelChange($event)" (selectChange)="onSelectChange($event)">
+              <ng-template ngFor let-item [ngForOf]="lstStar" let-i="index">
+                  <tds-filter-status-item [name]='item.name' 
+                      [value]="item.value">
+                      <ng-template tds-filter-status-template let-active='active' let-disabled="disabled" let-count='count'
+                          let-name='name' let-value>                   
+                          <div class="p-4 flex items-center border-b-3 border-transparent text-body-2 font-medium"
+                              [ngClass]="{' border-primary-1':active,'
+                              hover:border-primary-1 group':!disabled}">
+                              <div class="text-body-2 mr-2 font-semibold"
+                                  [ngClass]="{'text-neutral-1-900':active,'text-neutral-1-600 
+                                  group-hover:text-neutral-1-900':!active}">
+                                  {{name}}</div>
+                              <div>
+                                  <span *ngIf="value != 0" class="tdsi-star-1-fill text-base leading-4 text-warning-400">
+                                  </span>
+                              </div>
+                          </div>
+                      </ng-template>
+                  </tds-filter-status-item>
+              </ng-template>
+          </tds-filter-status>
+      
+   </div>
+</div>
+<div class="flex    h-full w-full bg-neutral-3-50 p-4 overflow-hidden  ">
+  <!-- list order -->
+    <div class="bg-white w-full border  border-neutral-2-200 pb-2.5  rounded-md  overflow-hidden  flex flex-col" >
+            <div class="flex items-center  justify-between px-4">
+              <tds-filter-status [ngModel]='1'  (selectChange)="onSelectChange($event)">
+
+                  <tds-filter-status-item name='Tất cả' [value]='1' [count]='10'>      
+                  </tds-filter-status-item>
+              
+                  <tds-filter-status-item name='Chưa trả lời' [value]='2' [count]='20'>       
+                  </tds-filter-status-item>   
+                  <tds-filter-status-item name='Đã trả lời' [value]='3' [count]='20'>       
+                  </tds-filter-status-item>   
+              
+                  <tds-filter-status-item name='Đã ẩn' [value]='4' [count]='20'>       
+                  </tds-filter-status-item>   
+              
+              </tds-filter-status>
+              <tds-form-field>
+                <div tdsAddOnLeft>
+                  <div
+                    tds-dropdown
+                    trigger="click"
+                    [tdsDropdownMenu]="menu"
+                    (click)="onClickDropdown($event)">
+                    <span
+                      class="flex text-body-2 items-center pl-1.5 py-0 font-regular text-neutral-1-900 cursor-pointer"
+                      tds-dropdown
+                      trigger="click"
+                      [tdsDropdownMenu]="menu">
+                      {{fieldDropdown.name}}
+                      <i class="tdsi-arrow-down-line text-body-2  leading-none ml-2 text-neutral-1-900"></i>
+                    </span>
+                  </div>
+                  <tds-dropdown-menu #menu="tdsDropdownMenu">
+                    <div class="w-full">
+                      <ng-template ngFor let-item [ngForOf]="listDataOfDropdown">
+                        <div tds-dropdown-item (click)="onClickFieldSearch(item)">
+                          <a> {{item.name}}</a>
+                        </div>
+                      </ng-template>
+                    </div>
+                  </tds-dropdown-menu>
+                </div>
+                <div>
+                  <input tdsInput placeholder="Nhập tên sản phẩm" autocomplete="off" tdsInput />
+                </div>
+              </tds-form-field>
+            </div>
+            <div class="w-full h-full">
+              <tds-table showSizeChanger #sortTable [listData]="listOfData"  [scroll]="{y:'auto'}" [pageSize]="13" >
+                <thead >
+                    <tr>
+                        
+                      <th width="154px">Mã đơn hàng</th>
+                      <th width="270px">Sản phẩm</th>
+                        <th width="180px">Khách hàng</th>
+                        <th width="160px">Đánh giá</th>
+                        <th width="366px">Nội dung</th>
+                        <th width="147px">Ngày đánh giá</th>
+                        <th width="152px">Trạng thái </th>
+                        <th >Thao tác</th>
+                       
+                    </tr>
+                </thead>
+                <tbody >      
+                      <ng-container *ngFor="let data of sortTable.data">
+                        <tr>
+                           
+                            
+                            <td>
+                                <div class=" text-neutral-1-900 text-body-2 font-regular"> {{ data.IdOrder }} </div>
+                            </td>
+                            <td>
+                                <div class="flex items-center gap-3">
+                                    <img src="../../../../assets/Rectangle 1671.png" alt="">
+                                    <div class="flex flex-col justify-center">
+                                        <div class="text-body-2 font-medium text-neutral-1-900">{{ data.product }}</div>
+                                        <div class="text-caption-1 font-medium text-neutral-1-300">{{ data.IdProduct }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><div class="flex flex-col ">
+                              <div class="text-body-2 font-regular text-neutral-1-900 ">
+                                {{ data.Customer }} 
+                              </div>
+                              <div class="flex items-center gap-1 text-neutral-1-400 text-body-2 font-regular"><i class="tdsi-call-fill text-neutral-1-500"></i> {{ data.Phone }} </div>
+                            </div></td>
+                           
+                            <td >
+                              <tds-rate size="sm"  [(ngModel)]="data.review" (ngModelChange)="onChange($event)" 
+                                  (tdsOnBlur)="onBlur($event)" 
+                                  (tdsOnHoverChange)="onItemHover($event)"
+                                  (tdsOnFocus)="onFocus($event)"
+                                  (tdsOnKeyDown)="onKeyDown($event)">
+                              </tds-rate>
+                             
+                            </td>
+                            <td  >
+                              <div class="text-body-2 font-regular text-neutral-1-900 gap-1">
+                                  {{ data.content }}
+                                 
+                                </div>
+                            </td>                 
+                            <td><div class="text-body-2 font-regular text-neutral-1-900">{{ data.Date }}</div></td>
+                            <td  [ngSwitch]="data.Status">
+                              <tds-tag *ngSwitchCase="'Đã trả lời'" status='success' type="outline" class="text-body-2 font-regular text-neutral-1-900">{{ data.Status }}</tds-tag> 
+                              <tds-tag *ngSwitchCase="'Đã ẩn'" status='secondary' type="outline" class="text-body-2 font-regular text-neutral-1-900">{{ data.Status }}</tds-tag>
+                              <tds-tag *ngSwitchCase="'Chưa trả lời'" status='info' type="outline" class="text-body-2 font-regular text-neutral-1-900">{{ data.Status }}</tds-tag>
+                             
+                            </td>
+                            <td [ngSwitch]="data.Status">
+                              <div *ngSwitchCase="'Đã ẩn'" class="text-body-2 font-medium text-info-500 opacity-65">
+                                  Trả lời |   Đã báo cáo
+                              </div>
+                              <div *ngSwitchCase="'Chưa trả lời'" class="text-body-2 font-medium text-info-500">
+                               Trả lời |   Báo cáo
+                              </div>
+                              <div *ngSwitchCase="'Đã trả lời'" class="text-body-2 font-medium text-info-500">
+                                  Trả lời |   Báo cáo
+                              </div>
+                            </td>
+                        </tr>
+                       
+                      
+                      </ng-container>
+                    
+                </tbody>
+            </tds-table>
+             </div>
+    </div>
+</div>  
