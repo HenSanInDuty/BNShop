@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 import os
 from pathlib import Path
 from datetime import timedelta
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -26,7 +27,7 @@ SECRET_KEY = 'django-insecure-$mocnf@6we!4-cf04qw-4j2o2v%)#*=*pbxwfx6)@2p%*305=e
 DEBUG = True
 DEBUG_PROPAGATE_EXCEPTIONS = True
 
-ALLOWED_HOSTS = ["*", "bnshop.herokuapp.com"]
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -37,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'django.contrib.sites',
     'django.contrib.staticfiles',
     'accounts.apps.AccountsConfig',
     'address.apps.AddressConfig',
@@ -48,7 +50,12 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
-    'drf_yasg'
+    'drf_yasg',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.facebook',
 ]
 
 MIDDLEWARE = [
@@ -90,11 +97,11 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
     # 'default': {
-    #     'ENGINE': 'django.db.backends.postgresql_psycopg2',
-    #     'NAME': 'd9c5dis4k19kg5',
-    #     'USER': 'ogfzgrfphkapga',
-    #     'PASSWORD': 'c738d9b686114897158393bac3eb4cde79fedbe0112f4556217fd3b1eda7847a',
-    #     'HOST': 'ec2-54-85-56-210.compute-1.amazonaws.com',
+    #     'ENGINE': 'django.db.backends.postgresql',
+    #     'NAME': 'd6gtpuluvtikat',
+    #     'USER': 'xkgphzhsefvfhh',
+    #     'PASSWORD': '082522d809637165419cd97be34c38722f48f68f80928330738f8783174fba2d',
+    #     'HOST': 'ec2-44-210-228-110.compute-1.amazonaws.com',
     #     'PORT': '5432',
     # }
 }
@@ -120,7 +127,10 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend'
+]
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
 
@@ -194,3 +204,27 @@ SWAGGER_SETTINGS = {
       }
    }
 }
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'APP':{
+            'client_id': '992676680304-vatvjblhod2kpbrh8riu8bu18r1664ar.apps.googleusercontent.com',
+            'secret': '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',
+            'key': ''
+        }
+        ,
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        }
+    }
+}
+
+SITE_ID = 2
+
+# Configure Django App for Heroku
+import django_heroku
+django_heroku.settings(locals())

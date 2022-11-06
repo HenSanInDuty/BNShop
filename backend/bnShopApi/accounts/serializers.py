@@ -19,11 +19,19 @@ class MyTokenObtainPairViewSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
         data = super().validate(attrs)
         refresh = self.get_token(self.user)
+        if self.user.is_agency:
+            role = 'Agency'
+        if self.user.is_customer:
+            role = 'Customer'
+        if self.user.is_admin:
+            role = 'Admin'
+
         data['refresh'] = str(refresh)
         data['access'] = str(refresh.access_token)
         data['data'] = {
             'id': self.user.id,
-            'phoneNumber': self.user.phone
+            'phoneNumber': self.user.phone,
+            'role': role
         }
         return data
     
