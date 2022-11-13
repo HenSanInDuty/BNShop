@@ -1,14 +1,19 @@
+from collections import OrderedDict
 from datetime import datetime
+from django.core.paginator import Paginator
 from django.forms.models import model_to_dict
 from rest_framework import generics,status
 from rest_framework.decorators import api_view,permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser,IsAuthenticated
+from rest_framework.pagination import PageNumberPagination
 from drf_yasg.utils import swagger_auto_schema
 
-from products.serializers import AttachmentSerializer, CategorySerializer, DetailSerializer, ProductRegisterSerializer, ProductSerializer, CategorySwagger, ProductUpdateSerializer
-from .models import Brand, Category, Detail, Product
+from products.serializers import AttachmentSerializer, CategorySerializer, DetailSerializer, ProductRegisterSerializer, ProductSerializer, CategorySwagger, ProductUpdateSerializer, ReportProductSerializer, TypeSerializer
+from .models import Brand, Category, Detail, Product, Quantity, Type
 from permissions.permissions import AgencyPermission
+
+from rating.models import Rate
 import json
 
 MESSAGE = {
@@ -167,7 +172,8 @@ def product_agency(request,agencyid):
 class ProductViewAll(generics.GenericAPIView):
     permission_classes = []
     serializer_class = ProductRegisterSerializer
-    
+    pagination_class = PageNumberPagination
+
     def get_permissions(self):
         per = super().get_permissions()
         if self.request.method != "GET":
@@ -175,12 +181,22 @@ class ProductViewAll(generics.GenericAPIView):
         else:
             return per
     
-    def get(self,request):
+    def get(self,request,**kwargs):
         product = Product.objects.all()
         result = []
         for p in product:
             instance = get_info_product(p)
             result.append(instance)
+
+        if request.GET.get('page'):
+            page = Paginator(result,10)
+            if int(request.GET.get('page')) > page.num_pages:
+                return Response({
+                    'message':'Only have ' + str(page.num_pages) + ' pages'
+                },status=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE)
+        
+            return Response(page.page(request.GET.get('page')).object_list)
+
         return Response(result)
     
     def post(self,request):
@@ -271,4 +287,171 @@ def get_wish_list(request):
         instance = get_info_product(p)
         result.append(instance)
     return Response(result)
+
+@swagger_auto_schema()
+class Report(generics.GenericAPIView):
+    permission_classes = [IsAuthenticated,AgencyPermission]
+    serializer_class = ReportProductSerializer
+    def post(self,request,**kwargs):
+        QUARTER = {
+            '1':[1,2,3],
+            '2':[4,5,6],
+            '3':[7,8,9],
+            '4':[10,11,12]
+        }
+
+        MIDYEAR = {
+            '1':[1,2,3,4,5,6],
+            '2':[7,8,9,10,11,12]
+        }
+
+        type = request.data.get('type')
+        detail = request.data.get('detail')
+        agency = request.user.user.agency
+        product_agency = Product.objects.filter(agency=agency).all()
+        
+        # Month
+        if type == "1":
+            all_quantity = Quantity.objects.filter(from_date__month=detail,
+                                                note='User buy items',
+                                                product__in=product_agency)
+            if not all_quantity:
+                return Response({"message":"Zero product were selled in this month"}) 
+        # Quarter
+        elif type == "2":
+            
+            all_quantity = Quantity.objects.filter(from_date__month__in=QUARTER[str(detail)],
+                                                note='User buy items',
+                                                product__in=product_agency)
+            if not all_quantity:
+                return Response({"message":"Zero product were selled in this quarter"}) 
+        # MidYear
+        elif type == "3":
+            all_quantity = Quantity.objects.filter(from_date__month__in=MIDYEAR[str(detail)],
+                                                note='User buy items',
+                                                product__in=product_agency)
+            if not all_quantity:
+                return Response({"message":"Zero product were selled in this midyear"}) 
+        # Year
+        elif type == "4":
+            all_quantity = Quantity.objects.filter(from_date__year=datetime.now().year,
+                                                note='User buy items',
+                                                product__in=product_agency)
+            if not all_quantity:
+                return Response({"message":"Zero product were selled in this year"}) 
+        else:
+            return Response({},status=status.HTTP_400_BAD_REQUEST)
+        
+        result = OrderedDict()
+        for rep in all_quantity:
+            key = str(rep.product.id)
+            value = rep.change_num
+            if key in result.keys():
+                result.update({str(rep.product.id):result[key]+value})
+            else:
+                result[key] = value    
+        compare_list = list(result.keys())
+        result_return = {'slowestSeller':compare_list[0],'bestSeller':compare_list[-1]}
+        return Response(result_return)
+
+@swagger_auto_schema()
+class RateReturn(generics.GenericAPIView):
+    permission_classes = [IsAuthenticated,AgencyPermission]
+    def get(self,request,**kwargs):
+        agency = request.user.user.agency
+        product_agency = Product.objects.filter(agency=agency).all()
+        all_quantity = Quantity.objects.filter(product__in = product_agency,
+                                                note='User buy items')
+        result = {}
+        for rep in all_quantity:
+            customer = 'customer-'+str(rep.customer.id)
+            info = {'product':rep.product.id,
+                    'num_buy':rep.change_num}
+            if customer in result.keys():
+                result[customer].append(info)
+            else:
+                result[customer] = [info]    
+        return_customer = 0
+        for cus,infor in result.items():
+            if len(infor) > 1:
+                return_customer +=1
+        return_percent = return_customer/len(result.keys()) * 100
+
+        result['statistical'] = {
+            'number_of_customer':len(result.keys()),
+            'return_percent': return_percent,
+            'unreturn_percent': 100 - return_percent
+        }
+        return Response(result)
+
+@swagger_auto_schema()
+class SatisfactionLevel(generics.GenericAPIView):
+    permission_classes = [IsAuthenticated,AgencyPermission]
+
+    def get(self,request,**kwargs):
+        agency = request.user.user.agency
+        product_agency = Product.objects.filter(agency=agency).all()
+        all_rate = Rate.objects.filter(product__in = product_agency)
+        rate_negative_total = 0
+        rate_netraul_total = 0
+        rate_positive_total = 0
+        result = {}
+        #Statistical
+        for rate in all_rate:
+            product = "product-"+str(rate.product.id)
+            star = rate.star
+
+            if star < 0:
+                star = 1
+            
+            if star > 5:
+                star = 5
+
+            if star in [1,2]:
+                rate_negative_total += 1
+
+            if star in [3,4]:
+                rate_netraul_total += 1
+
+            if star in [5]:
+                rate_positive_total += 1
+
+            if product in result.keys():
+                if star in [1,2]:
+                    result[product].update({'negative':result[product]['negative']+1})
+                elif star in [3,4]:
+                    result[product].update({'neutral':result[product]['neutral']+1})
+                elif star in [5]:
+                    result[product].update({'positive':result[product]['positive']+1})
+                
+                result[product].update({'total_star':result[product]['total_star']+star})
+                result[product].update({'total_rate':result[product]['total_rate']+1})
+            else:
+                if star in [1,2]:
+                    result[product] = {'negative':1}
+                elif star in [3,4]:
+                    result[product] = {'neutral':1}
+                elif star in [5]:
+                    result[product] = {'positive':1}
+
+                result[product]['total_star'] = star
+                result[product]['total_rate'] = 1
+
+        for product,value in result.items():
+            result[product]['avarage_rate'] = value['total_star'] / value['total_rate']
+
+        result['total_negative'] = rate_negative_total
+        result['total_neutral'] = rate_netraul_total
+        result['total_positive'] = rate_positive_total
+        return Response(result)
+
+class TypeProductViewAll(generics.GenericAPIView):
+    serializer_class = TypeSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get(self,request,**kWargs):
+        all_type = Type.objects.all()
+        serializer = self.serializer_class(all_type,many=True)
+        return Response(serializer.data,status=status.HTTP_200_OK)
+
 

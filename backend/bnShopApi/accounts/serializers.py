@@ -121,3 +121,12 @@ class AgencyRegister(serializers.Serializer):
     time_visited = serializers.FloatField(default=0,required = False)
     main_industry = serializers.CharField(max_length=100,required=True)
     identify = serializers.CharField(max_length=12,required=True)   
+
+class ProfileCustomerUpdateSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=100, required=False)
+    email = serializers.EmailField(required=False)
+    avatar = serializers.CharField(max_length=3000,required=False)
+    nationality = serializers.CharField(max_length=100,required=False)
+    gender = serializers.CharField(max_length=1,required=False)
+    nickname = serializers.CharField(max_length=100,required=False)
+    birthday = serializers.DateField(required=False)

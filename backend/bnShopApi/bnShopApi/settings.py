@@ -38,7 +38,6 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.sites',
     'django.contrib.staticfiles',
     'accounts.apps.AccountsConfig',
     'address.apps.AddressConfig',
@@ -51,22 +50,22 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
     'drf_yasg',
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-    'allauth.socialaccount.providers.google',
-    'allauth.socialaccount.providers.facebook',
+    'corsheaders'
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+CORS_ORIGIN_ALLOW_ALL=True
 
 ROOT_URLCONF = 'bnShopApi.urls'
 
@@ -98,7 +97,8 @@ DATABASES = {
     }
     # 'default': {
     #     'ENGINE': 'django.db.backends.postgresql',
-    #     'NAME': 'd6gtpuluvtikat',
+    #     'NAME': 'd6gtpuluvtikat', 
+    
     #     'USER': 'xkgphzhsefvfhh',
     #     'PASSWORD': '082522d809637165419cd97be34c38722f48f68f80928330738f8783174fba2d',
     #     'HOST': 'ec2-44-210-228-110.compute-1.amazonaws.com',
@@ -127,10 +127,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',
-    'allauth.account.auth_backends.AuthenticationBackend'
-]
+
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
 
@@ -160,7 +157,7 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 10
+    'PAGE_SIZE': 1
 }
 
 SIMPLE_JWT = {
@@ -204,26 +201,6 @@ SWAGGER_SETTINGS = {
       }
    }
 }
-
-SOCIALACCOUNT_PROVIDERS = {
-    'google': {
-        'APP':{
-            'client_id': '992676680304-vatvjblhod2kpbrh8riu8bu18r1664ar.apps.googleusercontent.com',
-            'secret': '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',
-            'key': ''
-        }
-        ,
-        'SCOPE': [
-            'profile',
-            'email',
-        ],
-        'AUTH_PARAMS': {
-            'access_type': 'online',
-        }
-    }
-}
-
-SITE_ID = 2
 
 # Configure Django App for Heroku
 import django_heroku

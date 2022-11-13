@@ -1,5 +1,7 @@
 from datetime import datetime
 from rest_framework import serializers
+
+from products.models import Quantity
 from .models import Order, OrderDetail, Payment, STATUS
 
 class ViewOrdersSerializer(serializers.ModelSerializer):
@@ -23,6 +25,7 @@ class ViewOrderDetailSerializer(serializers.ModelSerializer):
         fields = "__all__"
  
 class CreateOrdersDetailSerializer(serializers.Serializer):
+    id = serializers.IntegerField(required=False)
     order = serializers.ListField()
     payment = serializers.IntegerField()
     #address
@@ -35,26 +38,40 @@ class CreateOrdersDetailSerializer(serializers.Serializer):
             raise serializers.ValidationError({"orders":"Orders must be a number"})
         return result
     
-    def create(self, validated_data):
-        
+    def save(self,customer):
+        validated_data = self.validated_data
         order_detail = OrderDetail.objects.create(status="Waiting for confirm",
                                                   payment=Payment.objects.filter(id=validated_data['payment'])[0])
         total = 0.0
         for order in validated_data['order']:
             order_model = Order.objects.filter(id=int(order))[0]
+            #Get product
+            product = order_model.product
+            if product.quantity.last().quantity < order_model.qty:
+                raise serializers.ValidationError({"qty":"Don't have anymore product"})
+            # Change quantity of product
+            quantity = Quantity.objects.create(quantity=product.quantity.last().quantity-order_model.qty,
+                                                change_num=order_model.qty,
+                                                note="User buy items",
+                                                customer = customer,
+                                                product = product)
+            # Add note quantity to product
+            product.quantity.add(quantity)
             order_detail.order.add(order_model)
             total+=order_model.amount
             order_detail.save()
         order_detail.total = total
         order_detail.save()
+        validated_data['id'] = order_detail.id
         return validated_data
     
 class UpdateOrderDetailSerializer(serializers.Serializer):
     status = serializers.ChoiceField(choices=STATUS)
     
     def update(self, instance, validated_data):
-        instance.status = validated_data['status']
+        ud_instance = instance[0]
+        ud_instance.status = validated_data['status']
         if validated_data['status'] == '5':
-            instance.date_receive=datetime.now()
-        instance.save()
-        return instance
+            ud_instance.date_receive=datetime.now()
+        ud_instance.save()
+        return ud_instance

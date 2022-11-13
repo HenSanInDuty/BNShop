@@ -39,10 +39,9 @@ class Detail(models.Model):
 class Describe(models.Model):
     content = models.TextField()
 
-
 class Product(models.Model):
     name = models.CharField(max_length=100)
-    display_image = models.CharField(max_length=100)
+    display_image = models.CharField(max_length=30000)
     is_approved = models.BooleanField(default=False, blank=True)
     is_delete = models.BooleanField(default=False, blank=True)
     category = models.ManyToManyField(Category, related_name="product",blank=True)
@@ -66,14 +65,14 @@ class Price(models.Model):
     product = models.ForeignKey(
         Product, on_delete=models.CASCADE, related_name='price')
 
-
 class Quantity(models.Model):
-    quantity = models.CharField(max_length=100)
+    quantity = models.IntegerField()
+    change_num = models.IntegerField(null=True)
     note = models.CharField(max_length=100)
     from_date = models.DateTimeField(auto_now_add=True)
+    customer = models.ForeignKey(Customer,on_delete=models.CASCADE,related_name="history", null=True)
     product = models.ForeignKey(
         Product, related_name="quantity", on_delete=models.CASCADE)
-
 
 class Attachment(models.Model):
     url = models.CharField(max_length=100)

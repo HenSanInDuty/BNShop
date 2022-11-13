@@ -12,6 +12,4 @@ urlpatterns = [
     path('sign-in/refresh/',TokenRefreshView.as_view(),name='user-sign-in-refresh'),
     path('profile/',views.ProfileView.as_view(),name='profile'),
     path('profile/change-password/',views.ChangePasswordView.as_view(),name='change-password'),
-    path('test/',views.ggAuthen,name="gg-authen"),
-    path('gg/', include('allauth.urls')),
 ]

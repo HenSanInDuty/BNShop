@@ -51,7 +51,7 @@ class AttachmentSerializer(serializers.ModelSerializer):
 class ProductRegisterSerializer(serializers.Serializer):
     id = serializers.IntegerField(required=False)
     name = serializers.CharField(max_length=100, required=True)
-    display_image = serializers.CharField(max_length=100, required=True)
+    display_image = serializers.CharField(max_length=30000, required=True)
     category = serializers.ListField(required = False,write_only=True)
     type = serializers.ListField(required=True,write_only=True)
     brand_origin = serializers.CharField(max_length=100,required = True)
@@ -88,7 +88,8 @@ class ProductRegisterSerializer(serializers.Serializer):
                                          display_image=validated_data['display_image'],
                                          brand=brand,)
         Quantity.objects.create(quantity=validated_data['quantity'],
-                                           product=product)
+                                           product=product,
+                                           note="Init")
         Price.objects.create(price=validated_data['price'],
                                      product=product)
         
@@ -154,7 +155,7 @@ class ProductRegisterSerializer(serializers.Serializer):
     
 
 class ProductUpdateSerializer(serializers.Serializer):
-    display_image = serializers.CharField(max_length=100,required=False)
+    display_image = serializers.CharField(max_length=30000,required=False)
     price = serializers.FloatField(required=False)
     price_end_datetime = serializers.DateTimeField(required=False)
     quantity = serializers.IntegerField(required=False)
@@ -163,30 +164,34 @@ class ProductUpdateSerializer(serializers.Serializer):
     
     def update(self,instance,validated_data):
         agency = self.context.get('request').user.user.agency
-        instance.display_image = validated_data.get('display_image')
+        if validated_data.get('display_image'):
+            instance.display_image = validated_data.get('display_image')
         #Update category
-        instance.category.clear()
-        for cate in validated_data['category']:
-            try:
-                c = Category.objects.get(id=int(cate),agency=agency)
-                instance.category.add(c)
-                instance.save()
-            except ValueError:
-                raise serializers.ValidationError({"category":"category id must be a number"})
-            except Exception:
-                raise serializers.ValidationError({"category":"can't find this category"})
+        if validated_data.get('category'):
+            instance.category.clear()
+            for cate in validated_data['category']:
+                try:
+                    c = Category.objects.get(id=int(cate),agency=agency)
+                    instance.category.add(c)
+                    instance.save()
+                except ValueError:
+                    raise serializers.ValidationError({"category":"category id must be a number"})
+                except Exception:
+                    raise serializers.ValidationError({"category":"can't find this category"})
         #Add quantity
-        if validated_data.get('quantity'):
+        old_quantity = Quantity.objects.filter(product = instance).last().quantity
+        if validated_data.get('quantity') and validated_data.get('quantity')!=old_quantity:
             note = validated_data.get('quantity_note')  
+            change_num = abs(validated_data.get('quantity')-old_quantity)
             if not note:
-                old_quantity = Quantity.objects.filter(product = instance).last()
-                print(old_quantity)
                 if old_quantity < validated_data.get('quantity'):
-                    note = "Add "+str(validated_data.get('quantity')-old_quantity)+" items"
+                    note = "Add "+str(change_num)+" items"
                 if old_quantity > validated_data.get('quantity'):
-                    note = "Sub "+str(validated_data.get('quantity')-old_quantity)+" items"
-                                                       
-            new_quantity = Quantity.objects.create(quantity=validated_data.get('quantity'),
+                    note = "Sub "+str(change_num)+" items"      
+            new_quantity = Quantity.objects.create(
+                                                product=instance,
+                                                quantity=validated_data.get('quantity'),
+                                                change_num = change_num,
                                                    note=note,)
             instance.quantity.add(new_quantity)
             instance.save()
@@ -204,3 +209,13 @@ class ProductUpdateSerializer(serializers.Serializer):
             instance.save()
             
         return instance
+
+class ReportProductSerializer(serializers.Serializer):
+    
+    TYPE_REPORT=(("1",'Month'),
+    ("2",'Quarter'),
+    ("3",'Midyear'),
+    ("4",'Year'),)
+
+    type = serializers.ChoiceField(choices=TYPE_REPORT)
+    detail = serializers.IntegerField(required=False)

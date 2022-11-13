@@ -9,6 +9,8 @@ from orders.serializers import CreateOrdersDetailSerializer, OrdersSerializer, U
 from products.views import get_info_product
 from drf_yasg.utils import swagger_auto_schema
 # Create your views here.
+
+#Giỏ hàng
 @swagger_auto_schema()
 class OrderViewAll(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
@@ -17,7 +19,7 @@ class OrderViewAll(generics.GenericAPIView):
     def get(self,request):
         customer = request.user.user.customer
         if customer:
-            orders = Order.objects.filter(customer = customer)
+            orders = Order.objects.filter(customer = customer,order_detail__isnull=True)
             serializer = ViewOrdersSerializer(orders,many=True)
             return Response(serializer.data)    
         return Response()
@@ -37,7 +39,8 @@ class OrderViewAll(generics.GenericAPIView):
             else:
                 return Response(serializer.errors)    
         return Response()
-    
+
+#Lấy giỏ hàng chi tiết
 @swagger_auto_schema()
 class OrderViewDetail(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
@@ -50,7 +53,8 @@ class OrderViewDetail(generics.GenericAPIView):
             serializer = OrdersSerializer(order[0])
             return Response({
                     **serializer.data,
-                    'amount':order[0].amount
+                    'amount':order[0].amount,
+                    'qty':order[0].qty
                 })   
         return Response()
         
@@ -84,12 +88,14 @@ def get_order_detail(od):
                "product":{
                    **get_info_product(o.product)
                },
-               "amount":o.amount
+               "amount":o.amount,
+               "buy":o.qty
                } for o in od.order.all()
         ]
     }
     return result
 
+#Đặt hàng
 @swagger_auto_schema()
 class OrderDetailViewAll(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
@@ -105,11 +111,12 @@ class OrderDetailViewAll(generics.GenericAPIView):
     def post(self,request):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            serializer.save(customer=request.user.user.customer)
             return Response(serializer.data)
         else:
             return Response(serializer.errors)
-        
+            
+#Thay đổi trạng thái đơn hàng
 @swagger_auto_schema()
 class OrderDetailViewDetail(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
@@ -130,4 +137,4 @@ class OrderDetailViewDetail(generics.GenericAPIView):
             return Response(get_order_detail(od[0]))
         else:
             return Response(serializer.errors)
-    
+

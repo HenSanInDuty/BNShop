@@ -17,7 +17,7 @@ class AddressViewAll(generics.GenericAPIView):
     
     def post(self,request,*arg,**kwargs):
         data = request.data
-        data['user'] = request.user.id
+        data['user'] = request.user.user.id
         #Check user have any address ?
         if self.model.objects.count() == 0:
             data['is_default'] = True
