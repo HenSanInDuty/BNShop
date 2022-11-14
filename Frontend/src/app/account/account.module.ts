@@ -1,86 +1,58 @@
-
-import { RouterModule } from '@angular/router';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { LayoutComponent } from './layout/layout.component';
-import { LoginComponent } from './component/login/login.component';
-import { StoreComponent } from './component/store/store.component';
-import { RegisterStoreComponent } from './component/register-store/register-store.component';
-import { ForgetPassComponent } from './component/forget-pass/forget-pass.component';
-import { ResetpassComponent } from './component/forget-pass/resetpass/resetpass.component';
-import { OtpComponent } from './component/forget-pass/otp/otp.component';
-import { ChangePassComponent } from './component/forget-pass/change-pass/change-pass.component';
-import { RegisterComponent } from './component/register/register.component';
-import { PhoneComponent } from './component/register/phone/phone.component';
-import { PinComponent } from './component/register/pin/pin.component';
 
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { LoginFormComponent } from './component/login/login-form/login-form.component';
-import { RegisterFormComponent } from './component/register-store/register-form/register-form.component';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AccountRoutingModule } from './account-routing.module';
-import { TDSAvatarModule } from 'tds-ui/avatar';
-import { TDSButtonModule } from 'tds-ui/button';
-import { TDSCardModule } from 'tds-ui/card';
-import { TDSDividerModule } from 'tds-ui/divider';
-import { TDSDropDownModule } from 'tds-ui/dropdown';
+import { LoginComponent } from './pages/login/login.component';
+import { LoginSmsComponent } from './pages/login-sms/login-sms.component';
+import { ForgotPasswordComponent } from './pages/forgot-password/forgot-password.component';
+import { AccountComponent } from './account.component';
+import { AccountLayoutComponent } from './components/account-layout/account-layout.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TDSFormFieldModule } from 'tds-ui/form-field';
-import { TDSHeaderModule } from 'tds-ui/header';
-import { TDSSelectModule } from 'tds-ui/select';
+import {  TDSInputModule } from 'tds-ui/tds-input';
+import { TDSButtonModule } from 'tds-ui/button';
+import { TDSModalModule } from 'tds-ui/modal';
+import { TDSMessageModule, TDSMessageService } from 'tds-ui/message';
+import { TDSSpinnerModule } from 'tds-ui/progress-spinner';
+import { TDSImageModule } from 'tds-ui/image';
 import { TDSCheckBoxModule } from 'tds-ui/tds-checkbox';
-import { TDSInputModule } from 'tds-ui/tds-input';
-import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { Interceptor } from '../HttpInterceptor';
+import { ModalConfirmOtpComponent } from './components/modal-confirm-otp/modal-confirm-otp.component';
+import { ChangePasswordComponent } from './pages/change-password/change-password.component';
+import { ModalResetPasswordComponent } from './components/modal-reset-password/modal-reset-password.component';
+import { RegisterComponent } from './pages/register/register.component';
+import { SignUpComponent } from './pages/sign-up/sign-up.component';
+
 
 @NgModule({
   declarations: [
-    LayoutComponent,
     LoginComponent,
-    StoreComponent,
-    RegisterStoreComponent,
-    ForgetPassComponent,
-    ResetpassComponent,
-    OtpComponent,
-    ChangePassComponent,
+    LoginSmsComponent,
+    ForgotPasswordComponent,
+    AccountComponent,
+    AccountLayoutComponent,
+    ModalConfirmOtpComponent,
+    ChangePasswordComponent,
+    ModalResetPasswordComponent,
     RegisterComponent,
-    PhoneComponent,
-    PinComponent,
-    LoginFormComponent,
-    RegisterFormComponent,
-    
-
-
-
+    SignUpComponent,
   ],
   imports: [
-    CommonModule, 
-    RouterModule,
+    CommonModule,
     AccountRoutingModule,
-    TDSAvatarModule,
-    TDSHeaderModule,
-    TDSDropDownModule,
-    TDSButtonModule,
-    TDSFormFieldModule,
-    TDSCheckBoxModule,
     FormsModule,
     ReactiveFormsModule,
+    TDSFormFieldModule,
     TDSInputModule,
-    TDSDividerModule,
-    TDSSelectModule,
-    BrowserAnimationsModule,
-    TDSCardModule
-    
-    
-  
-    
-    
-    
-    
+    TDSButtonModule,
+    TDSModalModule,
+    TDSMessageModule,
+    TDSSpinnerModule,
+    TDSImageModule,
+    TDSCheckBoxModule,
 
   ],
-  exports: [LayoutComponent, LoginComponent],
-  providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: Interceptor, multi: true }
+  providers:[
+    TDSMessageService
   ]
 })
 export class AccountModule { }

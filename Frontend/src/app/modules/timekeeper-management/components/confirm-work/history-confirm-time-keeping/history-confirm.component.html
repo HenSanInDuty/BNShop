@@ -1,0 +1,46 @@
+<div class="flex flex-col h-full w-full bg-white rounded-xl">
+    <div class="p-4">
+        <h1 class="text-header-1 font-semibold text-neutral-1-900">Lịch sử duyệt</h1>
+    </div>
+    <div class="w-full h-full">
+        <tds-table #templateMode [loading]="isLoadingTable" [listData]="listDataOfRequestHistory"
+            [frontPagination]="false">
+            <thead>
+                <tr>
+                    <th>Nhân viên</th>
+                    <th>Ngày làm việc</th>
+                    <th>Giờ check in</th>
+                    <th>Giờ check out</th>
+                    <th>Ca làm</th>
+                    <th>Trạng thái</th>
+                    <th>Người duyệt</th>
+                    <th>Thời gian duyệt</th>
+                </tr>
+            </thead>
+            <tbody>
+                <ng-template ngFor let-data [ngForOf]="templateMode.data">
+                    <tr>
+                        <td>{{requestHistoryOfTimeKeeping.user?.fullName}}</td>
+                        <td>{{requestHistoryOfTimeKeeping.workingDate | date: 'dd-MM-YYYY'}}</td>
+                        <td>{{requestHistoryOfTimeKeeping.inTime == null ? '--/--' : requestHistoryOfTimeKeeping.inTime | date: 'HH:mm'}}</td>
+                        <td>{{requestHistoryOfTimeKeeping.outTime == null ? '--/--' : requestHistoryOfTimeKeeping.outTime | date: 'HH:mm'}}</td>
+                        <td>{{requestHistoryOfTimeKeeping.shift?.name}}</td>
+                        <td>
+                            <tds-tag *ngIf="(data.oldStatus == 0 && data.newStatus == 1) || (data.oldStatus == 2 && data.newStatus == 1)" status='success' type="outline">Leader đã duyệt</tds-tag>
+                            <tds-tag *ngIf="data.oldStatus == 0 && data.newStatus == 3" status='error' type="outline">Leader đã Từ chối</tds-tag>
+                            <tds-tag *ngIf="data.oldStatus == 1 && data.newStatus == 3" status='error' type="outline">Hr-Admin đã từ chối</tds-tag>
+                            <tds-tag *ngIf="data.oldStatus == 1 && data.newStatus == 2" status='success' type="outline">Hr-Admin đã duyệt</tds-tag>
+                            <tds-tag *ngIf="data.oldStatus == 0 && data.newStatus == 4" status='error' type="outline">Nhân viên đã hủy yêu cầu</tds-tag>
+                            <tds-tag *ngIf="data.oldStatus == 1 && data.newStatus == 0" status='secondary' type="outline">Leader Hoàn tác</tds-tag>
+                            <tds-tag *ngIf="data.oldStatus == 2 && data.newStatus == 0" status='secondary' type="outline">Hr-Admin Hoàn tác</tds-tag>
+                        </td>
+                        <td>
+                            {{data.userChange?.fullName}}
+                        </td>
+                        <td>{{data.creationTime | date: 'HH:mm, dd-MM-YYYY'}}</td>
+                    </tr>
+                </ng-template>
+            </tbody>
+        </tds-table>
+    </div>
+</div>

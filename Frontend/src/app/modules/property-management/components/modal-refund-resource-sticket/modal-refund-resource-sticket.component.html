@@ -1,0 +1,14 @@
+<div class="flex gap-6 items-start pl-2 pt-3">
+  <i class="tdsi-warning-2-fill text-3xl text-primary-1 rounded-full"></i>
+  <div class="flex flex-col gap-4">
+    <div class="text-title-1 font-semibold text-neutral-1-900">Xác nhận từ chối tham gia</div>
+    <div class="font-regular text-body-2 text-neutral-1-900">Bạn có muốn từ chối tham gia ?</div>
+</div>
+<div *tdsModalFooter class="flex justify-end gap-3 p-4">
+  <button (click)="cancel()" tds-button color="secondary" class="min-w-[100px]">
+    Hủy
+  </button>
+  <button (click)="onAccept()" tds-button type="submit" color="primary" class="min-w-[100px]">
+    Xác nhận
+  </button>
+</div>

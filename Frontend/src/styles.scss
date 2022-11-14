@@ -1,8 +1,31 @@
+/* You can add global styles to this file, and also import other style files */
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 @import "../node_modules/tds-ui/assets/scss/cdk.scss";
-@import "../node_modules/tds-ui/assets/scss/scroll";
+@import "../node_modules/tds-ui/assets/scss/scroll.scss";
 @import "../node_modules/tds-ui/assets/scss/table.scss";
 @import "../node_modules/tds-ui/assets/scss/carousel.scss";
+@import "../node_modules/tds-ui/assets/scss/steps.scss";
+@import "../node_modules/tds-ui/assets/scss/calendar.scss";
+@import "../node_modules/tds-ui/assets/scss/radio.scss";
 @import "./assets/font-icon/style.css";
+@import "./assets/scss/table.scss";
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+  border: unset;
+  -webkit-text-fill-color: unset;
+  -webkit-box-shadow: 0 0 0px 1000px #000 inset;
+  transition: background-color 5000s ease-in-out 0s;
+}
+tds-date-picker.timekeeping-person div input {
+  text-transform: capitalize;
+}

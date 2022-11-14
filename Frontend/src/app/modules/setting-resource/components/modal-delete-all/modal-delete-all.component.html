@@ -1,0 +1,174 @@
+<tds-spin [spinning]="isSubmit" class="w-full">
+  <div class="flex flex-col gap-4 w-full">
+    <div class="flex flex-col rounded-lg">
+      <tds-table *ngIf="lstAccsetType" templateMode>
+        <thead>
+          <tr>
+            <th width="120px">STT</th>
+            <th width="204px">Mã loại tài sản</th>
+            <th class="w-full">Tên loại tài sản</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of lstAccsetType; let indexOfelement = index">
+            <td width="120px">{{ indexOfelement + 1 }}</td>
+            <td width="204px">{{ data.code }}</td>
+            <td>{{ data.name }}</td>
+          </tr>
+        </tbody>
+      </tds-table>
+      <tds-table *ngIf="lstAccset" templateMode>
+        <thead>
+          <tr>
+            <th width="120px">STT</th>
+            <th width="204px">Mã tài sản</th>
+            <th class="w-full">Tên tài sản</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of lstAccset; let indexOfelement = index">
+            <td width="120px">{{ indexOfelement + 1 }}</td>
+            <td width="204px">{{ data.code }}</td>
+            <td>{{ data.name }}</td>
+          </tr>
+        </tbody>
+      </tds-table>
+      <tds-table *ngIf="lstShift" templateMode>
+        <thead>
+          <tr>
+            <th width="120px">STT</th>
+            <th width="370px">Tên ca làm việc</th>
+            <th width="135px">Thời gian</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of lstShift; let indexOfelement = index">
+            <td width="120px">{{ indexOfelement + 1 }}</td>
+            <td width="370px">{{ data.name }}</td>
+            <td width="135px">{{data.start.split(':')[0]+':'+data.start.split(':')[1]}} -
+              {{data.end.split(':')[0]+':'+data.end.split(':')[1]}}</td>
+          </tr>
+        </tbody>
+      </tds-table>
+      <tds-table *ngIf="lstFurloughKind" templateMode>
+        <thead>
+          <tr>
+            <th width="120px">STT</th>
+            <th width="370px">Tên loại nghỉ</th>
+            <th width="135px">Hình thức</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of lstFurloughKind; let indexOfelement = index">
+            <td width="120px">{{ indexOfelement + 1 }}</td>
+            <td width="388px">{{ data.name }}</td>
+            <td  width="135px"  *ngIf="data.isPaid; else elseTemplate">
+              Có lương
+            </td>
+            <ng-template #elseTemplate>
+              <td width="135px">Không lương</td>
+            </ng-template>
+          </tr>
+        </tbody>
+      </tds-table>
+      <tds-table *ngIf="lstHolidays" templateMode>
+        <thead>
+          <tr>
+            <th width="120px">STT</th>
+            <th width="388px">Tên ngày lễ</th>
+            <th width="135px">Số ngày nghỉ</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of lstHolidays; let indexOfelement = index">
+            <td width="120px">{{ indexOfelement + 1 }}</td>
+            <td width="388px">{{ data.name }}</td>
+            <td width="135px">{{data.quantityDayOff}}</td>
+          </tr>
+        </tbody>
+      </tds-table>
+      <tds-table *ngIf="lstBioDevice" templateMode>
+        <thead>
+          <tr>
+            <th width="120px">STT</th>
+            <th width="388px">Tên máy</th>
+            <th width="135px">Chi nhánh</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of lstBioDevice; let indexOfelement = index">
+            <td width="120px">{{ indexOfelement + 1 }}</td>
+            <td width="388px">{{ data.name }}</td>
+            <td width="135px">{{data.branchId}}</td>
+          </tr>
+        </tbody>
+      </tds-table>
+      <tds-table *ngIf="lstWorkingkind" templateMode>
+        <thead>
+          <tr>
+            <th width="120px">STT</th>
+            <th width="388px">Tên Hình thức</th>
+            <th width="135px">Mã</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of lstWorkingkind; let indexOfelement = index">
+            <td width="120px">{{ indexOfelement + 1 }}</td>
+            <td width="388px">{{ data.name }}</td>
+            <td width="135px">{{data.key}}</td>
+          </tr>
+        </tbody>
+      </tds-table>
+      <tds-table *ngIf="lstRoleUser" templateMode>
+        <thead>
+          <tr>
+            <th width="120px">STT</th>
+            <th width="388px">Vai trò</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of lstRoleUser; let indexOfelement = index">
+            <td width="120px">{{ indexOfelement + 1 }}</td>
+            <td width="388px">{{ data }}</td>
+          </tr>
+        </tbody>
+      </tds-table>
+      <tds-table *ngIf="lstRole" templateMode>
+        <thead>
+          <tr>
+            <th width="120px">STT</th>
+            <th width="388px">Vai trò</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of lstRole; let indexOfelement = index">
+            <td width="120px">{{ indexOfelement + 1 }}</td>
+            <td width="388px">{{ data.name }}</td>
+          </tr>
+        </tbody>
+      </tds-table>
+    </div>
+    <div  *ngIf="!error; else templateName" class="text-body-2 font-regular text-error-500 mb-8">
+      Lưu ý: Không thể khôi phục thông tin phân quyền sau khi xóa
+  </div>
+  <ng-template #templateName>
+    <div  class="text-body-2 font-regular text-error-500 mb-8">
+     {{error}}
+  </div>
+  </ng-template>
+  </div>
+  <div *tdsModalFooter class="flex justify-end gap-3 px-4 pb-4">
+    <button (click)="cancel()" tds-button color="secondary" class="min-w-[100px]">
+      Hủy
+    </button>
+    <button
+      (click)="onDelete()"
+      tds-button
+      type="submit"
+      color="error"
+      class="min-w-[100px]"
+    >
+      Xóa
+    </button>
+  </div>
+</tds-spin>

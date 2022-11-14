@@ -1,0 +1,294 @@
+<div class="w-full h-full flex flex-col">
+  <div class="flex flex-col justify-center items-center gap-4.5 w-full">
+    <div class="flex justify-between truncate w-full px-4 py-3 border-b">
+      <span class="text-header-1 font-semibold text-neutral-1-900"> Quản lý chấm công</span>
+      <div class="flex gap-2">
+        <button (click)="getTimeKeepingUserExport()" tds-button color="primary" size="sm">
+          <span class="flex items-center">
+            <i class="tdsi-download-fill text-lg leading-none mr-2"></i>Tải xuống
+          </span>
+        </button>
+      </div>
+    </div>
+    <div class="flex flex-col gap-4.5 justify-center items-center mt-4">
+      <div class="text-header-1 font-semibold text-neutral-1-900">
+        BẢNG XUẤT CÔNG TỪ {{fistDateMonth | date: "dd/MM/yyyy"}} - {{lastDateMonth | date: "dd/MM/yyyy"}}
+      </div>
+      <div class="flex gap-6">
+        <div class="flex gap-2 items-center text-body-2 font-regular text-neutral-1-900">
+          <div class="px-2 py-0.5 bg-base-orange-50 rounded-full truncate">--/--</div>
+          Khiếu nại công
+        </div>
+        <div class="flex items-center gap-2  font-regular text-neutral-1-900">
+          <i class="tdsi-calendar-fill text-xl leading-none text-primary-1"></i>Xin nghỉ phép
+        </div>
+        <div class="flex items-center gap-2  font-regular text-neutral-1-900">
+          <i class="tdsi-laptop-fill text-xl leading-none text-primary-1"></i>
+          Xác nhận hình thức làm việc khác
+        </div>
+      </div>
+    </div>
+    <div class="flex justify-between items-center w-full px-4">
+      <tds-filter-status [(ngModel)]='selectedStatus' (selectChange)="onSelectStatus($event)">
+        <ng-template ngFor let-item [ngForOf]="lstStatus" let-i="index">
+          <tds-filter-status-item [name]='item.name' [count]='item.count!' [value]="item.value">
+            <ng-template tds-filter-status-template let-active='active' let-disabled="disabled" let-count='count'
+              let-name='name' let-value>
+              <div class="p-4 flex items-center" [ngClass]="{'border-b-3 border-primary-1':active,'hover:border-b-3
+                    hover:border-primary-1 group':!disabled}">
+                <div class="text-body-2 mr-2 font-semibold" [ngClass]="{'text-primary-1':active,'text-neutral-1-400
+                        group-hover:text-neutral-1-900':!active}">
+                  {{name}}
+                </div>
+              </div>
+            </ng-template>
+          </tds-filter-status-item>
+        </ng-template>
+      </tds-filter-status>
+      <div class="w-80">
+        <tds-date-picker  allowClear="false" [format]="'MM-yyyy'" mode="month" [(ngModel)]="date"
+          (ngModelChange)="onChangeDateTime($event)">
+        </tds-date-picker>
+      </div>
+    </div>
+  </div>
+  <div class="w-full h-full">
+    <tds-table #rowSelectionTable showSizeChanger bordered [frontPagination]="false" [showPagination]="false"
+      [loading]="loading" [listData]="lstKeepingTime" [scroll]="{ x:'1500px',y:'auto'}"
+      [widthConfig]="['110px','220px','100px','120px','100px','100px','140px','125px','130px','105px','105px','100px','100px']">
+      <thead>
+        <tr>
+          <th class="border-r text-center" rowSpan="2">Ngày làm việc</th>
+          <th class="border-r text-center" rowSpan="2">Giờ vào/giờ ra</th>
+          <th class="border-r text-center" rowSpan="2">Đi trễ/phút</th>
+          <th class="border-r text-center" rowSpan="2">Về sớm/phút</th>
+          <th class="border-r text-center" rowSpan="2">Thiếu công</th>
+          <th class="border-r text-center" rowSpan="2">Công chấm</th>
+          <th class="border-r text-center" rowSpan="2">Ca làm</th>
+          <th class="border-r border-b text-center" colspan="2">Nghỉ phép</th>
+          <th class="border-r border-b text-center" colspan="2">Hình thức làm việc</th>
+          <th class="border-r text-center" rowSpan="2">Tổng cộng</th>
+          <th class="text-center" rowSpan="2" [tdsRight]="true">Thao tác</th>
+        </tr>
+        <tr>
+          <th class="border-r text-center">Không lương</th>
+          <th class="border-r text-center">Phép tiêu chuẩn</th>
+
+          <th class="border-r text-center">Tại nhà</th>
+          <th class="border-r text-center">Công tác</th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-template ngFor let-data [ngForOf]="rowSelectionTable.data" let-index='index' let-odd='odd'>
+          <tr *ngIf="lstKeepingTime[index].timeKeeping">
+            <td class="border-r text-center">
+              <div class="flex flex-col gap-1 items-start">
+                <div class="text-body-2 font-regular text-neutral-1-900">{{lstKeepingTime[index].date | date:
+                  'dd/MM/yyyy'}}</div>
+                <div class="text-caption-2 font-semibold text-neutral-1-400">{{lstKeepingTime[index].date | date:'EEEE'
+                  }}
+                </div>
+              </div>
+            </td>
+            <td [ngClass]="lstKeepingTime[index].total == 0.5 ? 'bg-orange-50' : ''" class="border-r ">
+              <div class="flex flex-col gap-0.5">
+                <div class="flex justify-between">
+                  <div class="flex gap-1">
+                    <div class="">
+                      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                          d="M9.99991 2.5C6.14574 2.5 2.96491 5.4225 2.54907 9.1675H8.33324V6.6675L12.4999 10.0008L8.33324 13.3342V10.8342H2.54991C2.96657 14.5783 6.14657 17.5 9.99991 17.5C14.1357 17.5 17.4999 14.1358 17.4999 10C17.4999 5.86417 14.1357 2.5 9.99991 2.5Z"
+                          fill="#4378FF" />
+                      </svg>
+                    </div>
+                    <div class="text-caption-1 font-semibold text-neutral-1-600">Check-in: </div>
+                  </div>
+                  <div *ngIf='lstKeepingTime[index].timeKeeping.inTimeOffset'
+                    class="text-caption-1 font-semibold text-neutral-1-900">
+                    {{lstKeepingTime[index].timeKeeping.inTimeOffset | date: 'HH:mm'}}
+                  </div>
+                  <div *ngIf='!lstKeepingTime[index].timeKeeping.inTimeOffset'
+                    class="px-2 py-0.5 bg-base-orange-50 rounded-full truncate">--/--</div>
+                </div>
+                <div class="flex justify-between">
+                  <div class="flex gap-1">
+                    <div class="">
+                      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                          d="M10.0001 17.5C13.8543 17.5 17.0351 14.5775 17.4509 10.8325L11.6668 10.8325L11.6668 13.3325L7.5001 9.99917L11.6668 6.66583L11.6668 9.16583L17.4501 9.16583C17.0334 5.42167 13.8534 2.5 10.0001 2.5C5.86426 2.5 2.5001 5.86417 2.5001 10C2.50009 14.1358 5.86426 17.5 10.0001 17.5Z"
+                          fill="#EE5543" />
+                      </svg>
+                    </div>
+                    <div class="text-caption-1 font-semibold text-neutral-1-600">Check-out: </div>
+                  </div>
+                  <div *ngIf='lstKeepingTime[index].timeKeeping.outTimeOffset'
+                    class="text-caption-1 font-semibold text-neutral-1-900">
+                    {{lstKeepingTime[index].timeKeeping.outTimeOffset | date: 'HH:mm'}}
+                  </div>
+                  <button (click)="showModalWorkingdate(index)" *ngIf='!lstKeepingTime[index].timeKeeping.outTimeOffset'
+                    class="px-2 py-0.5 bg-base-orange-50 rounded-full truncate">--/--</button>
+                </div>
+              </div>
+            </td>
+            <td class="text-center border-r">
+              <div *ngIf="lstKeepingTime[index].timeKeeping.timeKeepingProperties[0]?.kind ==0"
+                class="text-body-2 font-regular text-error-400">
+                {{lstKeepingTime[index].timeKeeping.timeKeepingProperties[0]?.value}}
+              </div>
+              <div *ngIf="lstKeepingTime[index].timeKeeping.timeKeepingProperties[0]?.kind != 0"
+                class="text-body-2 font-regular text-error-400">
+                <div class="text-body-2 text-neutral-1-900 font-regular">
+                  <div class="truncate">--/--</div>
+                </div>
+              </div>
+            </td>
+            <td class="text-center border-r">
+              <div *ngIf="lstKeepingTime[index].timeKeeping.timeKeepingProperties[0]?.kind == 1"
+                class="text-body-2 font-regular text-error-400">
+                {{lstKeepingTime[index].timeKeeping.timeKeepingProperties[0]?.value}}
+              </div>
+              <div *ngIf="lstKeepingTime[index].timeKeeping.timeKeepingProperties[0]?.kind != 1"
+                class="text-body-2 font-regular text-error-400">
+                <div class="text-body-2 text-neutral-1-900 font-regular">
+                  <div class="truncate">--/--</div>
+                </div>
+              </div>
+            </td>
+            <td class="text-center border-r">
+              <div *ngIf="lstKeepingTime[index].timeKeeping.timeKeepingProperties[1]?.kind == 2"
+                class="text-body-2 font-regular text-error-400">
+                {{lstKeepingTime[index].timeKeeping.timeKeepingProperties[0]?.value}}
+              </div>
+              <div *ngIf="lstKeepingTime[index].timeKeeping.timeKeepingProperties[1]?.kind != 2"
+                class="text-body-2 font-regular text-error-400">
+                <div class="text-body-2 text-neutral-1-900 font-regular">
+                  <div class="truncate">--/--</div>
+                </div>
+              </div>
+            </td>
+            <td class="text-center border-r">
+              <div class="text-body-2 font-regular text-error-400">
+                {{lstKeepingTime[index].timeKeeping.shiftKeepingNumber}}
+              </div>
+            </td>
+            <td class="text-center border-r ">
+
+              <div *ngIf="lstKeepingTime[index].timeKeeping.shift" class="text-body-2 font-regular text-neutral-1-900">
+                {{lstKeepingTime[index].timeKeeping.shift.name}}
+              </div>
+              <div *ngIf="!lstKeepingTime[index].timeKeeping.shift" class="text-body-2 font-regular text-neutral-1-900">
+                <div class="text-body-2 text-neutral-1-900 font-regular">
+                  Chưa xác định
+                </div>
+              </div>
+            </td>
+            <td class="text-center ">
+              <div class="text-body-2 text-neutral-1-900 font-regular rounded px-12 bg-neutral-3-50">
+                0
+              </div>
+            </td>
+            <td class="text-center border-r ">
+              <div class="text-body-2 text-neutral-1-900 font-regular rounded px-12 bg-neutral-3-50">
+                0
+              </div>
+            </td>
+            <td class="text-center">
+              <div class="text-body-2 text-neutral-1-900 font-regular rounded px-10 bg-neutral-3-50">0</div>
+            </td>
+            <td class="text-center border-r">
+              <div class="text-body-2 text-neutral-1-900 font-regular rounded px-10 bg-neutral-3-50">0</div>
+            </td>
+            <td class="text-center border-r ">
+              <div *ngIf='lstKeepingTime[index].timeKeeping' class="text-body-2 text-neutral-1-900 font-regular">
+                {{lstKeepingTime[index].total}}
+              </div>
+              <div *ngIf='!lstKeepingTime[index].timeKeeping' class="truncate">--/--</div>
+            </td>
+            <td class="text-center border-r " [tdsRight]="true">
+              <div class="flex gap-2">
+                <button (click)="showModaChangeWorkingKind(index)" tds-button-flat-icon>
+                  <i
+                    class="tdsi-laptop-fill active:text-primary-1 active:bg-transparent active:ring-0 text-neutral-1-300 border-neutral-1-200"></i>
+                </button>
+                <button (click)="showModaLeaveApplication()" tds-button-flat-icon color="secondary">
+                  <i class="tdsi-calendar-fill active:text-primary-1 text-neutral-1-300 border-neutral-2-100"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+          <tr *ngIf="!lstKeepingTime[index].timeKeeping" class="bg-primary-5">
+            <td class="border-r text-center">
+              <div class="flex flex-col gap-1 items-start">
+                <div class="text-body-2 font-regular text-neutral-1-900">{{lstKeepingTime[index].date | date:
+                  'dd/MM/yyyy'}}</div>
+                <div class="text-caption-2 font-semibold text-neutral-1-400">{{lstKeepingTime[index].date | date:'EEEE'
+                  }}
+                </div>
+              </div>
+            </td>
+            <td class="border-r  text-center">
+              <div class="text-body-2 text-neutral-1-900 font-regular">
+                <div class="truncate">--/--</div>
+              </div>
+            </td>
+            <td class="text-center border-r">
+              <div class="text-body-2 text-neutral-1-900 font-regular">
+                <div class="truncate">--/--</div>
+              </div>
+            </td>
+            <td class="text-center border-r">
+              <div class="text-body-2 text-neutral-1-900 font-regular">
+                <div class="truncate">--/--</div>
+              </div>
+            </td>
+            <td class="text-center border-r">
+              <div class="text-body-2 text-neutral-1-900 font-regular">
+                <div class="truncate">--/--</div>
+              </div>
+            </td>
+            <td class="text-center border-r">
+              <div class="text-body-2 text-neutral-1-900 font-regular">
+                <div class="truncate">--/--</div>
+              </div>
+            </td>
+            <td class="text-center border-r ">
+              <div class="text-body-2 text-neutral-1-900 font-regular">
+                <div class="truncate">--/--</div>
+              </div>
+            </td>
+            <td class="text-center">
+              <div class="text-body-2 text-neutral-1-900 font-regular">
+                <div class="truncate">--/--</div>
+              </div>
+            </td>
+            <td class="text-center border-r ">
+              <div class="text-body-2 text-neutral-1-900 font-regular">
+                <div class="truncate">--/--</div>
+              </div>
+            </td>
+            <td class="text-center">
+              <div class="text-body-2 text-neutral-1-900 font-regular">
+                <div class="truncate">--/--</div>
+              </div>
+            </td>
+            <td class="text-center border-r">
+              <div class="text-body-2 text-neutral-1-900 font-regular">
+                <div class="truncate">--/--</div>
+              </div>
+            </td>
+            <td class="text-center border-r ">
+              <div class="text-body-2 text-neutral-1-900 font-regular">
+                <div class="truncate">--/--</div>
+              </div>
+            </td>
+            <td class="text-center border-r " [tdsRight]="true">
+              <div class="text-body-2 text-neutral-1-900 font-regular">
+                <div class="truncate">--/--</div>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </tbody>
+    </tds-table>
+  </div>
+</div>

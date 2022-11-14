@@ -1,0 +1,56 @@
+<div class="flex flex-col">
+    <div class="bg-white flex justify-between px-4 py-2.5 rounded-tl-md rounded-tr-md">
+        <div class="w-1/2">
+            <div class="flex items-center" *ngIf="setOfCheckedId.size != 0">
+                <span class="text-body-2 font-regular text-neutral-1-500">{{setOfCheckedId.size}} dòng đã
+                    chọn</span>
+                <button (click)="onDeleteSetOfCheck()"
+                    class="flex items-center justify-center bg-neutral-3-50 hover:bg-neutral-3-100 text-neutral-1-700 hover:text-neutral-1-900 rounded-md px-3 py-1 mx-6">
+                    <i class="tdsi-close-fill text-neutral-1-500"></i>
+                    <span class="text-body-2 font-semibold ml-2">Xóa lựa chọn</span>
+                </button>
+                <button (click)="deleteShiftForDepartment()" class="mr-2" tds-button color="red">
+                    <span class="flex items-center">
+                        <i class="tdsi-trash-fill text-lg leading-none mr-2"></i>Xóa ca
+                    </span>
+                </button>
+            </div>
+        </div>
+        <div class="w-1/2 flex items-center justify-end">
+            <form class="flex" [formGroup]="addShiftForm">
+                <tds-form-field class="mr-2 w-80">
+                    <tds-select valueField="id" formControlName="shiftIds" textField="name"
+                        placeholder='Chọn ca làm việc' [data]="listDataOfShift" mode="multiple">
+                    </tds-select>
+                </tds-form-field>
+                <button class="w-[100px] h-[34px]" (click)="onSubmit()" type="submit" tds-button color="info">Thêm ca</button>
+            </form>
+        </div>
+    </div>
+    <div class="w-full h-full bg-white rounded-bl-md rounded-br-md">
+        <tds-table #rowSelectionTable [frontPagination]="false" [listData]="listDataShiftOfDepartment"
+            (currentPageDataChange)="onCurrentPageDataChange($event)" [loading]="isLoadingTable">
+            <thead>
+                <tr>
+                    <th width="42px" [(checked)]="checked" [indeterminate]="indeterminate"
+                        (checkedChange)="onAllChecked($event)">
+                    </th>
+                    <th width="524px">Tên ca</th>
+                    <th width="524px">Thời gian làm việc</th>
+                    <th width="524px">Số công</th>
+                </tr>
+            </thead>
+            <tbody>
+                <ng-template ngFor let-data [ngForOf]="rowSelectionTable.data" let-odd='odd'>
+                    <tr>
+                        <td [checked]="setOfCheckedId.has(data.id!)" (checkedChange)="onItemChecked(data.id!, $event)">
+                        </td>
+                        <td>{{data.name}}</td>
+                        <td>{{data.start! | validateTime : data.end!}}</td>
+                        <td>{{data.keepingNumber}}</td>
+                    </tr>
+                </ng-template>
+            </tbody>
+        </tds-table>
+    </div>
+</div>

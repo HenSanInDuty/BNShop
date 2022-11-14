@@ -1,59 +1,45 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { ChangePassComponent } from './component/forget-pass/change-pass/change-pass.component';
-import { ForgetPassComponent } from './component/forget-pass/forget-pass.component';
-import { OtpComponent } from './component/forget-pass/otp/otp.component';
-import { ResetpassComponent } from './component/forget-pass/resetpass/resetpass.component';
-import { LoginComponent } from './component/login/login.component';
-import { RegisterStoreComponent } from './component/register-store/register-store.component';
-import { PhoneComponent } from './component/register/phone/phone.component';
-import { PinComponent } from './component/register/pin/pin.component';
-import { RegisterComponent } from './component/register/register.component';
-import { StoreComponent } from './component/store/store.component';
-import { LayoutComponent } from './layout/layout.component';
+import { AccountComponent } from './account.component';
+import { ChangePasswordComponent } from './pages/change-password/change-password.component';
+import { ForgotPasswordComponent } from './pages/forgot-password/forgot-password.component';
+import { LoginSmsComponent } from './pages/login-sms/login-sms.component';
+import { LoginComponent } from './pages/login/login.component';
+import { SignUpComponent } from './pages/sign-up/sign-up.component';
 
 const routes: Routes = [
-  { path: '', redirectTo: '/account/login', pathMatch: 'full' },
   {
-    path: 'account',
-    component: LayoutComponent,
-    children: [
-      { path: '', redirectTo: 'login', pathMatch: 'full' },
+    path: '',
+    component:AccountComponent,
+    children:[
+      {
+        path:'',
+        redirectTo:'/account/login',
+        pathMatch:'full'
+      },
       {
         path: 'login',
-        component: LoginComponent,
+        component: LoginComponent
       },
       {
-        path: 'store',
-        component: StoreComponent,
+        path: 'signUp',
+        component: SignUpComponent
       },
       {
-        path: 'register-store',
-        component: RegisterStoreComponent,
+        path: 'login-sms',
+        component: LoginSmsComponent
       },
       {
-        path: 'register',
-        component: RegisterComponent,
-        children: [
-          { path: '', redirectTo: 'phone', pathMatch: 'full' },
-          { path: 'phone', component: PhoneComponent },
-          { path: 'nhap-thong-tin', component: PinComponent },
-          { path: 'thay-doi-mat-khau', component: ChangePassComponent },
-        ],
+        path: 'forgot-password',
+        component: ForgotPasswordComponent
       },
       {
-        path: 'quen-mat-khau',
-        component: ForgetPassComponent,
-        children: [
-          { path: '', redirectTo: 'dat-lai-mat-khau', pathMatch: 'full' },
-          { path: 'dat-lai-mat-khau', component: ResetpassComponent },
-          { path: 'nhap-ma-xac-minh', component: OtpComponent },
-          { path: 'thay-doi-mat-khau', component: ChangePassComponent },
-        ],
+        path: 'change-password',
+        component: ChangePasswordComponent
       },
-    ],
-  },
-]
+    ]
+  }
+];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

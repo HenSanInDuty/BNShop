@@ -1,0 +1,118 @@
+<div class="flex flex-col h-full w-full">
+    <div class="flex justify-between items-center py-2.5 px-4">
+        <div class="w-1/2 flex ">
+            <div *ngIf="setOfCheckedId.size != 0" class="flex">
+                <button (click)="confirmMultipleForm()" tds-button color="info" size="sm" class="mr-2">
+                    <span class="flex items-center">
+                        <i class="tdsi-checkbox-check-fill text-lg leading-none mr-2"></i>Xác nhận tất cả
+                    </span>
+                </button>
+                <button (click)="declineMultipleForm()" tds-button color="secondary" size="sm">
+                    <span class="flex items-center text-error-400">
+                        <i class="tdsi-close-fill text-lg leading-none mr-2"></i>Từ chối tất cả
+                    </span>
+                </button>
+            </div>
+            <div class="flex items-center ml-8" *ngIf="setOfCheckedId.size != 0">
+                <span class="text-body-2 font-regular text-primary-1 mr-6">{{setOfCheckedId.size}} mục đã
+                    chọn</span>
+                <button (click)="onDeleteSetOfCheck()"
+                    class="flex items-center justify-center bg-neutral-3-50 hover:bg-neutral-3-100 text-neutral-1-700 hover:text-neutral-1-900 rounded-md px-3 py-1">
+                    <i class="tdsi-close-fill text-neutral-1-500"></i>
+                    <span class="text-body-2 font-semibold ml-2">Xóa lựa chọn</span>
+                </button>
+            </div>
+        </div>
+        <div class="w-1/2 flex justify-end items-center">
+            <tds-date-picker class="w-80 mr-2" [format]="'MM-YYYY'" [(ngModel)]="chooseMonth"
+                (ngModelChange)="onChangeMonth($event)" mode="month"></tds-date-picker>
+            <tds-form-field *ngIf="role == 'leader'" class="w-60 mr-2">
+                <tds-select [(ngModel)]="firstTeam" [data]="dataOfTeam" (ngModelChange)="onChangeTeam($event)"
+                    valueField="id" textField="name" placeholder='Chọn team của bạn' [allowClear]="true">
+                </tds-select>
+            </tds-form-field>
+            <tds-form-field class="w-80">
+                <input tdsInput autocomplete="off" placeholder="Tìm kiếm" [tdsInputDebounce]="500"
+                    (inputKeyup)="search($event)" />
+            </tds-form-field>
+        </div>
+    </div>
+    <div class="w-full h-full pb-4">
+        <tds-table #headerTable [listData]="listTimeKeepingRequest"
+            (currentPageDataChange)="onCurrentPageDataChange($event)" showSizeChanger [scroll]="{y:'auto'}"
+            [frontPagination]="false" [loading]="loadingPage" [total]="total" [(pageSize)]="pageSize"
+            [(pageIndex)]="pageIndex" (queryParams)="onQueryParamsChange($event)" (clickRefresh)="resetPage($event)">
+            <thead>
+                <tr>
+                    <th width="40px"></th>
+                    <th width="70px" [(checked)]="checked" [indeterminate]="indeterminate"
+                        (checkedChange)="onAllChecked($event)"></th>
+                    <th width="235px">Nhân viên</th>
+                    <th width="153px">Ngày làm việc</th>
+                    <th width="153px">Giờ check in</th>
+                    <th width="153px">giờ checkout</th>
+                    <th width="153px">Ca làm</th>
+                    <th width="153px">Số công</th>
+                    <th width="234px">Mô tả</th>
+                    <th width="275px">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                <ng-template ngFor let-data [ngForOf]="headerTable.data" let-index='index' let-odd='odd'>
+                    <tr [ngClass]="{'tds-row-selected':setOfCheckedId.has(data.id!)}">
+                        <td [expand]="expandSet.has(data.id!)" (expandChange)="onExpandChange(data.id!, $event)"></td>
+                        <td [checked]="setOfCheckedId.has(data.id!)" (checkedChange)="onItemChecked(data.id!, $event)">
+                        </td>
+                        <td>{{data.user?.fullName}}</td>
+                        <td>{{ data.workingDate | date:'dd/MM/yyyy' }}</td>
+                        <td>{{ data.inTime == null ? '--/--' : data.inTime | date:'HH:mm' }}</td>
+                        <td>{{ data.outTime == null ? '--/--' :data.outTime | date:'HH:mm' }}</td>
+                        <td>{{ data.shift?.name }}</td>
+                        <td>{{ data.shift?.keepingNumber }}</td>
+                        <td>{{ data.description}}</td>
+                        <td>
+                            <div class="flex items-center">
+                                <span *ngIf="data.status == 2 && role == 'leader'" class="text-neutral-1-400">
+                                    {{data.statusMessage}}
+                                </span>
+                                <span *ngIf="data.status == 3" class="text-neutral-1-400">
+                                    {{data.statusMessage}}
+                                </span>
+                                <span *ngIf="data.status == 4" class="text-neutral-1-400">
+                                    <span>Nhân viên đã hủy yêu cầu</span>
+                                </span>
+                                <div *ngIf="(data.status == 0 && role == 'leader') || (data.status == 1 && role == 'hr')"
+                                    class="flex items-center">
+                                    <button (click)="confirmForm(data)" tds-button color="info" size="sm" class="mr-2">
+                                        <span class="flex items-center">
+                                            <i class="tdsi-checkbox-check-fill text-lg leading-none mr-2"></i>Xác nhận
+                                        </span>
+                                    </button>
+                                    <button (click)="declineForm(data)" tds-button color="secondary" size="sm">
+                                        <span class="flex items-center text-primary-1">
+                                            <i class="tdsi-close-fill text-lg leading-none mr-2"></i>Từ chối
+                                        </span>
+                                    </button>
+                                </div>
+                                <button (click)="undoRequest(data)" *ngIf="(data.status == 1 && role == 'leader')"
+                                    tds-button color="secondary" size="sm">
+                                    <span class="flex items-center text-primary-1">
+                                        <i class="tdsi-undo-line text-lg leading-none mr-2"></i>Hoàn tác
+                                    </span>
+                                </button>
+                                <i *ngIf="(data.status == 2 && role == 'hr')"
+                                    class="tdsi-tick-fill text-success-400 text-heading-3"></i>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr [expand]="expandSet.has(data.id!)"
+                        class="border-b border-neutral-2-100 text-neutral-1-900 bg-neutral-3-50">
+                        <hrm-history-confirm-time-keeping *ngIf="expandSet.has(data.id!)"
+                            [requestHistoryOfTimeKeeping]="data">
+                        </hrm-history-confirm-time-keeping>
+                    </tr>
+                </ng-template>
+            </tbody>
+        </tds-table>
+    </div>
+</div>

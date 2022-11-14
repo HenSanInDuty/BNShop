@@ -1,0 +1,80 @@
+name: '$(Date:yy.MM.dd).$(Rev:r)'
+pool:
+  name: fe_pools
+variables:
+  tag: '$(Build.BuildNumber)'
+  IMAGE_NAME: hrm/hrmweb
+  REGISTRY: cri-o.tpos.dev
+  DOCKERFILE_PATH: '.Dockerfile'
+  K8S_CLUSTER: rke-live.rke.t-idc.net
+  NAMESPACE: hrm
+  CHART_NAME: hrmweb
+  CHART_DIR: hrmweb # tên  thư mục chứa chart
+  ENVIRONMENT: production
+  BUILD_ENV: production
+
+stages:
+- stage: Build 
+  displayName: Build and Push image
+  jobs:
+  - job: Build
+    displayName: Build and Push
+    steps:
+    - task: Docker@2
+      displayName: Build image
+      inputs:
+        containerRegistry: $(REGISTRY)
+        repository: $(IMAGE_NAME)
+        command: build
+        Dockerfile: $(DOCKERFILE_PATH)
+        buildContext: '.'
+        arguments: --build-arg BUILD_ENV=$(BUILD_ENV)
+        tags: $(tag)
+    - task: Docker@2
+      displayName: Push image
+      inputs:
+        containerRegistry: $(REGISTRY)
+        repository: $(IMAGE_NAME)
+        command: push
+        Dockerfile: $(DOCKERFILE_PATH)
+        buildContext: 'src'
+        tags: $(tag)
+
+- stage: Deploy_k8s
+  displayName: Deploy k8s
+  jobs:
+  - job: helmDeploy
+    displayName: helmDeploy
+    steps:
+      - task: HelmDeploy@0
+        inputs:
+          connectionType: 'Kubernetes Service Connection'
+          kubernetesServiceConnection: $(K8S_CLUSTER)
+          namespace: $(NAMESPACE)
+          command: 'upgrade'
+          chartType: filepath
+          chartPath: 'charts/$(CHART_DIR)'
+          chartName: $(CHART_NAME)
+          chartVersion: '$(tag)'
+          releaseName: $(CHART_NAME)
+          valueFile: 'charts/$(CHART_DIR)/prod-values.yaml'
+          arguments: '--set image.tag=$(tag) --create-namespace'
+
+  - job: rollbackDeploy
+    dependsOn:
+    - helmDeploy
+    condition: failed()
+    steps:
+    - checkout: none
+    - task: HelmDeploy@0
+      inputs:
+        connectionType: 'Kubernetes Service Connection'
+        kubernetesServiceConnection: $(K8S_CLUSTER)
+        namespace: $(NAMESPACE)
+        command: 'rollback'
+        chartType: filepath
+        chartPath: 'charts/$(CHART_DIR)'
+        chartName: $(CHART_NAME)
+        chartVersion: '$(tag)'
+        releaseName: $(CHART_NAME)
+        valueFile: 'charts/$(CHART_DIR)/values.yaml'

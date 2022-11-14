@@ -1,0 +1,32 @@
+<div class="w-full h-full flex flex-col ">
+  <div class="w-full pt-4 bg-white">
+    <tds-page-header title="Lịch cho thuê tài sản">
+      <tds-page-header-content>
+        <div class="w-full">
+          <a routerLink="/property-management/rent-schedule" routerLinkActive #rls="routerLinkActive">
+            <tds-tag mode="checkable" [disabled]="true" [checked]="rls.isActive"
+              [rounded]='rls.isActive ? "rounded-full":"rounded-full rounded-full !border-0"' class="mr-2">
+              Lịch cho thuê tài sản
+            </tds-tag>
+          </a>
+          <a routerLink="/property-management/personal-rent" routerLinkActive #rlp="routerLinkActive">
+            <tds-tag mode="checkable" [disabled]="true" [checked]="rlp.isActive"
+              [rounded]='rlp.isActive ? "rounded-full":"rounded-full rounded-full !border-0"' class="mr-2">
+              Vé thuê tài sản của tôi
+            </tds-tag>
+          </a>
+          <a routerLink="/property-management/statistic" routerLinkActive #rlst="routerLinkActive">
+            <tds-tag mode="checkable" [disabled]="true" [checked]="rlst.isActive"
+              [rounded]='rlst.isActive ? "rounded-full":"rounded-full rounded-full !border-0"'>
+              Thống kê
+            </tds-tag>
+          </a>
+        </div>
+      </tds-page-header-content>
+    </tds-page-header>
+  </div>
+  <div class="flex-auto ">
+    <router-outlet>
+    </router-outlet>
+  </div>
+</div>

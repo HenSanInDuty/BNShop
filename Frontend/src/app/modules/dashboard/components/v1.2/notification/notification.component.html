@@ -1,0 +1,305 @@
+<div class="flex w-full h-full justify-center  p-4 overflow-auto tds-custom-scroll">
+  <div class="w-1/2 ">
+    <div class=" flex flex-col bg-white rounded-xl  gap-3.5">
+      <div class="flex justify-between items-center border-b border-neutral-2-200 px-4 py-3 ">
+        <div class="font-semibold text-header-1 text-neutral-1-900">Thông báo</div>
+        <div class="flex gap-4">
+          <button tds-button-icon color="secondary" tds-tooltip tooltipTitle="Đánh dấu đọc tất cả">
+            <i class="tdsi-edit-line"></i>
+          </button>
+          <button tds-button-icon color="secondary">
+            <i class="tdsi-gear-line"></i>
+          </button>
+        </div>
+      </div>
+      <div class="flex flex-col gap-8">
+        <div class="px-2">
+          <tds-filter-status [ngModel]='0'>
+            <tds-filter-status-item name='Tất cả' [value]='0'>
+              <ng-template tds-filter-status-template let-active='active' let-disabled="disabled" let-count='count'
+                let-name='name' let-value>
+                <div class="py-1.5 px-4.5 flex items-center rounded-2xl mr-2 cursor-pointer" [ngClass]="{'text-white bg-primary-1':active,'
+                    hover:bg-primary-1 group':!disabled}">
+                  <i class="tdsi-list-view-fill mr-2" [ngClass]="{'text-white':active,'text-neutral-1-500
+                  group-hover:text-white':!active}"></i>
+                  <div class="text-body-2 mr-2 font-semibold" [ngClass]="{'text-white':active,'text-neutral-1-600
+                            group-hover:text-white':!active}">
+                    {{name}}
+                  </div>
+                  <div>
+                    <div class="text-body-2 font-semibold" [ngClass]="{'text-white':active,'text-neutral-1-300
+                    group-hover:text-white':!active}">
+                      {{value}}
+                    </div>
+                  </div>
+                </div>
+              </ng-template>
+            </tds-filter-status-item>
+            <tds-filter-status-item name='Cá nhân' [value]='1'>
+              <ng-template tds-filter-status-template let-active='active' let-disabled="disabled" let-count='count'
+                let-name='name' let-value>
+                <div class="py-1.5 px-4.5 flex items-center rounded-2xl cursor-pointer" [ngClass]="{'text-white bg-primary-1':active,'
+                    hover:bg-primary-1 group':!disabled}">
+                  <i class="tdsi-user-fill mr-2" [ngClass]="{'text-white':active,'text-neutral-1-500
+                  group-hover:text-white':!active}"></i>
+                  <div class="text-body-2 mr-2 font-semibold" [ngClass]="{'text-white':active,'text-neutral-1-600
+                            group-hover:text-white':!active}">
+                    {{name}}
+                  </div>
+                  <div>
+                    <div class="text-body-2 font-semibold" [ngClass]="{'text-white':active,'text-neutral-1-300
+                    group-hover:text-white':!active}">
+                      {{value}}
+                    </div>
+                  </div>
+                </div>
+              </ng-template>
+            </tds-filter-status-item>
+          </tds-filter-status>
+        </div>
+        <div class="flex flex-col gap-4 overflow-auto">
+          <div class="flex justify-between hover:bg-primary-5 px-4 py-3.5 group cursor-pointer">
+            <div class="flex gap-6 cursor-pointer">
+              <tds-badge [count]="iconTemplate">
+                <tds-avatar class="bg-base-orange-500 dark:bg-d-base-orange-500 text-white" [size]="'xl'"
+                  [shape]="'square'" [text]="nameProfile" [tdsSrc]="userProfile$?.userAvatar">
+                </tds-avatar>
+              </tds-badge>
+              <ng-template #iconTemplate>
+                <div class=" absolute top-0 right-0 cursor-pointer
+                  inline-block transform translate-x-1/2 -translate-y-1/2 ">
+                  <tds-badge status="primary"></tds-badge>
+                </div>
+              </ng-template>
+              <div class="flex flex-col gap-4 items-start justify-start">
+                <div class="text-body-2 text-neutral-1-900 font-regular">
+                  <span class="font-semibold">Nguyen Anh</span>
+                  đã duyệt
+                  <span class="font-semibold">Đơn khiếu nại công</span>
+                  của bạn
+                </div>
+                <div class="text-primary-2 flex gap-1 items-start text-caption-1 font-regular">
+                  <i class="tdsi-time-line text-base"></i>20 phút trước
+                </div>
+              </div>
+            </div>
+            <button class="hidden group-hover:flex" size="sm" tds-button-icon color="#C4C4C4" trigger="click" tds-dropdown
+              [tdsDropdownMenu]="menu1" [placement]="'bottomRight'">
+              <i class="tdsi-three-dots-horizon-fill"></i>
+            </button>
+            <tds-dropdown-menu #menu1="tdsDropdownMenu">
+              <div class="w-36">
+                <div tds-dropdown-item>
+                  <a>Đánh dấu đã đọc</a>
+                </div>
+                <div tds-dropdown-item>
+                  <a> Xóa thông báo này</a>
+                </div>
+              </div>
+            </tds-dropdown-menu>
+          </div>
+          <div class="flex justify-between hover:bg-primary-5 px-4 py-3.5 group cursor-pointer">
+            <div class="flex gap-6">
+              <tds-badge [count]="iconTemplate">
+                <tds-avatar class="bg-base-orange-500 dark:bg-d-base-orange-500 text-white" [size]="'xl'"
+                  [shape]="'square'" [text]="nameProfile" [tdsSrc]="userProfile$?.userAvatar">
+                </tds-avatar>
+              </tds-badge>
+              <ng-template #iconTemplate>
+                <div class=" absolute top-0 right-0
+                  inline-block transform translate-x-1/2 -translate-y-1/2 ">
+                  <tds-badge status="primary"></tds-badge>
+                </div>
+              </ng-template>
+              <div class="flex flex-col gap-4 items-start justify-start">
+                <div class="text-body-2 text-neutral-1-900 font-regular">
+                  <span class="font-semibold">Nguyen Anh</span>
+                  đã duyệt
+                  <span class="font-semibold">Đơn khiếu nại công</span>
+                  của bạn
+                </div>
+                <div class="text-primary-2 flex gap-1 items-start text-caption-1 font-regular">
+                  <i class="tdsi-time-line text-base"></i>20 phút trước
+                </div>
+              </div>
+            </div>
+            <button class="hidden group-hover:flex" size="sm" tds-button-icon color="#C4C4C4" trigger="click" tds-dropdown
+              [tdsDropdownMenu]="menu1" [placement]="'bottomRight'">
+              <i class="tdsi-three-dots-horizon-fill"></i>
+            </button>
+            <tds-dropdown-menu #menu1="tdsDropdownMenu">
+              <div class="w-36">
+                <div tds-dropdown-item>
+                  <a>Đánh dấu đã đọc</a>
+                </div>
+                <div tds-dropdown-item>
+                  <a> Xóa thông báo này</a>
+                </div>
+              </div>
+            </tds-dropdown-menu>
+          </div>
+          <div class="flex justify-between hover:bg-primary-5 px-4 py-3.5 group cursor-pointer">
+            <div class="flex gap-6">
+              <tds-badge [count]="iconTemplate">
+                <tds-avatar class="bg-base-orange-500 dark:bg-d-base-orange-500 text-white" [size]="'xl'"
+                  [shape]="'square'" [text]="nameProfile" [tdsSrc]="userProfile$?.userAvatar">
+                </tds-avatar>
+              </tds-badge>
+              <ng-template #iconTemplate>
+                <div class=" absolute top-0 right-0
+                  inline-block transform translate-x-1/2 -translate-y-1/2 ">
+                  <tds-badge status="primary"></tds-badge>
+                </div>
+              </ng-template>
+              <div class="flex flex-col gap-4 items-start justify-start">
+                <div class="text-body-2 text-neutral-1-900 font-regular">
+                  <span class="font-semibold">Nguyen Anh</span>
+                  đã duyệt
+                  <span class="font-semibold">Đơn khiếu nại công</span>
+                  của bạn
+                </div>
+                <div class="text-primary-2 flex gap-1 items-start text-caption-1 font-regular">
+                  <i class="tdsi-time-line text-base"></i>20 phút trước
+                </div>
+              </div>
+            </div>
+            <button class="hidden group-hover:flex" size="sm" tds-button-icon color="#C4C4C4" trigger="click" tds-dropdown
+              [tdsDropdownMenu]="menu1" [placement]="'bottomRight'">
+              <i class="tdsi-three-dots-horizon-fill"></i>
+            </button>
+            <tds-dropdown-menu #menu1="tdsDropdownMenu">
+              <div class="w-36">
+                <div tds-dropdown-item>
+                  <a>Đánh dấu đã đọc</a>
+                </div>
+                <div tds-dropdown-item>
+                  <a> Xóa thông báo này</a>
+                </div>
+              </div>
+            </tds-dropdown-menu>
+          </div>
+          <div class="flex justify-between hover:bg-primary-5 px-4 py-3.5 group cursor-pointer">
+            <div class="flex gap-6">
+              <tds-badge [count]="iconTemplate">
+                <tds-avatar class="bg-base-orange-500 dark:bg-d-base-orange-500 text-white" [size]="'xl'"
+                  [shape]="'square'" [text]="nameProfile" [tdsSrc]="userProfile$?.userAvatar">
+                </tds-avatar>
+              </tds-badge>
+              <ng-template #iconTemplate>
+                <div class=" absolute top-0 right-0
+                  inline-block transform translate-x-1/2 -translate-y-1/2 ">
+                  <tds-badge status="primary"></tds-badge>
+                </div>
+              </ng-template>
+              <div class="flex flex-col gap-4 items-start justify-start">
+                <div class="text-body-2 text-neutral-1-900 font-regular">
+                  <span class="font-semibold">Nguyen Anh</span>
+                  đã duyệt
+                  <span class="font-semibold">Đơn khiếu nại công</span>
+                  của bạn
+                </div>
+                <div class="text-primary-2 flex gap-1 items-start text-caption-1 font-regular">
+                  <i class="tdsi-time-line text-base"></i>20 phút trước
+                </div>
+              </div>
+            </div>
+            <button class="hidden group-hover:flex" size="sm" tds-button-icon color="#C4C4C4" trigger="click" tds-dropdown
+              [tdsDropdownMenu]="menu1" [placement]="'bottomRight'">
+              <i class="tdsi-three-dots-horizon-fill"></i>
+            </button>
+            <tds-dropdown-menu #menu1="tdsDropdownMenu">
+              <div class="w-36">
+                <div tds-dropdown-item>
+                  <a>Đánh dấu đã đọc</a>
+                </div>
+                <div tds-dropdown-item>
+                  <a> Xóa thông báo này</a>
+                </div>
+              </div>
+            </tds-dropdown-menu>
+          </div>
+          <div class="flex justify-between hover:bg-primary-5 px-4 py-3.5 group cursor-pointer">
+            <div class="flex gap-6">
+              <tds-badge [count]="iconTemplate">
+                <tds-avatar class="bg-base-orange-500 dark:bg-d-base-orange-500 text-white" [size]="'xl'"
+                  [shape]="'square'" [text]="nameProfile" [tdsSrc]="userProfile$?.userAvatar">
+                </tds-avatar>
+              </tds-badge>
+              <ng-template #iconTemplate>
+                <div class=" absolute top-0 right-0
+                  inline-block transform translate-x-1/2 -translate-y-1/2 ">
+                  <tds-badge status="primary"></tds-badge>
+                </div>
+              </ng-template>
+              <div class="flex flex-col gap-4 items-start justify-start">
+                <div class="text-body-2 text-neutral-1-900 font-regular">
+                  <span class="font-semibold">Nguyen Anh</span>
+                  đã duyệt
+                  <span class="font-semibold">Đơn khiếu nại công</span>
+                  của bạn
+                </div>
+                <div class="text-primary-2 flex gap-1 items-start text-caption-1 font-regular">
+                  <i class="tdsi-time-line text-base"></i>20 phút trước
+                </div>
+              </div>
+            </div>
+            <button class="hidden group-hover:flex" size="sm" tds-button-icon color="#C4C4C4" trigger="click" tds-dropdown
+              [tdsDropdownMenu]="menu1" [placement]="'bottomRight'">
+              <i class="tdsi-three-dots-horizon-fill"></i>
+            </button>
+            <tds-dropdown-menu #menu1="tdsDropdownMenu">
+              <div class="w-36">
+                <div tds-dropdown-item>
+                  <a>Đánh dấu đã đọc</a>
+                </div>
+                <div tds-dropdown-item>
+                  <a> Xóa thông báo này</a>
+                </div>
+              </div>
+            </tds-dropdown-menu>
+          </div>
+          <div class="flex justify-between hover:bg-primary-5 px-4 py-3.5 group cursor-pointer">
+            <div class="flex gap-6">
+              <tds-badge [count]="iconTemplate">
+                <tds-avatar class="bg-base-orange-500 dark:bg-d-base-orange-500 text-white" [size]="'xl'"
+                  [shape]="'square'" [text]="nameProfile" [tdsSrc]="userProfile$?.userAvatar">
+                </tds-avatar>
+              </tds-badge>
+              <ng-template #iconTemplate>
+                <div class=" absolute top-0 right-0
+                  inline-block transform translate-x-1/2 -translate-y-1/2 ">
+                  <tds-badge status="primary"></tds-badge>
+                </div>
+              </ng-template>
+              <div class="flex flex-col gap-4 items-start justify-start">
+                <div class="text-body-2 text-neutral-1-900 font-regular">
+                  <span class="font-semibold">Nguyen Anh</span>
+                  đã duyệt
+                  <span class="font-semibold">Đơn khiếu nại công</span>
+                  của bạn
+                </div>
+                <div class="text-primary-2 flex gap-1 items-start text-caption-1 font-regular">
+                  <i class="tdsi-time-line text-base"></i>20 phút trước
+                </div>
+              </div>
+            </div>
+            <button class="hidden group-hover:flex" size="sm" tds-button-icon color="#C4C4C4" trigger="click" tds-dropdown
+              [tdsDropdownMenu]="menu1" [placement]="'bottomRight'">
+              <i class="tdsi-three-dots-horizon-fill"></i>
+            </button>
+            <tds-dropdown-menu #menu1="tdsDropdownMenu">
+              <div class="w-36">
+                <div tds-dropdown-item>
+                  <a>Đánh dấu đã đọc</a>
+                </div>
+                <div tds-dropdown-item>
+                  <a> Xóa thông báo này</a>
+                </div>
+              </div>
+            </tds-dropdown-menu>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
