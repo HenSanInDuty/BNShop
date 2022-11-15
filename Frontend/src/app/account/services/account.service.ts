@@ -9,6 +9,7 @@ import { CoreCommonService } from '@core/services';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { TDSSafeAny } from 'tds-ui/shared/utility';
+import { createAgencyDTO } from '../models/agency.dto';
 
 @Injectable({
   providedIn: 'root'
@@ -30,6 +31,10 @@ export class AccountService {
       this.authenService.afterRequestToken()
     );
 
+  }
+  //Thực thi việc đăng nhập và lấy token
+  signUpPassword(data: createAgencyDTO): Observable<TDSSafeAny>{
+    return this.http.post<any>(environment.apiBNShop + `account/sign-up/agency/`, data)
   }
 
   //Thực thi việc đăng nhập và lấy token{}
