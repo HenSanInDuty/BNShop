@@ -1,0 +1,61 @@
+<tds-spin [spinning]="false" class="w-full">
+  <div class="bg-white  w-full pb-2.5 h-full  rounded-lg  overflow-hidden  flex flex-col">
+    <div class="flex items-center  justify-end px-4 py-2.5">
+      <div class="flex gap-2">
+        <button (click)="showModalAdd()" tds-button color="primary">
+          <span class="flex items-center">
+            <i class="tdsi-plus-circle-fill text-lg leading-none mr-2"></i>Thêm mới
+          </span>
+        </button>
+        <tds-form-field>
+          <input class="w-96" tdsInput autocomplete="off" [tdsInputDebounce]="500"
+            placeholder="Tìm kiếm theo ngày lễ" (inputKeyup)="search($event)"/>
+          <span tdsPrefix><i class="tdsi-search-fill"></i></span>
+        </tds-form-field>
+        <button (click)="onDeleteAll()" tds-button-outline-icon color="secondary">
+          <i class="tdsi-trash-fill text-neutral-1-500 border-neutral-2-200"></i>
+        </button>
+      </div>
+    </div>
+    <div class="w-full h-full">
+      <tds-table #rowSelectionTable showSizeChanger getListShift [frontPagination]="false" [listData]="lstHolidays.items!"
+        [scroll]="{y:'auto'}" [total]="lstHolidays.totalCount!" [loading]="loading" [(pageSize)]="pageSize" [(pageIndex)]="pageIndex"
+        (currentPageDataChange)="onCurrentPageDataChange($event)" (queryParams)="onQueryParamsChange($event)">
+        <thead>
+          <tr>
+            <th width="48px" [(checked)]="checked" [indeterminate]="indeterminate"
+              (checkedChange)="onAllChecked($event)"></th>
+            <th width="54px">STT</th>
+            <th width="360px">Tên ngày lễ</th>
+            <th width="274px">Bắt đầu nghỉ</th>
+            <th width="274px">Kết thúc nghỉ</th>
+            <th width="274px">Số ngày nghỉ</th>
+            <th width="274px" [tdsRight]="true">Thao tác</th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-template ngFor let-data [ngForOf]="rowSelectionTable.data" let-index='index' let-odd='odd'>
+            <tr>
+              <td width="48px" [checked]="setOfCheckedId.has(data)" (checkedChange)="onItemChecked(data, $event)"></td>
+              <td width="54px">{{(pageIndex-1) * pageSize + index + 1}}</td>
+              <td width="360px">{{data.name}}</td>
+              <td width="274px">{{data.fromTime | date:'dd/MM/yyyy'}}</td>
+              <td width="274px">{{data.toTime | date:'dd/MM/yyyy'}}</td>
+              <td width="274px">{{data.quantityDayOff}}</td>
+              <td width="274px" [tdsRight]="true">
+                <div class="flex gap-2">
+                  <button (click)="showModalEdit(data)" tds-button-outline-icon color="secondary">
+                    <i  class="tdsi-edit-fill text-neutral-1-300 border-neutral-2-100"></i>
+                  </button>
+                  <button (click)="onDeleteOne(data)" tds-button-outline-icon color="secondary">
+                    <i  class="tdsi-trash-fill text-neutral-1-300 border-neutral-1-200"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+        </tbody>
+      </tds-table>
+    </div>
+  </div>
+</tds-spin>

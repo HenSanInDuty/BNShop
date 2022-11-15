@@ -1,0 +1,58 @@
+<tds-spin [spinning]="isSubmit">
+    <form [formGroup]="addDepartmentForm" id="addDepartmentForm" (ngSubmit)="onSubmit()"
+        class="flex flex-col text-body-2 font-semibold text-neutral-1-900">
+        <div class="flex flex-col">
+            <tds-form-field>
+                <tds-label>Mã phòng ban</tds-label>
+                <input
+                    class="border-neutral-2-100 text-body-2 font-regular text-neutral-1-900 placeholder:text-body-2 placeholder:font-regular placeholder:text-neutral-1-400"
+                    tdsInput autocomplete="off" placeholder="Nhập mã phòng ban" formControlName="departmentCode"
+                    [required]='true' />
+                <tds-error>Vui lòng nhập mã phòng ban</tds-error>
+            </tds-form-field>
+            <tds-form-field class="mt-4">
+                <tds-label>Tên phòng ban</tds-label>
+                <input
+                    class="border-neutral-2-100 text-body-2 font-regular text-neutral-1-900 placeholder:text-body-2 placeholder:font-regular placeholder:text-neutral-1-400"
+                    tdsInput autocomplete="off" placeholder="Nhập tên phòng ban" formControlName="name"
+                    [required]='true' />
+                <tds-error>Vui lòng nhập tên phòng ban</tds-error>
+            </tds-form-field>
+            <tds-form-field class="mt-4">
+                <tds-label>Người quản lý</tds-label>
+                <tds-select valueField="id" textField="fullName" placeholder='Chọn người quản lý'
+                    formControlName="managerId"  [allowClear]="true" [data]="listDataOfStaff">
+                    <ng-template tds-option-tmp let-item="item">
+                        <div class="flex items-center">
+                            <tds-avatar class="mr-2.5" [tdsSrc]="item.avatar" size="md"></tds-avatar>
+                            <span>{{item.fullName}}</span>
+                        </div>
+                    </ng-template>
+                </tds-select>
+            </tds-form-field>
+            <tds-form-field class="mt-4">
+                <tds-label>Ca làm việc chính</tds-label>
+                <tds-select valueField="id" textField="name" placeholder='Chọn ca làm việc'
+                    [data]="listDataOfShift" formControlName="mainShiftId" [allowClear]="true">
+                    <ng-template tds-label-tmp let-item="item">
+                        {{item.data.name}}
+                    </ng-template>
+                </tds-select>
+            </tds-form-field>
+            <tds-form-field class="mt-4">
+                <tds-label>Mô tả</tds-label>
+                <input
+                    class="pt-0.5 pb-10 text-body-2 font-regular text-neutral-1-900 placeholder:text-body-2 placeholder:font-regular placeholder:text-neutral-1-400"
+                    tdsInput autocomplete="off" placeholder="Nhập mô tả" formControlName="description" />
+            </tds-form-field>
+        </div>
+        <div *tdsModalFooter class="flex items-center justify-end py-4 pr-4">
+            <button (click)="cancel()" type="button" tds-button class="mr-2 w-[98px]" color="secondary">
+                Hủy
+            </button>
+            <button type="submit" form="addDepartmentForm" tds-button color="primary" class="w-[98px]">
+                Lưu
+            </button>
+        </div>
+    </form>
+</tds-spin>

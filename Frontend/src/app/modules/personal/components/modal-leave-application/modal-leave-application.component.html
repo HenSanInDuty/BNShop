@@ -1,0 +1,57 @@
+<tds-spin [spinning]="loading">
+  <form id="addEditShiftForm" [formGroup]="addEditKeepingOtherForm" (ngSubmit)="onSubmit()">
+    <div class="flex flex-col gap-4">
+      <tds-form-field class="w-full">
+        <tds-label>Thời gian</tds-label>
+        <tds-range-picker [ngModelOptions]="{standalone: true}" [(ngModel)]="fromToDayOff"
+          (ngModelChange)="onChange($event)">
+        </tds-range-picker>
+      </tds-form-field>
+      <ng-container *ngIf="lstFurloughKind; else elseTemplate">
+        <tds-form-field>
+          <tds-label>Chọn loại nghỉ phép</tds-label>
+          <tds-select valueField="id" textField="name" placeholder='Chọn loại nghỉ phép' [data]="lstFurloughKind"
+            formControlName="furloughKindId" [allowClear]="true">
+          </tds-select>
+        </tds-form-field>
+      </ng-container>
+      <ng-template #elseTemplate>
+        <tds-form-field>
+          <tds-label>Hình thức làm việc</tds-label>
+          <tds-select valueField="id" textField="name" placeholder='Chọn loại hình thức làm việc' [data]="lstWorkingKind"
+            formControlName="workingKindId" [allowClear]="true">
+          </tds-select>
+        </tds-form-field>
+      </ng-template>
+
+      <tds-form-field>
+        <tds-label>Ca làm việc</tds-label>
+        <tds-select valueField="id" textField="name" placeholder='Chọn ca làm việc' [data]="lstShift"
+          formControlName="shiftId" [allowClear]="true">
+        </tds-select>
+      </tds-form-field>
+      <div class="flex gap-2 items-center text-body-2 font-regular text-neutral-1-900">
+        <tds-checkbox [checked]="false" formControlName="includingSat"></tds-checkbox>
+        Bao gồm thứ 7
+      </div>
+      <div class="flex gap-2 items-center text-body-2 font-regular text-neutral-1-900">
+        <tds-checkbox [checked]="false" formControlName="includingSun"></tds-checkbox>
+        Bao gồm chủ nhật
+      </div>
+      <tds-form-field>
+        <tds-label>Mô tả</tds-label>
+        <div class="flex items-start h-16 border-neutral-2-200">
+          <input tdsInput autocomplete="off" placeholder="Nhập mô tả" formControlName="description" />
+        </div>
+      </tds-form-field>
+    </div>
+    <div *tdsModalFooter class="flex justify-end gap-3 p-4">
+      <button (click)="cancel()" tds-button color="secondary" class="min-w-[100px]">
+        Hủy
+      </button>
+      <button tds-button form='addEditShiftForm' type="submit" color="primary" class="min-w-[100px]">
+        Gửi
+      </button>
+    </div>
+  </form>
+</tds-spin>

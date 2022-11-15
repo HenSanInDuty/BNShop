@@ -1,0 +1,50 @@
+<div class="w-full h-full flex flex-col gap-4 p-4">
+  <div class="bg-white flex flex-col rounded-md p-4">
+    <div class="flex justify-between items-end">
+      <div class="text-header-1 font-semibold text-neutral-1-900">Tổng quan lượt thuê tài sản</div>
+      <div class="">
+      </div>
+    </div>
+    <tds-spin [spinning]="loading">
+      <div class="overflow-auto tds-custom-scroll" echarts [options]="barCharOptions" [size]="sizeBarChar"></div>
+    </tds-spin>
+  </div>
+  <div class="bg-white flex flex-col rounded-md">
+    <div class="flex gap-2 justify-start px-4 py-2.5">
+      <div class="w-80">
+        <tds-date-picker [disabledDate]='disabledDate' placeholder=" Chọn ngày bắt đầu" [showToday]="false"
+          [(ngModel)]='fromTime' (ngModelChange)="changeFromTime($event)"></tds-date-picker>
+      </div>
+      <div class="w-80">
+        <tds-date-picker [disabledDate]='disabledDate' placeholder="Chọn ngày kết thúc" [showToday]="false"
+          [(ngModel)]='toTime' (ngModelChange)="changeToTime($event)"></tds-date-picker>
+      </div>
+      <div class="w-52">
+        <tds-select (selectChange)="changeResourceType($event)" valueField="id" textField="name"
+          placeholder='Chọn loại tài nguyên' [allowClear]="false" [(ngModel)]="selected" [data]="listResourceTypes">
+        </tds-select>
+      </div>
+    </div>
+    <tds-divider></tds-divider>
+    <div class="pb-2">
+      <tds-table #rowSelectionTable showSizeChanger [listData]="listResourceReport" [frontPagination]="false"
+        [loading]="false" [total]="totalResourceReport" [loading]="loading" [(pageSize)]="pageSize" [(pageIndex)]="pageIndex"
+        (queryParams)="onQueryParamsChange($event)" class="min-h-[200px]">
+        <thead>
+          <tr>
+            <th class="text-tile_table" *ngIf="isShowResourceReport">Tài sản/ngày tháng</th>
+            <th class="text-tile_table" *ngFor="let day of listRentDay">{{day}}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-template ngFor let-data [ngForOf]="rowSelectionTable.data" let-index='index' let-odd='odd'>
+            <tr>
+              <td>{{ data.resourceName }}</td>
+              <td *ngFor="let item of data.values">{{ item.totalCount }} lượt / {{item.totalTime}} phút</td>
+            </tr>
+          </ng-template>
+        </tbody>
+      </tds-table>
+    </div>
+  </div>
+</div>

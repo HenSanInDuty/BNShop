@@ -1,0 +1,25 @@
+<div class="border-t border-t-neutral-2-200 rounded-md border-r border-r-neutral-2-200 border-l border-l-neutral-2-200">
+    <tds-table templateMode>
+        <thead>
+            <tr>
+                <th width="170px">Họ tên</th>
+                <th width="160px">Số điện thoại</th>
+                <th width="160px">Ngày sinh</th>
+                <th width="230px">Email</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><p class="text-body-2 font-semibold text-info-400">{{listDataOfStaffDuplicate.fullName}}</p></td>
+                <td>{{listDataOfStaffDuplicate.phoneNumber}}</td>
+                <td>{{listDataOfStaffDuplicate.dateOfBirth}}</td>
+                <td>{{listDataOfStaffDuplicate.email}}</td>
+            </tr>
+        </tbody>
+    </tds-table>
+</div>
+<div *tdsModalFooter class="flex items-center justify-end p-4">
+    <button class="min-w-100 w-[100px]" (click)="cancel()" type="button" tds-button color="secondary">
+        Đóng
+    </button>
+</div>

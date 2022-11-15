@@ -1,0 +1,115 @@
+<div class="flex flex-col w-full h-full">
+    <div class="flex justify-between items-center p-4 bg-white w-full">
+        <div>
+            <h1 class="text-header-1 font-semibold">Bảng chấm công</h1>
+        </div>
+        <div>
+            <button (click)="exportToExcelFile()" tds-button color="primary">
+                <span class="flex items-center">
+                    <i class="tdsi-excel-fill text-lg leading-none mr-2"></i>Xuất thành excel file
+                </span>
+            </button>
+        </div>
+    </div>
+    <div class="p-4 w-full h-full">
+        <div class="bg-white flex flex-col rounded-xl w-full h-full">
+            <div class="flex flex-col items-center justify-center p-4">
+                <div class="text-header-1 font-semibold text-neutral-1-900">
+                    <h1>BẢNG XUẤT CÔNG TỪ <span>{{firstDay | date: 'dd-MM-YYYY'}}</span> - <span>{{lastDay | date:
+                            'dd-MM-YYYY'}}</span></h1>
+                </div>
+                <div class="grid gap-x-8 grid-cols-4 w-full pt-6">
+                    <div>
+                        <tds-date-picker [(ngModel)]="chooseMonth" (ngModelChange)="onChangeMonth($event)" mode="month">
+                        </tds-date-picker>
+                    </div>
+                    <div>
+                        <tds-form-field>
+                            <tds-select [data]="listDataOfBranch" (selectChange)="filterOfBranch($event)"
+                                valueField="id" textField="name" placeholder='Chọn chi nhánh' [allowClear]="true">
+                            </tds-select>
+                        </tds-form-field>
+                    </div>
+                    <div>
+                        <tds-form-field>
+                            <tds-select (selectChange)="filterOfDepartment($event)" [data]="listDataOfDepartment"
+                                valueField="id" textField="name" placeholder='Chọn phòng ban' [allowClear]="true">
+                            </tds-select>
+                        </tds-form-field>
+                    </div>
+                    <div>
+                        <tds-form-field>
+                            <input autocomplete="off" tdsInput placeholder="Tìm kiếm" [tdsInputDebounce]="500"
+                                (inputKeyup)="search($event)" />
+                            <span tdsPrefix><i class="tdsi-search-fill"></i></span>
+                        </tds-form-field>
+                    </div>
+                </div>
+            </div>
+            <div class="w-full h-full pb-4">
+                <tds-table class="table-keeping" [bordered]="true" #headerTable showSizeChanger
+                    [listData]="listDataOfTimesheets" [scroll]="{y:'auto', x: 'auto'}" [frontPagination]="false"
+                    [loading]="loadingPage" [total]="total" [(pageSize)]="pageSize" [(pageIndex)]="pageIndex"
+                    (queryParams)="onQueryParamsChange($event)">
+                    <thead>
+                        <tr>
+                            <th class="text-center border-r border-r-neutral-2-100 border-b border-b-neutral-2-100"
+                                width="66px" [tdsLeft]="true">STT</th>
+                            <th class="border-r border-r-neutral-2-100 border-b border-b-neutral-2-100" width="230px"
+                                [tdsLeft]="true">Họ tên</th>
+                            <th width="160px" class="border-r border-r-neutral-2-100 border-b border-b-neutral-2-100"
+                                [tdsLeft]="true">Chức danh</th>
+                            <th *ngFor="let data of listDayOfMonth" class="text-center border-r border-b" width="95px">
+                                <div class="flex flex-col items-center">
+                                    <p class="text-caption-2 font-semibold text-neutral-1-700">{{data.dayOfWeek}}</p>
+                                    <p class="text-header-1 font-semibold text-neutral-1-900">{{data.dayOfMonth}}</p>
+                                </div>
+                            </th>
+                            <th [tdsRight]="true" width="95px"
+                                class="text-center border-r border-r-neutral-2-100 border-b border-b-neutral-2-100 text-body-2 font-semibold text-info-400">
+                                <div class="flex flex-col">
+                                    <p>Tổng</p>
+                                    <p>Công</p>
+                                </div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <ng-template ngFor let-data [ngForOf]="headerTable.data" let-index='index' let-odd='odd'>
+                            <tr class="group">
+                                <td class="text-center border-r border-r-neutral-2-100" [tdsLeft]="true">{{(pageIndex-1)
+                                    * pageSize + index +
+                                    1}}</td>
+                                <td class="border-r border-r-neutral-2-100 text-center" [tdsLeft]="true">
+                                    {{data.fullName}}</td>
+                                <td class="border-r" [tdsLeft]="true">
+                                    <div class="p-3">{{data.positionName}}</div>
+                                </td>
+                                <td *ngFor="let day of data.keepingDtos"
+                                    class="border-r border-r-neutral-2-100 text-center group-hover:bg-primary-3 relative">
+                                    <div class="text-center bg-primary-5 text-primary-1 px-4 py-6 group-hover:bg-primary-3"
+                                        *ngIf="day.timeKeeping == null || (day.timeKeeping?.inTime == null && day.timeKeeping?.outTime == null); else  workday">
+                                        <span>--/--</span>
+                                    </div>
+                                    <ng-template #workday>
+                                        <div class="absolute inset-0 group-hover:bg-primary-3 flex flex-col">
+                                            <div class="border-b border-dotted w-full h-1/2 text-center items-center flex justify-center"
+                                                [innerHtml]="day.timeKeeping | workDay:'inTime'">
+                                            </div>
+                                            <div class="w-full h-1/2 text-center items-center flex justify-center"
+                                                [innerHtml]="day.timeKeeping | workDay">
+                                            </div>
+                                        </div>
+                                    </ng-template>
+                                </td>
+                                <td class="border-r text-center" [tdsRight]="true">
+                                    <p>{{data | totalWork}}</p>
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </tbody>
+                </tds-table>
+            </div>
+        </div>
+    </div>
+</div>

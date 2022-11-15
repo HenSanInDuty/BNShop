@@ -1,0 +1,49 @@
+<div class="flex flex-col w-full h-full">
+    <div class="p-4 bg-white w-full">
+        <div>
+            <h1 class="text-header-1 font-semibold">Lịch sử nghỉ phép</h1>
+        </div>
+    </div>
+    <div class="p-4 w-full h-full">
+        <div class="bg-white flex flex-col rounded-xl w-full h-full">
+            <div class="flex justify-end py-3 px-4">
+                <div class="flex">
+                    <tds-date-picker class="w-80 mr-2" [(ngModel)]="chooseMonth" (ngModelChange)="onChangeMonth($event)"
+                        mode="month"></tds-date-picker>
+                    <tds-form-field class="w-80">
+                        <input autocomplete="off" tdsInput placeholder="Tìm kiếm" [tdsInputDebounce]="500" />
+                        <span tdsPrefix><i class="tdsi-search-fill"></i></span>
+                    </tds-form-field>
+                </div>
+            </div>
+            <div class="w-full h-full pb-4">
+                <tds-table #headerTable showSizeChanger [listData]="listDataOfLeaveHistory"
+                    [scroll]="{y:'auto', x: 'auto'}" [frontPagination]="false" [loading]="loadingPage" [total]="total"
+                    [(pageSize)]="pageSize" [(pageIndex)]="pageIndex" (queryParams)="onQueryParamsChange($event)">
+                    <thead>
+                        <tr>
+                            <th width="80px">STT</th>
+                            <th width="304px">Tên nhân viên</th>
+                            <th width="304px">Ngày bắt đầu</th>
+                            <th width="304px">Ngày kết thúc</th>
+                            <th width="304px">Loại nghỉ phép</th>
+                            <th width="304px">Số ngày nghỉ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <ng-template ngFor let-data [ngForOf]="headerTable.data" let-index='index' let-odd='odd'>
+                            <tr>
+                                <td>{{ (pageIndex-1) * pageSize + index + 1 }}</td>
+                                <td>{{data.fullName}}</td>
+                                <td>{{data.workingDate | date: 'dd-MM-YYYY'}}</td>
+                                <td>{{data.workingDate | date: 'dd-MM-YYYY'}}</td>
+                                <td>{{data?.kindById?.name}}</td>
+                                <td>{{data.shiftKeepingNumber}}</td>
+                            </tr>
+                        </ng-template>
+                    </tbody>
+                </tds-table>
+            </div>
+        </div>
+    </div>
+</div>

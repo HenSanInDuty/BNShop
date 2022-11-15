@@ -1,0 +1,64 @@
+<tds-spin [spinning]="isSubmit">
+    <form (ngSubmit)="onSubmit()" id="form"
+        class="flex flex-col h-[calc(65vh)] overflow-hidden border border-neutral-2-200 rounded-md">
+        <div class="flex justify-end items-center px-4 py-2.5">
+            <div class="w-3/5 mr-8">
+                <tds-form-field class="w-full">
+                    <input autocomplete="off" tdsInput placeholder="Tìm kiếm" [required]='true' [tdsInputDebounce]="500"
+                        (inputKeyup)="search($event)" />
+                    <span tdsPrefix><i class="tdsi-search-fill"></i></span>
+                </tds-form-field>
+            </div>
+            <div class="w-2/5">
+                <tds-form-field class="w-full mr-2">
+                    <tds-select (selectChange)="filterOfDepartment($event)" [data]="listDataOfDepartment"
+                        valueField="id" textField="name" placeholder='Chọn phòng ban' [allowClear]="true">
+                    </tds-select>
+                </tds-form-field>
+            </div>
+        </div>
+        <div class="w-full h-full pb-2.5">
+            <tds-table #headerTable showSizeChanger [listData]="listDataOfStaff"
+                (currentPageDataChange)="onCurrentPageDataChange($event)" [scroll]="{y:'auto'}"
+                [frontPagination]="false" [loading]="loadingStaffList" [total]="total" [(pageSize)]="pageSize"
+                [(pageIndex)]="pageIndex" (queryParams)="onQueryParamsChange($event)">
+                <thead>
+                    <tr>
+                        <th width="32px" [(checked)]="checked" [indeterminate]="indeterminate"
+                            (checkedChange)="onAllChecked($event)">
+                        </th>
+                        <th width="250px">Họ và tên</th>
+                        <th width="250px">Email</th>
+                        <th width="200px">Phòng ban</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <ng-template ngFor let-data [ngForOf]="headerTable.data" let-odd='odd'>
+                        <tr>
+                            <td [checked]="setOfCheckedId.has(data.id!)"
+                                (checkedChange)="onItemChecked(data.id!, $event)">
+                            </td>
+                            <td>
+                                <div class="flex items-center">
+                                    <tds-avatar [tdsSrc]="data.avatar!" size="md">
+                                    </tds-avatar>
+                                    <p class="text-body-2 font-semibold text-primary-1 ml-2.5">{{data.fullName}}</p>
+                                </div>
+                            </td>
+                            <td>{{data.email}}</td>
+                            <td>{{data.departmentName}}</td>
+                        </tr>
+                    </ng-template>
+                </tbody>
+            </tds-table>
+        </div>
+        <div *tdsModalFooter class="flex items-center justify-end py-4 pr-4">
+            <button class="min-w-100 w-[100px] mr-2" (click)="cancel()" type="button" tds-button color="secondary">
+                Hủy
+            </button>
+            <button class="min-w-100 w-[100px]" type="submit" [disabled]="setOfCheckedId.size <= 0" form="form" tds-button color="primary">
+                Mời
+            </button>
+        </div>
+    </form>
+</tds-spin>

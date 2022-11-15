@@ -1,0 +1,177 @@
+<tds-spin [spinning]="isLoadingData || isLoadingResource">
+    <div class="p-4 w-full">
+        <div class="w-full h-full flex flex-col rounded-xl bg-white">
+            <div class="flex w-full justify-between items-center p-4">
+                <tds-form-field>
+                    <input [tdsInputDebounce]="100" (inputKeyup)="searchResource($event)" class="w-80"
+                        autocomplete="off" tdsInput placeholder="Tìm kiếm sự kiện" />
+                    <span tdsPrefix><i class="tdsi-search-fill"></i></span>
+                </tds-form-field>
+                <tds-calendar-datepicker [tdsViewDate]="viewDate" (tdsViewDateChange)="onchange($event)"
+                    [tdsMode]="'week'">
+                </tds-calendar-datepicker>
+                <div class="flex items-center">
+                    <button (click)="onClickToday()" class="text-body-2 font-semibold text-primary-1" tds-button
+                        color="secondary">Hôm
+                        nay</button>
+                    <tds-form-field class="mx-2">
+                        <tds-select valueField="id" textField="name" placeholder='Chọn sự kiện' disabledField="isActive"
+                            [data]="filterStatusOptions" [(ngModel)]="filterStatus"
+                            (ngModelChange)="changeFilterStatus($event)" [allowClear]="true">
+                        </tds-select>
+                        <tds-error>Validation message text</tds-error>
+                    </tds-form-field>
+                    <button (click)="showModalAddEvent()" tds-button color="info">
+                        <span class="flex items-center">
+                            <i class="tdsi-add-fill text-lg leading-none mr-2"></i>Thêm sự kiện
+                        </span>
+                    </button>
+                </div>
+            </div>
+            <div class="w-full h-full px-4 pb-4">
+                <table
+                    class="h-full w-full table-fixed border-t border-t-neutral-2-200 border-r border-r-neutral-2-200 border-l border-l-neutral-2-200">
+                    <tr class="bg-neutral-3-50 border-b border-b-neutral-2-200">
+                        <th class="bg-white border-r border-r-neutral-2-200">
+                            <div class="flex justify-center items-center px-4">
+                                <tds-select class="w-[150px]" valueField="id" textField="name"
+                                    [(ngModel)]="resourceTypeId" (ngModelChange)="changeResourceType($event)"
+                                    placeholder='Chọn loại tài sản' disabledField="isActive" [border]="false"
+                                    [data]="resourceTypes" [allowClear]="false">
+                                </tds-select>
+                            </div>
+                        </th>
+                        <ng-template ngFor [ngForOf]="dayOfWeek" let-itemDate let-idx="index" let-total="count">
+                            <th>
+                                <div class="flex flex-col justify-center items-center py-3">
+                                    <span class="text-heading-4 font-semibold text-neutral-1-700"
+                                        [ngClass]="itemDate == viewDate? 'text-primary-1' : 'text-neutral-1-700'">{{itemDate
+                                        |
+                                        date:'dd'}}</span>
+                                    <span class="text-ception-1 font-regular text-neutral-1-400">{{itemDate |
+                                        date:'EEEE'}}</span>
+                                </div>
+                            </th>
+                        </ng-template>
+                    </tr>
+                    <tr *ngFor="let data of resourceOverviewSchedules">
+                        <td class="text-center h-[180px] border-b border-b-neutral-2-200">
+                            <div class="text-body-2 font-regular text-neutral-1-900">
+                                <p>{{data.resourceName}}</p>
+                            </div>
+                        </td>
+                        <td class="border-l border-l-neutral-2-200 border-b border-b-neutral-2-200"
+                            *ngFor="let resourceTicketByDates of data.resourceTicketByDates; let index = index">
+                            <button (click)="showModalAddEventOfChoosed(resourceTicketByDates.date, data.resourceId!)"
+                                *ngIf="!resourceTicketByDates.values" tds-tooltip tooltipTitle="Thêm sự kiện"
+                                class="hover:bg-primary-5 h-full w-full flex justify-center items-center cursor-pointer p-2  ">
+                                <span class="text-heading-4 font-semibold text-neutral-1-200">0</span>
+                            </button>
+                            <div *ngIf="resourceTicketByDates.values"
+                                class="flex flex-col h-full justify-center items-start hover:bg-primary-5 p-2">
+                                <div *ngFor="let values of resourceTicketByDates.values | slice:0:2"
+                                    class="flex flex-col w-full items-start rounded-md p-2 mb-2 relative"
+                                    [ngClass]="{'bg-base-green-50': values.resourceTicketStatusName === 'Active','bg-base-red-50':values.resourceTicketStatusName === 'Closed','bg-blue-50':values.resourceTicketStatusName === 'Waiting'}">
+                                    <div *ngFor="let members of values.members">
+                                        <div *ngIf="members.userId == currentUserId"
+                                            class="w-2.5 h-2.5 rounded-full bg-primary-1 absolute -right-1 -top-1">
+                                        </div>
+                                    </div>
+                                    <tds-tag *ngIf="values.resourceTicketStatusName === 'Active'" status='success'
+                                        type="outline">{{values.startTime | date: 'HH:mm'}} -
+                                        {{values.endTime | date: 'HH:mm'}}
+                                    </tds-tag>
+                                    <tds-tag *ngIf="values.resourceTicketStatusName === 'Closed'" status='error'
+                                        type="outline">{{values.startTime | date: 'HH:mm'}} -
+                                        {{values.endTime | date: 'HH:mm'}}
+                                    </tds-tag>
+                                    <tds-tag *ngIf="values.resourceTicketStatusName === 'Waiting'" status='info'
+                                        type="outline">{{values.startTime | date: 'HH:mm'}} -
+                                        {{values.endTime | date: 'HH:mm'}}
+                                    </tds-tag>
+                                    <div
+                                        class="text-body-2 font-regular text-neutral-1-900 w-full flex overflow-hidden">
+                                        <span class="truncate w-full">{{values.title}}</span>
+                                    </div>
+                                </div>
+                                <!-- <button tds-popover popoverTitle="{{resourceTicketByDates.date | date: 'dd-MM-YYYY'}} - {{data.resourceName}}" 
+                                    (popoverVisibleChange)="onPopoverVisibleChange($event)" popoverTrigger="click" 
+                                     [popoverContent]="contentTemplate" [popoverBackdrop]="true" class="flex items-center">
+                                     <span
+                                        class="mr-2 cursor-pointer flex justify-center items-center w-5 h-5 rounded-full bg-base-red-100">
+                                        <i class="tdsi-external-link-line text-error-400 text-caption-2"></i></span>
+                                    <span
+                                        class="text-body-2 font-regular text-neutral-1-900">{{resourceTicketByDates.totalBook}}cuộc họp
+                                    </span>
+                                </button> -->
+                                <button tds-popover (click)="openPopover(data.resourceId, index)"
+                                    [popoverVisible]="isResourceId == data.resourceId && idxclick == index"
+                                    (popoverVisibleChange)="onPopoverVisibleChange($event)"
+                                    popoverTitle="{{resourceTicketByDates.date | date: 'dd-MM-YYYY'}} - {{data.resourceName}}"
+                                    popoverTrigger="click" [popoverContent]="contentTemplate" class="flex items-center">
+                                    <span
+                                        class="mr-2 cursor-pointer flex justify-center items-center w-5 h-5 rounded-full bg-base-red-100">
+                                        <i class="tdsi-external-link-line text-error-400 text-caption-2"></i></span>
+                                    <span
+                                        class="text-body-2 font-regular text-neutral-1-900">{{resourceTicketByDates.totalBook}}
+                                        cuộc
+                                        họp</span>
+                                </button>
+                                <ng-template #contentTemplate>
+                                    <div class="w-[635px] max-h-[calc(100vh-100px)] overflow-auto tds-custom-scroll">
+                                        <button *ngFor="let values of resourceTicketByDates.values"
+                                            class="p-4 w-full cursor-pointer mb-3 rounded border-l-4 border-l-primary-1 hover:bg-primary-5">
+                                            <div (click)="showModalScheduleDetails(values.id!)" class="flex flex-col">
+                                                <div class="flex items-center">
+                                                    <span
+                                                        class="text-title-1 font-semibold text-neutral-1-900 mr-2">{{values.title}}</span>
+                                                    <tds-tag *ngIf="values.resourceTicketStatusName === 'Waiting'"
+                                                        status='info' type="outline">{{values.startTime | date:
+                                                        'HH:mm'}} -
+                                                        {{values.endTime | date: 'HH:mm'}}
+                                                    </tds-tag>
+                                                    <tds-tag *ngIf="values.resourceTicketStatusName === 'Closed'"
+                                                        status='error' type="outline">{{values.startTime | date:
+                                                        'HH:mm'}} -
+                                                        {{values.endTime | date: 'HH:mm'}}
+                                                    </tds-tag>
+                                                    <tds-tag *ngIf="values.resourceTicketStatusName === 'Active'"
+                                                        status='success' type="outline">{{values.startTime | date:
+                                                        'HH:mm'}} -
+                                                        {{values.endTime | date: 'HH:mm'}}
+                                                    </tds-tag>
+                                                </div>
+                                                <div class="flex items-center my-3">
+                                                    <span class="tdsi-calendar-fill text-neutral-1-400"></span>
+                                                    <span
+                                                        class="text-neutral-1-900 text-body-2 font-regular ml-2.5 mr-1">{{resourceTicketByDates.date
+                                                        | date: 'dd-MM-YYYY'}},
+                                                        {{values.startTime | date: 'HH:mm'}} -
+                                                        {{values.endTime | date: 'HH:mm'}}</span>
+                                                    <span class="text-neutral-1-400 text-body-2 font-regular">- Người
+                                                        tạo:
+                                                        {{values.ownerName}}</span>
+                                                </div>
+                                                <div class="flex flex-wrap items-center">
+                                                    <span
+                                                        class="tdsi-group-people-fill text-neutral-1-400 mr-2.5"></span>
+                                                    <span *ngFor="let data4 of values.members"
+                                                        class="text-body-2 font-regular text-neutral-1-900">{{data4.fullName}}<span
+                                                            *ngIf="values.members?.length! > 1">,&nbsp;</span>
+                                                    </span>
+                                                    <span *ngIf="values.members == null"
+                                                        class="text-body-2 font-regular text-neutral-1-900">Chưa có
+                                                        người tham gia</span>
+                                                </div>
+                                            </div>
+                                        </button>
+                                    </div>
+                                </ng-template>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</tds-spin>

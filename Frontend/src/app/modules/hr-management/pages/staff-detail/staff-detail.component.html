@@ -1,0 +1,345 @@
+<tds-spin [spinning]="isLoadingData || isLoadingHistory">
+    <div class="flex flex-col h-full overflow-hidden">
+        <div class="bg-white flex justify-between items-center px-4 py-2">
+            <div class="flex flex-col">
+                <tds-breadcrumb>
+                    <tds-breadcrumb-item>
+                        <a [routerLink]="['/hr-management/staff']">Nhân viên</a>
+                    </tds-breadcrumb-item>
+                    <tds-breadcrumb-item>{{staffDetail?.fullName}}</tds-breadcrumb-item>
+                </tds-breadcrumb>
+                <h1 class="text-header-1 text-neutral-1-900 font-semibold">{{staffDetail?.fullName}}</h1>
+            </div>
+            <div>
+                <button [routerLink]="['/hr-management/staff']" tds-button color="secondary">Quay lại</button>
+            </div>
+        </div>
+        <div class="flex p-4 h-full overflow-hidden">
+            <div class="w-2/3 h-full flex flex-col overflow-auto tds-custom-scroll">
+                <div class="p-4 flex flex-col bg-white rounded-xl">
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center">
+                            <tds-avatar class="rounded-10" *ngIf="staffDetail?.avatar == null" [shape]="'square'"
+                                [size]="58"></tds-avatar>
+                            <div *ngIf="staffDetail?.avatar != null">
+                                <img class="w-[58px] h-[58px] rounded-10" src="{{staffDetail?.avatar}}" alt="">
+                            </div>
+                            <div class="px-8 text-header-1 text-neutral-1-900 font-semibold">
+                                <h1>[{{staffDetail?.code}}] {{staffDetail?.fullName}}</h1>
+                            </div>
+                        </div>
+                        <div>
+                            <button (click)="showModalUpdateStaff()" tds-button color="info">
+                                <span class="flex items-center">
+                                    <i class="tdsi-edit-fill text-lg leading-none mr-2"></i>Chỉnh sửa
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="flex pt-4 text-neutral-1-900 text-body-2">
+                        <div class="w-1/2 flex flex-col pr-4">
+                            <div class="flex">
+                                <div class="w-1/3 font-semibold">Danh xưng</div>
+                                <div class="w-2/3 font-regular">{{staffDetail?.vocative}}</div>
+                            </div>
+                            <div class="flex pt-4">
+                                <div class="w-1/3 font-semibold">Giới tính</div>
+                                <div *ngIf="staffDetail?.sex == 1" class="w-2/3">Nam</div>
+                                <div *ngIf="staffDetail?.sex == 0" class="w-2/3">Nữ</div>
+                                <div *ngIf="staffDetail?.sex == 2" class="w-2/3"></div>
+                            </div>
+                            <div class="flex pt-4">
+                                <div class="w-1/3 font-semibold">Ngày sinh</div>
+                                <div class="w-2/3">{{staffDetail?.dateOfBirth | date: 'dd-MM-YYYY'}}</div>
+                            </div>
+                            <div class="flex pt-4">
+                                <div class="w-1/3 font-semibold">Số điện thoại</div>
+                                <div class="w-2/3">{{staffDetail?.phoneNumber}}</div>
+                            </div>
+                        </div>
+                        <div class="w-1/2 flex flex-col pl-4">
+                            <div class="flex pt-4">
+                                <div class="w-1/3 font-semibold">Email cá nhân</div>
+                                <div class="w-2/3">{{staffDetail?.email}}</div>
+                            </div>
+                            <div class="flex pt-4">
+                                <div class="w-1/3 font-semibold">Địa chỉ thường trú</div>
+                                <div class="w-2/3">{{staffDetail?.temporaryAdress}}</div>
+                            </div>
+                            <div class="flex pt-4">
+                                <div class="w-1/3 font-semibold">Địa chỉ tạm trú</div>
+                                <div class="w-2/3">{{staffDetail?.residentAdress}}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <tds-collapse class="-ml-4 mt-3" [bordered]="false">
+                        <tds-collapse-panel header="Thông tin khác" [active]="true">
+                            <div class="flex -mt-3">
+                                <div class="w-1/2 flex flex-col gap-4">
+                                    <div class="flex">
+                                        <div class="w-1/3 text-body-2 font-semibold">Nguyên quán</div>
+                                        <div class="w-2/3">{{staffDetail?.homeTown}}</div>
+                                    </div>
+                                    <div class="flex">
+                                        <div class="w-1/3 text-body-2 font-semibold">CMND/CCCD</div>
+                                        <div class="w-2/3">{{staffDetail?.citizenIdentification}}</div>
+                                    </div>
+                                </div>
+                                <div class="w-1/2 flex flex-col gap-4 pl-4">
+                                    <div class="flex">
+                                        <div class="w-1/3 text-body-2 font-semibold">Ngày cấp</div>
+                                        <div class="w-2/3">{{staffDetail?.grantDate | date: 'dd-MM-YYYY'}}</div>
+                                    </div>
+                                    <div class="flex">
+                                        <div class="w-1/3 text-body-2 font-semibold">Nơi cấp</div>
+                                        <div class="w-2/3">{{staffDetail?.grantLocation}}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </tds-collapse-panel>
+                    </tds-collapse>
+                </div>
+                <div class="mt-4 bg-white rounded-xl p-4">
+                    <h1 class="text-header-2 text-primary-1 font-semibold">Thông tin cá nhân tại công ty</h1>
+                    <div class="pt-4 text-body-2 text-neutral-1-900 flex">
+                        <div class="w-1/2 flex flex-col pr-4">
+                            <div class="flex">
+                                <div class="w-1/3 text-body-2 font-semibold">Mã số thuế</div>
+                                <div class="w-2/3">{{staffDetail?.taxTodeIndividual}}</div>
+                            </div>
+                            <div class="flex pt-4">
+                                <div class="w-1/3 text-body-2 font-semibold">Mã nhân viên</div>
+                                <div class="w-2/3">{{staffDetail?.code}}</div>
+                            </div>
+                            <div class="flex pt-4">
+                                <div class="w-1/3 text-body-2 font-semibold">Ngày bắt đầu làm việc</div>
+                                <div class="w-2/3">{{staffDetail?.startTime | date: 'dd-MM-YYYY'}}</div>
+                            </div>
+                            <div class="flex pt-4">
+                                <div class="w-1/3 text-body-2 font-semibold">Email công ty</div>
+                                <div class="w-2/3">{{staffDetail?.companyEmail}}</div>
+                            </div>
+                        </div>
+                        <div class="w-1/2 flex flex-col pl-4">
+                            <div class="flex items-center">
+                                <div class="w-1/3 font-semibold">
+                                    Chi nhánh
+                                </div>
+                                <div class="w-2/3 font-regular flex justify-between items-center">
+                                    {{staffDetail?.branchName}}
+                                    <button tds-popover [(popoverVisible)]="visibleBranch" popoverTrigger="click"
+                                        (popoverVisibleChange)="onChangePopover($event)"
+                                        [popoverContent]="contentTemplateBranch" popoverPlacement="bottomRight"
+                                        class="flex justify-center items-center w-5 h-5 bg-primary-5 rounded-md">
+                                        <span class="tdsi-edit-fill text-title-1 text-primary-1"></span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="flex items-center pt-4">
+                                <div class="w-1/3 font-semibold">
+                                    Phòng ban
+                                </div>
+                                <div class="w-2/3 font-regular flex justify-between items-center">
+                                    {{staffDetail?.departmentName}}
+                                    <button tds-popover [(popoverVisible)]="visibleDepartment" popoverTrigger="click"
+                                        (popoverVisibleChange)="onChangePopover($event)"
+                                        [popoverContent]="contentTemplateDepartment" popoverPlacement="bottomRight"
+                                        class="flex justify-center items-center w-5 h-5 bg-primary-5 rounded-md">
+                                        <span class="tdsi-edit-fill text-title-1 text-primary-1"></span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="flex items-center pt-4">
+                                <div class="w-1/3 font-semibold">
+                                    Chức vụ
+                                </div>
+                                <div class="w-2/3 font-regular flex justify-between items-center">
+                                    {{staffDetail?.positionName}}
+                                    <button tds-popover [(popoverVisible)]="visiblePosition" popoverTrigger="click"
+                                        (popoverVisibleChange)="onChangePopover($event)"
+                                        [popoverContent]="contentTemplatePosition" popoverPlacement="bottomRight"
+                                        class="flex justify-center items-center w-5 h-5 bg-primary-5 rounded-md">
+                                        <span class="tdsi-edit-fill text-title-1 text-primary-1"></span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-4 bg-white rounded-xl h-auto p-4">
+                    <h1 class="text-header-2 text-primary-1 font-semibold">Hình ảnh</h1>
+                    <div *ngIf="staffDetail?.attachments != null" class="pt-2 flex flex-wrap">
+                        <!-- <tds-upload [showButton]="true" [(fileList)]="fileListImage" [showUploadList]="false"
+                            [beforeUpload]="beforeUploadImage" [multiple]="true">
+                            <div
+                                class="w-[107px] h-[107px] mr-2 mb-2 border border-dotted border-neutral-2-200 rounded flex flex-col justify-center items-center">
+                                <i class="tdsi-images-fill text-heading-2 text-neutral-1-200"></i>
+                                <span class="text-body-2 font-regular text-neutral-1-600">Upload</span>
+                            </div>
+                        </tds-upload> -->
+                        <div class="relative group mr-2 mt-2" *ngFor="let imgs of staffDetail?.attachments"
+                            (click)="showImage(imgs.urlImageProxy!)">
+                            <div
+                                class="absolute cursor-pointer inset-0 w-[107px] h-[107px] group-hover:bg-opacity-30 group-hover:bg-black rounded">
+                            </div>
+                            <img class="w-[107px] h-[107px] rounded" src="{{imgs.urlImageProxy}}" alt="">
+                            <tds-modal [(visible)]="isShowImage" [content]="modalContent" [footer]="null"
+                                (onCancel)="handleCancel()" size="md">
+                                <ng-template #modalContent>
+                                    <div class="group relative w-full h-full">
+                                        <div class="absolute group-hover:block hidden top-1 right-1">
+                                            <button
+                                                class="text-neutral-1-800 hover:text-neutral-1-900 ring-primary-1/20 border-neutral-2-50 bg-neutral-2-50 hover:neutral-2-50 focus:neutral-2-50"
+                                                (click)="handleCancel()" size="sm" tds-button-flat-icon>
+                                                <i class="tdsi-close-fill"></i>
+                                            </button>
+                                        </div>
+                                        <img [src]="previewImage" [ngStyle]="{ width: '100%' }" class="z-0" />
+                                    </div>
+                                </ng-template>
+                            </tds-modal>
+                        </div>
+                    </div>
+                    <!-- <div *ngIf="staffDetail?.attachments == null" class="pt-4 flex items-start">
+                        <tds-upload [showButton]="true" [(fileList)]="fileListImage" [showUploadList]="false"
+                            [beforeUpload]="beforeUploadImage" [multiple]="true">
+                            <div
+                                class="w-[107px] h-[107px] mr-1 border border-dotted border-neutral-2-200 rounded flex flex-col justify-center items-center">
+                                <i class="tdsi-images-fill text-heading-2 text-neutral-1-200"></i>
+                                <span class="text-body-2 font-regular text-neutral-1-600">Upload</span>
+                            </div>
+                        </tds-upload>
+                        <div class="flex flex-wrap" *ngIf="previewImage.length > 0">
+                            <div class="group px-1 pb-1 relative" *ngFor="let item of previewImage">
+                                <div
+                                    class="absolute cursor-pointer mx-1 mb-1 inset-0 w-[107px] h-[107px] group-hover:bg-opacity-30 group-hover:bg-black rounded">
+                                </div>
+                                <i (click)="deleteImage(item)"
+                                    class="absolute group-hover:block hidden cursor-pointer tdsi-close-fill top-0 z-60 right-1.5 group-hover:text-white text-heading-4"></i>
+                                <img class="w-[107px] h-[107px] rounded" [src]="item" />
+                            </div>
+                        </div>
+                    </div> -->
+                </div>
+            </div>
+            <div class="w-1/3 ml-4 h-full overflow-auto tds-custom-scroll">
+                <div class="flex flex-col bg-white rounded-xl py-6 px-4">
+                    <h1 class="text-header-1 font-semibold text-neutral-1-900">Quá trình làm việc tại công ty</h1>
+                    <tds-timeline class="mt-4">
+                        <tds-timeline-item>
+                            <h1 class="text-body-2 font-semibold text-neutral-1-900">Thời gian bắt đầu làm việc</h1>
+                            <h3 class="text-body-2 font-regular text-neutral-1-400">{{startWorkingDate | date:
+                                'dd-MM-YYYY'}}</h3>
+                        </tds-timeline-item>
+                        <tds-timeline-item>
+                            <h1 class="text-body-2 font-semibold text-neutral-1-900">Chi nhánh</h1>
+                            <h3 class="text-body-2 font-regular text-neutral-1-400">{{branch}}</h3>
+                        </tds-timeline-item>
+                        <tds-timeline-item>
+                            <h1 class="text-body-2 font-semibold text-neutral-1-900">Phòng ban</h1>
+                            <h3 class="text-body-2 font-regular text-neutral-1-400">{{department}}</h3>
+                        </tds-timeline-item>
+                        <tds-timeline-item>
+                            <h1 class="text-body-2 font-semibold text-neutral-1-900">Chức vụ</h1>
+                            <h3 class="text-body-2 font-regular text-neutral-1-400">{{position}}</h3>
+                        </tds-timeline-item>
+                        <tds-timeline-item *ngFor="let items of listHistory">
+                            <h1 class="text-body-2 font-semibold text-neutral-1-900">{{items.oldValueText}} sang
+                                {{items.newValueText}}</h1>
+                            <h3 class="text-body-2 font-regular text-neutral-1-400">{{items.creationTime | date:
+                                'dd-MM-YYYY'}} - lý do: {{items.description}}</h3>
+                        </tds-timeline-item>
+                    </tds-timeline>
+                </div>
+            </div>
+        </div>
+    </div>
+</tds-spin>
+
+<!-- popover cập nhật chi nhánh cho nv -->
+<ng-template #contentTemplateBranch>
+    <form [formGroup]="updateBranchForm" (ngSubmit)="onSubmitUpdateBranch()">
+        <div class="w-96">
+            <tds-form-field>
+                <tds-label>Chi nhánh</tds-label>
+                <tds-select [required]='true' formControlName="branchId" placeholder="Chọn chi nhánh" valueField="id"
+                    textField="name" [allowClear]="true" [data]="listDataOfBranch">
+                </tds-select>
+                <tds-error>Vui lòng chọn chi nhánh</tds-error>
+            </tds-form-field>
+            <tds-form-field class="mt-4">
+                <tds-label>Mô tả</tds-label>
+                <input formControlName="description" tdsInput autocomplete="off" placeholder="Nhập mô tả"
+                    [required]='true'>
+                <tds-error>Vui lòng nhập mô tả</tds-error>
+            </tds-form-field>
+            <div class="justify-end flex mt-8">
+                <button type="button" tds-button-icon color="secondary" class="mr-2" (click)="closeUpdateBranchForm()">
+                    <i class="tdsi-close-fill text-neutral-1-500"></i>
+                </button>
+                <button type="submit" tds-button-icon color="primary" class="mr-2">
+                    <i class="tdsi-tick-fill text-white"></i>
+                </button>
+            </div>
+        </div>
+    </form>
+</ng-template>
+
+<!-- popover cập nhật phòng ban cho nv -->
+<ng-template #contentTemplateDepartment>
+    <form [formGroup]="updateDepartmentForm" (ngSubmit)="onSubmitUpdateDepartment()">
+        <div class="w-96">
+            <tds-form-field>
+                <tds-label>Phòng ban</tds-label>
+                <tds-select [required]='true' formControlName="departmentId" placeholder="Chọn phòng ban"
+                    valueField="id" textField="name" [allowClear]="true" [data]="listDataOfDepartment">
+                </tds-select>
+                <tds-error>Vui lòng chọn phòng ban</tds-error>
+            </tds-form-field>
+            <tds-form-field class="mt-4">
+                <tds-label>Mô tả</tds-label>
+                <input formControlName="description" tdsInput autocomplete="off" placeholder="Nhập mô tả"
+                    [required]='true'>
+                <tds-error>Vui lòng nhập mô tả</tds-error>
+            </tds-form-field>
+            <div class="justify-end flex mt-8">
+                <button type="button" tds-button-icon color="secondary" class="mr-2"
+                    (click)="closeUpdateDepartmentForm()">
+                    <i class="tdsi-close-fill text-neutral-1-500"></i>
+                </button>
+                <button type="submit" tds-button-icon color="primary" class="mr-2">
+                    <i class="tdsi-tick-fill text-white"></i>
+                </button>
+            </div>
+        </div>
+    </form>
+</ng-template>
+
+<!-- popover cập nhật chức vụ cho nv -->
+<ng-template #contentTemplatePosition>
+    <form [formGroup]="updatePositionForm" (ngSubmit)="onSubmitUpdatePosition()">
+        <div class="w-96">
+            <tds-form-field>
+                <tds-label>Chức vụ</tds-label>
+                <tds-select [required]='true' formControlName="positionId" placeholder="Chọn chức vụ" valueField="id"
+                    textField="name" [allowClear]="true" [data]="listDataOfPosition">
+                </tds-select>
+                <tds-error>Vui lòng chọn chức vụ</tds-error>
+            </tds-form-field>
+            <tds-form-field class="mt-4">
+                <tds-label>Mô tả</tds-label>
+                <input formControlName="description" tdsInput autocomplete="off" placeholder="Nhập mô tả"
+                    [required]='true'>
+                <tds-error>Vui lòng nhập mô tả</tds-error>
+            </tds-form-field>
+            <div class="justify-end flex mt-8">
+                <button type="button" tds-button-icon color="secondary" class="mr-2" (click)="closeUpdatePosition()">
+                    <i class="tdsi-close-fill text-neutral-1-500"></i>
+                </button>
+                <button type="submit" tds-button-icon color="primary" class="mr-2">
+                    <i class="tdsi-tick-fill text-white"></i>
+                </button>
+            </div>
+        </div>
+    </form>
+</ng-template>

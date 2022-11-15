@@ -1,0 +1,65 @@
+<tds-spin [spinning]="isSubmit">
+  <form [formGroup]="addEditFurloughKindForm" id="addEditFurloughKindForm" (ngSubmit)="onSubmit()">
+    <div class="flex flex-col gap-4">
+      <tds-form-field>
+        <tds-label>Tên loại nghỉ phép</tds-label>
+        <input tdsInput autocomplete="off" placeholder="Nhập tên loại nghỉ phép (ví dụ: không lương)" [required]="true"
+          formControlName="name" />
+        <tds-error>Vui lòng nhập tên loại nghỉ phép</tds-error>
+      </tds-form-field>
+      <tds-form-field>
+        <tds-label>Ký hiệu</tds-label>
+        <input tdsInput autocomplete="off" placeholder="Nhập ký hiệu (ví dụ: KL)" formControlName="code" />
+        <tds-error>Vui lòng nhập tên tài sản</tds-error>
+      </tds-form-field>
+      <tds-form-field>
+        <tds-label>Năm áp dụng</tds-label>
+        <tds-date-picker [required]='true' mode="year" formControlName="year">
+        </tds-date-picker>
+        <tds-error *ngIf="addEditFurloughKindForm.invalid">Vui lòng chọn năm</tds-error>
+      </tds-form-field>
+      <tds-form-field class="w-full">
+        <tds-label>Số ngày nghỉ tối đa</tds-label>
+        <tds-input-number [min]="1" [max]="100" [step]="1" [required]='true' placeholder="Nhập số ngày nghỉ tối đa"
+          formControlName="maxDay">
+        </tds-input-number>
+        <tds-error>Vui lòng chọn sổ ngày nghỉ tối đa</tds-error>
+      </tds-form-field>
+      <div class="flex flex-col gap-4 w-full">
+        <div class="flex items-center ">
+          <tds-label>Hình thức nghỉ</tds-label>
+          <span class="ml-1 text-error-500 text-body-2 font-semibold ng-tns-c193-48 ng-star-inserted">*</span>
+        </div>
+        <tds-radio-group class="flex " tdsName="radioValue" formControlName="isPaid">
+          <div class="flex w-1/2">
+            <label tds-radio [value]="true">Có lương</label>
+          </div>
+          <div class="flex w-1/2">
+            <label tds-radio [value]="false">Không lương</label>
+          </div>
+        </tds-radio-group>
+      </div>
+      <tds-form-field class="w-full">
+        <tds-label>Hệ số lương</tds-label>
+        <tds-input-number [min]="1" [max]="100" [step]="1" [required]='true' placeholder="Nhập số ngày nghỉ tối đa"
+          formControlName="factor">
+        </tds-input-number>
+        <tds-error>Vui lòng hệ số lương</tds-error>
+      </tds-form-field>
+      <tds-form-field>
+        <tds-label>Mô tả</tds-label>
+        <div class="flex items-start h-16 border-neutral-2-200">
+          <input tdsInput autocomplete="off" placeholder="Nhập mô tả" formControlName="description" />
+        </div>
+      </tds-form-field>
+    </div>
+    <div *tdsModalFooter class="flex justify-end gap-3 p-4">
+      <button (click)="cancel()" tds-button color="secondary" class="min-w-[100px]">
+        Hủy
+      </button>
+      <button tds-button form='addEditFurloughKindForm' type="submit" color="primary" class="min-w-[100px]">
+        Thêm
+      </button>
+    </div>
+  </form>
+</tds-spin>
