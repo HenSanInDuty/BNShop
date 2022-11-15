@@ -2,6 +2,7 @@ from datetime import datetime
 from rest_framework import serializers
 
 from products.models import Quantity
+from address.models import Address
 from .models import Order, OrderDetail, Payment, STATUS
 
 class ViewOrdersSerializer(serializers.ModelSerializer):
@@ -28,6 +29,7 @@ class CreateOrdersDetailSerializer(serializers.Serializer):
     id = serializers.IntegerField(required=False)
     order = serializers.ListField()
     payment = serializers.IntegerField()
+    address = serializers.IntegerField()
     #address
     def validate(self, attrs):
         result = super().validate(attrs)
@@ -40,11 +42,21 @@ class CreateOrdersDetailSerializer(serializers.Serializer):
     
     def save(self,customer):
         validated_data = self.validated_data
+        address = Address.objects.filter(user_id=customer.user.id,
+                                        id=validated_data.get('address')).first()
+                                
+        if not address:
+            raise serializers.ValidationError({"address":"Please re put address"})
+        
         order_detail = OrderDetail.objects.create(status="Waiting for confirm",
-                                                  payment=Payment.objects.filter(id=validated_data['payment'])[0])
+                                                payment=Payment.objects.filter(id=validated_data['payment'])[0],
+                                                address=address)
         total = 0.0
         for order in validated_data['order']:
-            order_model = Order.objects.filter(id=int(order))[0]
+            order_model = Order.objects.filter(id=int(order),
+                                            order_detail__isnull=True).first()
+            if not order_model:
+                raise serializers.ValidationError({"order":"Wrong order, maybe order in order detail"})
             #Get product
             product = order_model.product
             if product.quantity.last().quantity < order_model.qty:
