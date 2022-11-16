@@ -1,6 +1,7 @@
 from collections import OrderedDict
 from datetime import datetime
 from django.core.paginator import Paginator
+from django.db.models import Q
 from django.forms.models import model_to_dict
 from rest_framework import generics,status
 from rest_framework.decorators import api_view,permission_classes
@@ -8,7 +9,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser,IsAuthenticated
 from rest_framework.pagination import PageNumberPagination
 from drf_yasg.utils import swagger_auto_schema
-
+from drf_yasg import openapi
 from products.serializers import AttachmentSerializer, CategorySerializer, DetailSerializer, ProductRegisterSerializer, ProductSerializer, CategorySwagger, ProductUpdateSerializer, ReportProductSerializer, TypeSerializer
 from .models import Brand, Category, Detail, Product, Quantity, Type
 from permissions.permissions import AgencyPermission
@@ -173,6 +174,11 @@ class ProductViewAll(generics.GenericAPIView):
     permission_classes = []
     serializer_class = ProductRegisterSerializer
     pagination_class = PageNumberPagination
+    type_param = openapi.Parameter('type', openapi.IN_QUERY, description="Product type", type=openapi.TYPE_STRING)
+    brand_param = openapi.Parameter('brand', openapi.IN_QUERY, description="Brand name", type=openapi.TYPE_STRING)
+    agency_param = openapi.Parameter('agency', openapi.IN_QUERY, description="Agency id", type=openapi.TYPE_INTEGER)
+    category_param = openapi.Parameter('category', openapi.IN_QUERY, description="Category id", type=openapi.TYPE_STRING)
+
 
     def get_permissions(self):
         per = super().get_permissions()
@@ -180,9 +186,43 @@ class ProductViewAll(generics.GenericAPIView):
             return [*per,IsAuthenticated(),AgencyPermission()]
         else:
             return per
-    
+            
+    @swagger_auto_schema(mehotd='get',manual_parameters=[type_param,brand_param,agency_param,category_param])
     def get(self,request,**kwargs):
-        product = Product.objects.all()
+        type_filter = None
+        brand_filter = request.GET.get('brand')
+        agency_filter = request.GET.get('agency')
+        category_filter = None 
+        if request.GET.get('type'):
+            type_filter = request.GET.get('type').split()
+
+        if request.GET.get('category'):
+            category_filter = request.GET.get('category').split()
+
+        query = Q()
+        if type_filter:
+            for type in type_filter:
+                query.add(Q(type__id=int(type)),Q.OR)
+
+        if brand_filter:
+            query.add(Q(brand__name__icontains=brand_filter),Q.OR)
+
+        if agency_filter:
+            if category_filter:
+                query_spec = Q()
+                for cate in category_filter:
+                    query_spec.add(Q(category__id=int(cate)),Q.OR)
+                query_spec.add(Q(agency__id=agency_filter),Q.AND)
+                query.add(query_spec,Q.AND)
+            else:
+                query.add(Q(agency__id=agency_filter),Q.AND)
+
+
+        if len(query.children) == 0:
+            product = Product.objects.all()
+        else:
+            product = Product.objects.filter(query)
+
         result = []
         for p in product:
             instance = get_info_product(p)

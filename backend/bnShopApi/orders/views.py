@@ -1,11 +1,9 @@
-from unittest import result
-from django.shortcuts import render
 from rest_framework import generics
 from rest_framework.response import Response
-from rest_framework.decorators import permission_classes, api_view
 from rest_framework.permissions import IsAuthenticated
 from orders.models import Order, OrderDetail
 from orders.serializers import CreateOrdersDetailSerializer, OrdersSerializer, UpdateOrderDetailSerializer, UpdateOrdersSerializer, ViewOrderDetailSerializer, ViewOrdersSerializer
+from permissions.permissions import AgencyPermission, ShipperPermission
 from products.views import get_info_product
 from drf_yasg.utils import swagger_auto_schema
 # Create your views here.
@@ -122,6 +120,13 @@ class OrderDetailViewDetail(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = UpdateOrderDetailSerializer
     
+    def get_permissions(self):
+        per = super().get_permissions()
+        if self.request.method != "GET":
+            return [*per,AgencyPermission(),ShipperPermission()]
+        else:
+            return per
+
     def get(self,request,id):
         od = OrderDetail.objects.filter(id = id)
         if od:

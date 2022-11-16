@@ -3,7 +3,7 @@ from pkg_resources import require
 from rest_framework import serializers
 from rest_framework.fields import CurrentUserDefault
 
-from products.models import Attachment, Brand, Category, Price, Product, Quantity, Type, Detail
+from products.models import Attachment, Brand, Category, Describe, Price, Product, Quantity, Type, Detail
 
 class CategorySwagger(serializers.Serializer):
     name = serializers.CharField(max_length=100)
@@ -128,11 +128,10 @@ class ProductRegisterSerializer(serializers.Serializer):
         if validated_data.get('attachment'):
             try:
                 for att in validated_data['attachment']:
-                    if att['url'] and detail['type'] in TYPES_ATTACHMENT:
-                        attachment = Attachment.objects.create(title=att['url'],
-                                                content=att['type'])
-                        product.attachment.add(attachment)
-                        product.save()
+                    if att['url'] and att['type'] in TYPES_ATTACHMENT:
+                        Attachment.objects.create(url=att['url'],
+                                                type=att['type'],
+                                                product=product)
             except TypeError:
                 raise serializers.ValidationError({"attachment":"please enter the list"})
         agency.product.add(product)
@@ -161,8 +160,11 @@ class ProductUpdateSerializer(serializers.Serializer):
     quantity = serializers.IntegerField(required=False)
     quantity_note = serializers.CharField(max_length=300,required=False)
     category = serializers.ListField(write_only=True,required=False)
-    
+    attachment = serializers.JSONField(required=False)
+    describe = serializers.CharField(max_length=1000000,required=False)
+
     def update(self,instance,validated_data):
+        TYPES_ATTACHMENT = ('2D','3D','Video')
         agency = self.context.get('request').user.user.agency
         if validated_data.get('display_image'):
             instance.display_image = validated_data.get('display_image')
@@ -207,7 +209,28 @@ class ProductUpdateSerializer(serializers.Serializer):
                 new_price.save()
             instance.price.add(new_price)
             instance.save()
-            
+        #Update attachment
+        if validated_data.get('attachment'):
+            if instance.attachment:
+                instance.attachment.all().delete()
+            try:
+                for att in validated_data['attachment']:
+                    if att['url'] and att['type'] in TYPES_ATTACHMENT:
+                        Attachment.objects.create(url=att['url'],
+                                                type=att['type'],
+                                                product=instance)
+            except TypeError:
+                raise serializers.ValidationError({"attachment":"please enter the list"})
+        
+        #Update describe sss
+        if validated_data.get('describe'):
+            if instance.describe:
+                instance.describe.delete()
+            Describe.objects.create(
+                content = validated_data.get('describe'),
+                product = instance
+            )
+
         return instance
 
 class ReportProductSerializer(serializers.Serializer):

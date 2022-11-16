@@ -3,7 +3,9 @@ from email.policy import default
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import serializers
+from rest_framework.exceptions import PermissionDenied
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
+from django.contrib.auth import authenticate
 
 from .models import Account, Agency, Customer, Users
 
@@ -17,6 +19,20 @@ class MyTokenObtainPairViewSerializer(TokenObtainPairSerializer):
         return token
 
     def validate(self, attrs):
+        # Take username and password from request
+        phone = attrs.get('phone')
+        password = attrs.get('password')
+
+        if phone and password:
+            # Try to authenticate the user using Django auth framework.
+            user = authenticate(request=self.context.get('request'),
+                                phone=phone, password=password)
+            if not user:
+                # If we don't have a regular user, raise a PermissionDenied
+                msg = 'Access denied: wrong username or password.'
+                raise PermissionDenied(msg,code="permission_denied")
+        
+        
         data = super().validate(attrs)
         refresh = self.get_token(self.user)
         if self.user.is_agency:

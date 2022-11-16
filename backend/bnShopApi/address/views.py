@@ -2,7 +2,7 @@ from rest_framework.response import Response
 from rest_framework import generics,status
 from rest_framework.permissions import IsAuthenticated
 from . import serializers,models
-
+from drf_yasg.utils import swagger_auto_schema
 TYPE_ADDRESS_CHOICES = ['home','company','brand']
 # Create your views here.
 class AddressViewAll(generics.GenericAPIView):
@@ -70,3 +70,14 @@ class AddressViewAll(generics.GenericAPIView):
                 return Response(serializer.data)
         except:
             return Response({"message":"Can't perform this action"},status=status.HTTP_400_BAD_REQUEST)
+
+@swagger_auto_schema(method='get')
+class AddressViewDetail(generics.GenericAPIView):
+    serializer_class = serializers.AddressSerializer
+    model = models.Address
+    permission_classes = [IsAuthenticated]
+    
+    def get(self,request, idAddress,**kwargs):
+        address = models.Address.objects.filter(id=idAddress).first()
+        serializer = self.serializer_class(address)
+        return Response(serializer.data)

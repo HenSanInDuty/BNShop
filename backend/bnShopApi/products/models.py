@@ -9,6 +9,9 @@ class Category(models.Model):
         Agency, on_delete=models.CASCADE, related_name="agency")
     class Meta:
         unique_together = [('name','agency')]
+    
+    def __str__(self):
+        return self.name
 
 
 class Type(models.Model):
@@ -35,6 +38,9 @@ class Detail(models.Model):
     title = models.CharField(max_length=100)
     content = models.CharField(max_length=100)
 
+    def __str__(self):
+        return self.title + " " + self.content
+
 
 class Describe(models.Model):
     content = models.TextField()
@@ -57,6 +63,9 @@ class Product(models.Model):
     describe = models.OneToOneField(
         Describe, null=True, blank=True, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return self.name
+
 
 class Price(models.Model):
     price = models.FloatField()
@@ -73,9 +82,12 @@ class Quantity(models.Model):
     customer = models.ForeignKey(Customer,on_delete=models.CASCADE,related_name="history", null=True)
     product = models.ForeignKey(
         Product, related_name="quantity", on_delete=models.CASCADE)
+    
+    def __str__(self):
+        return self.product.name + " " + self.note
 
 class Attachment(models.Model):
-    url = models.CharField(max_length=100)
+    url = models.CharField(max_length=3000)
     type = models.CharField(max_length=100)
     product = models.ForeignKey(
         Product, on_delete=models.CASCADE, related_name='attachment', blank=True)

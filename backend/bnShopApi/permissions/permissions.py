@@ -10,3 +10,7 @@ class AdminPermission(permissions.BasePermission):
     def has_permission(self, request, view):
         return request.user.is_admin
 
+class ShipperPermission(permissions.BasePermission):
+
+    def has_permission(self, request, view):
+        return request.user.is_shipper

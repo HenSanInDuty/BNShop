@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'products.apps.ProductsConfig',
     'orders.apps.OrdersConfig',
     'rating.apps.RatingConfig',
+    'shipping',
     'rest_framework',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
@@ -91,19 +92,19 @@ WSGI_APPLICATION = 'bnShopApi.wsgi.application'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
     # 'default': {
-    #     'ENGINE': 'django.db.backends.postgresql',
-    #     'NAME': 'd6gtpuluvtikat', 
-    
-    #     'USER': 'xkgphzhsefvfhh',
-    #     'PASSWORD': '082522d809637165419cd97be34c38722f48f68f80928330738f8783174fba2d',
-    #     'HOST': 'ec2-44-210-228-110.compute-1.amazonaws.com',
-    #     'PORT': '5432',
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
     # }
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'd6gtpuluvtikat', 
+    
+        'USER': 'xkgphzhsefvfhh',
+        'PASSWORD': '082522d809637165419cd97be34c38722f48f68f80928330738f8783174fba2d',
+        'HOST': 'ec2-44-210-228-110.compute-1.amazonaws.com',
+        'PORT': '5432',
+    }
 }
 
 
@@ -157,7 +158,7 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 1
+    'PAGE_SIZE': 10
 }
 
 SIMPLE_JWT = {

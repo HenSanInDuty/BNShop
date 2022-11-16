@@ -1,6 +1,6 @@
 from django.db import models
 from products.models import Product
-from accounts.models import Customer
+from accounts.models import Customer, Shipper
 from address.models import Address
 # Create your models here.
 STATUS = [
@@ -10,6 +10,11 @@ STATUS = [
     ("4",'Cancel'),
     ("5",'Received')
 ]
+
+SUB_STATUS_CHOICES = (
+    ('0','Delivery success'),
+    ('1','Delivery unsuccess')
+)
 
 class Payment(models.Model):
     name = models.CharField(max_length=100) 
@@ -21,6 +26,14 @@ class OrderDetail(models.Model):
     status = models.CharField(max_length=100,choices=STATUS)
     address = models.OneToOneField(Address,on_delete=models.CASCADE,related_name='order_detail',blank=True,null=True)
     payment = models.ForeignKey(Payment,on_delete=models.CASCADE,related_name='order_detail',blank=True,null=True)
+    shipper = models.ForeignKey(Shipper,on_delete=models.CASCADE,related_name='order_detail',blank=True,null=True)
+
+class StatusShippingNote(models.Model):
+    order_detail = models.ForeignKey(OrderDetail,on_delete=models.CASCADE,related_name='status_shipping')
+    shipper = models.ForeignKey(Shipper,on_delete=models.CASCADE,related_name='status_shipping')
+    substatus = models.IntegerField(choices=SUB_STATUS_CHOICES)
+    note = models.TextField()
+    date_note = models.DateTimeField(auto_now_add=True)
 
 class Order(models.Model):
     qty = models.IntegerField(default=1)
