@@ -1,9 +1,10 @@
-from rest_framework import generics
+from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from orders.models import Order, OrderDetail
 from orders.serializers import CreateOrdersDetailSerializer, OrdersSerializer, UpdateOrderDetailSerializer, UpdateOrdersSerializer, ViewOrderDetailSerializer, ViewOrdersSerializer
 from permissions.permissions import AgencyPermission, ShipperPermission
+from products.models import Product
 from products.views import get_info_product
 from drf_yasg.utils import swagger_auto_schema
 # Create your views here.
@@ -24,19 +25,26 @@ class OrderViewAll(generics.GenericAPIView):
     
     def post(self,request):
         customer = request.user.user.customer
-        if customer:
+        product = None
+        if request.data.get('product'):
+            product = Product.objects.filter(id=request.data.get('product'),
+                                            is_approved=True,
+                                            is_delete=False).first()
+        
+        if customer and product:
             data = request.data
             data['customer'] = customer.id
             serializer = self.serializer_class(data=data)
             if serializer.is_valid():
                 instance = serializer.save()
-                print(instance.id)
                 order = Order.objects.filter(id = instance.id)
                 result = ViewOrdersSerializer(order[0])
                 return Response(result.data)
             else:
                 return Response(serializer.errors)    
-        return Response()
+        return Response(
+            {"detail":"Can't find product or customer"},
+            status=status.HTTP_404_NOT_FOUND)
 
 #Lấy giỏ hàng chi tiết
 @swagger_auto_schema()
@@ -55,7 +63,17 @@ class OrderViewDetail(generics.GenericAPIView):
                     'qty':order[0].qty
                 })   
         return Response()
-        
+    
+    def delete(self,request,id):
+        customer = request.user.user.customer
+        if customer:
+            order = Order.objects.filter(customer = customer, pk = id)
+            if order:
+                order.delete()
+                return Response({"detail":"Delete success"},status=status.HTTP_200_OK)
+            
+        return Response({"detail":"Not found"},status=status.HTTP_404_NOT_FOUND)
+
     def patch(self,request,id):
         customer = request.user.user.customer
         if customer:
