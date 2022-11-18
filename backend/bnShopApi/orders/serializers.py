@@ -25,6 +25,11 @@ class ViewOrderDetailSerializer(serializers.ModelSerializer):
         model = OrderDetail
         fields = "__all__"
  
+class PaymentSerializer(serializers.ModelSerializer):
+    class Meta():
+        model = Payment
+        fields = "__all__"
+
 class CreateOrdersDetailSerializer(serializers.Serializer):
     id = serializers.IntegerField(required=False)
     order = serializers.ListField()
