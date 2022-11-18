@@ -1,8 +1,8 @@
 from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from orders.models import Order, OrderDetail
-from orders.serializers import CreateOrdersDetailSerializer, OrdersSerializer, UpdateOrderDetailSerializer, UpdateOrdersSerializer, ViewOrderDetailSerializer, ViewOrdersSerializer
+from orders.models import Order, OrderDetail, Payment
+from orders.serializers import CreateOrdersDetailSerializer, OrdersSerializer, PaymentSerializer, UpdateOrderDetailSerializer, UpdateOrdersSerializer, ViewOrderDetailSerializer, ViewOrdersSerializer
 from permissions.permissions import AgencyPermission, ShipperPermission
 from products.models import Product
 from products.views import get_info_product
@@ -161,3 +161,13 @@ class OrderDetailViewDetail(generics.GenericAPIView):
         else:
             return Response(serializer.errors)
 
+#Payment
+@swagger_auto_schema()
+class PaymentViewAll(generics.GenericAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = PaymentSerializer
+    
+    def get(self,request,id):
+        payment_all = Payment.objects.all()
+        serializer = self.serializer_class(payment_all,many=True)
+        return Response(serializer.data)
