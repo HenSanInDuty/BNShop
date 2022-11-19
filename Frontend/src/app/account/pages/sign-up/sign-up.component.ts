@@ -1,12 +1,13 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { convertPhoneNumber, CoreValidators } from '@core/validators';
 import { takeUntil } from 'rxjs';
+import { AccountService } from 'src/app/services/account.service';
 import { TDSDestroyService } from 'tds-ui/core/services';
 import { TDSMessageService } from 'tds-ui/message';
 import { TDSSafeAny } from 'tds-ui/shared/utility';
-import { AccountService } from '../../services/account.service';
+const PASSWORD_PATTERN = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,32}$/;
 
 @Component({
   selector: 'hrm-sign-up',
@@ -15,71 +16,97 @@ import { AccountService } from '../../services/account.service';
 })
 export class SignUpComponent implements OnInit {
 
-  isShowPassWord = false
-  changePasswordForm!: FormGroup;
+  // param thay đổi mật khẩu
+  checkOldPass = true;
+  isShowPassWord = false;
+  isShowPassWordNew = false;
+  isSubmit = false
+  RegisterForm!: FormGroup;
   returnUrl = '/account/login';
-  isSubmit: boolean = false;
-
-  constructor(private formBuilder: FormBuilder,
+  constructor(
     private router: Router,
-    private mgs: TDSMessageService,
-    private account: AccountService,
-    private destroy$: TDSDestroyService
+    private fb: FormBuilder,
+    private accountService: AccountService,
+    private cd: ChangeDetectorRef,
+    private destroy$: TDSDestroyService,
+    private message: TDSMessageService,
   ) { }
 
-  ngOnInit(): void {
-
-    this.changePasswordForm = this.formBuilder.group({
+  resetForm() {
+    this.RegisterForm = this.fb.group({
       phone: new FormControl('', [Validators.required, CoreValidators.isMobile]),
-      password1: new FormControl('', Validators.required),
-      name: new FormControl('', Validators.required),
-      email: new FormControl('', Validators.required),
-      gender: new FormControl('', Validators.required),
-      main_industry: new FormControl('', Validators.required),
-      identify: new FormControl('', Validators.required),
-    });
+      name: new FormControl('', [Validators.required]),
+      main_industry: new FormControl('', [Validators.required]),
+      identify: new FormControl('', [Validators.required, Validators.pattern(/^[0-9]{9,15}$/i)]),
+      password1: [
+        '',
+        Validators.compose([
+          Validators.required,
+          Validators.minLength(8),
+          Validators.maxLength(32),
+          Validators.pattern(PASSWORD_PATTERN)
+        ])
+      ],
+      password2: [
+        ''
+        // Validators.compose([
+        //   Validators.required,
+        //   Validators.minLength(8),
+        //   Validators.maxLength(32),
+        //   Validators.pattern(PASSWORD_PATTERN)
+        // ])
+      ],
+    })
+  }
 
+  ngOnInit(): void {
+    this.resetForm()
+    this.RegisterForm.controls["password2"].setValidators([
+      Validators.required,
+      Validators.minLength(8),
+      Validators.maxLength(32),
+      Validators.pattern(PASSWORD_PATTERN),
+      this.checkPasswordsMath()
+    ])
+  }
+
+  checkPasswordsMath(): ValidatorFn {
+    return (control: AbstractControl): { [key: string]: any } | null => {
+      const reNewPassword = this.RegisterForm.controls['password2'].value;
+      const newPassword = this.RegisterForm.controls['password1'].value;
+      if (newPassword === reNewPassword) {
+        return null
+      }
+      return { notSame: true }
+    }
+  }
+
+  onSubmit(): void {
+    if (this.RegisterForm.valid) {
+      this.isSubmit = true;
+      this.accountService.createAgency(this.RegisterForm.value).pipe(takeUntil(this.destroy$)).subscribe({
+        next: (res) => {
+          this.isSubmit = false;
+          this.message.success("Đăng kí tài khoản thành công");
+          this.router.navigate([this.returnUrl])
+        },
+        error: (err) => {
+          this.isSubmit = false;
+          this.cd.detectChanges();
+        },
+        complete() {
+        },
+      })
+    }
   }
 
   showPassword() {
     this.isShowPassWord = !this.isShowPassWord
   }
 
-  onSubmit() {
-    let that = this;
-    if (this.changePasswordForm.valid) {
-      this.isSubmit = true;
-      let phoneNumber = convertPhoneNumber(this.changePasswordForm.controls['phoneNumber'].value);
-      // this.account.signUpPassword()
-      //   .pipe(takeUntil(this.destroy$))
-      //   .subscribe(
-      //     {
-      //       next: (data: TDSSafeAny) => {
-
-      //         that.router.navigate([that.returnUrl]);
-      //       },
-      //       error: (err: TDSSafeAny) => {
-      //         if (!err || !err.error) {
-      //           this.mgs.error('Tạo tài khoản không thành công');
-      //         } else {
-      //           if (!err.error.validationErrors) {
-      //             this.mgs.error(err?.error?.message);
-      //           }
-      //           else {
-      //             for (let i = 0; i < err.error?.validationErrors.length; i++) {
-      //               this.mgs.error(err.error?.validationErrors[i]?.message);
-      //             }
-      //           }
-      //         }
-      //         this.isSubmit = false;
-      //       },
-      //       complete: () => {
-      //         this.isSubmit = false;
-      //       }
-      //     }
-
-      //   );
-    }
+  showPasswordNew() {
+    this.isShowPassWordNew = !this.isShowPassWordNew
   }
+
 
 }

@@ -56,31 +56,31 @@ export const DATA_MENU: Array<TDSMenuDTO> = [
             }
         ]
     },
-    // {
-    //     "name": "Quản lý nhân sự",
-    //     "icon": "tdsi-group-people-fill",
-    //     // "background": "bg-info-300",
-    //     // "backgroundHover": "bg-info-400",
-    //     // "roles": ["hr-admin"],
-    //     "listChild": [
-    //         {
-    //             "name": "Nhân viên",
-    //             "link": "hr-management/staff"
-    //         },
-    //         {
-    //             "name": "Phòng ban",
-    //             "link": "hr-management/department"
-    //         },
-    //         {
-    //             "name": "Chức vụ",
-    //             "link": "hr-management/position"
-    //         },
-    //         {
-    //             "name": "Team",
-    //             "link": "hr-management/team"
-    //         }
-    //     ]
-    // },
+    {
+        "name": "Quản lý giao hàng",
+        "icon": "tdsi-truck-fill",
+        // "background": "bg-info-300",
+        // "backgroundHover": "bg-info-400",
+        // "roles": ["hr-admin"],
+        "listChild": [
+            // {
+            //     "name": "Nhân viên",
+            //     "link": "hr-management/staff"
+            // },
+            {
+                "name": "Giao hàng",
+                "link": "hr-management/department"
+            },
+            // {
+            //     "name": "Chức vụ",
+            //     "link": "hr-management/position"
+            // },
+            // {
+            //     "name": "Team",
+            //     "link": "hr-management/team"
+            // }
+        ]
+    },
     // {
     //     "name": "Quản lý team",
     //     "icon": "tdsi-group-people-fill",

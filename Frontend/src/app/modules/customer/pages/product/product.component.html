@@ -1,0 +1,37 @@
+<div class="flex flex-col items-center gap-8  h-full w-full bg-neutral-3-50 px-[150px]">
+     <div class="w-full h-80">
+      <tds-carousel tdsAutoPlaySpeed="6000" [tdsEffect]="effect" class="w-full truncate">
+       <div tds-carousel-content *ngFor="let data of listOfData">
+        <div class="flex justify-center items-center">
+         <img class="h-full object-fill" src="{{ data.image }}" alt="" />
+        </div>
+       </div>
+      </tds-carousel>
+     </div>
+  <div class="flex w-full gap-4">
+   <div class="w-1/5 flex flex-col gap-4">
+    <div class="flex flex-col gap-2">
+     <div class="">Lọc theo danh mục</div>
+     <div class=""></div>
+    </div>
+    <div class=""></div>
+   </div>
+   <div class="w-4/5 grid grid-cols-5 gap-2">
+    <div class="bg-black  h-40">123</div>
+    <div class="bg-black  h-40">123</div>
+    <div class="bg-black  h-40">123</div>
+    <div class="bg-black  h-40">123</div>
+    <div class="bg-black  h-40">13</div>
+    <div class="bg-black  h-40">13</div>
+    <div class="bg-black  h-40">13</div>
+    <div class="bg-black  h-40">13</div>
+    <div class="bg-black  h-40">13</div>
+    <div class="bg-black  h-40">13</div>
+    <div class="bg-black  h-40">13</div>
+    <div class="bg-black  h-40">13</div>
+    <div class="bg-black  h-40">13</div>
+    <div class="bg-black  h-40">13</div>
+    <div class="bg-black  h-40">13</div>
+   </div>
+  </div>
+</div>

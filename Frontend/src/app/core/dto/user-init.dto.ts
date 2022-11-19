@@ -10,3 +10,12 @@ export interface CoreUserInitDTO  {
     main_industry: string;
     identify: string;
 }
+export interface CoreCustomerInitDTO  {
+    id: TDSSafeAny;
+    name: string;
+    email: string;
+    avatar: string;
+    nationality?: string;
+    nickname: string,
+    birthday: string
+}

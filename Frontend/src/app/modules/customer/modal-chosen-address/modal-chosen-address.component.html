@@ -1,0 +1,54 @@
+<tds-spin [spinning]="isSubmit">
+ <form [formGroup]="formOrder" id="formOrder" (ngSubmit)="create()" autocomplete="off">
+  <div class="flex flex-col gap-4 overflow-auto tds-custom-scroll pb-4">
+   <tds-form-field>
+    <tds-label>Hình thức trả</tds-label>
+    <tds-select [data]="listPayment" valueField="id" textField="name" formControlName="payment"
+     placeholder='Chọn hình thức trả'  [required]="true">
+    </tds-select>
+      <tds-error>Vui lòng chọn hình thức trả</tds-error>
+   </tds-form-field>
+   <tds-form-field>
+    <tds-label>Chọn địa chỉ giao hàng</tds-label>
+    <input class="placeholder-neutral-1-400"   placeholder="Chọn địa chỉ vận chuyển" [ngModelOptions]="{standalone: true}" tdsInput [(ngModel)]="lstAddress"
+     (ngModelChange)="onChange($event)"  [tdsAutocomplete]="auto2" />
+   </tds-form-field>
+   <tds-autocomplete #auto2 [compareWith]="compareFun">
+    <tds-auto-option *ngFor="let address of lstAddress"
+     [value]="address.id"
+     [label]="'Tỉnh/TP: ' + address.province + ' Quận Huyện: ' + address.district + ' Phường xã: ' + address.ward + ' Tên đường và số nhà: '+ address.detail">
+     <div class="w-full flex flex-col text-neutral-1-900 text-body-2 font-regular">
+      <div class="pb-1 flex">
+       <tds-label>Tỉnh</tds-label> : {{ address.province }}
+      </div>
+      <div class="pb-1 flex">
+       <tds-label>Quận huyện</tds-label> : {{ address.district }}
+      </div>
+      <div class="pb-1 flex">
+       <tds-label>Phường xã</tds-label> : {{ address.ward }}
+      </div>
+      <div class="pb-1 flex">
+       <tds-label>Đường và số nhà</tds-label> : {{ address.detail }}
+      </div>
+     </div>
+    </tds-auto-option>
+   </tds-autocomplete>
+  </div>
+  <div *tdsModalFooter class="flex justify-end gap-3 p-4">
+   <div class="flex justify-between">
+    <button (click)="addAddress()" tds-button  color="primary" class="min-w-[100px]">
+     Thêm địa chỉ vận chuyển mới
+    </button>
+    <div class="text-primary-1 text-body-2">
+     <!-- Tổng cộng: {{total | currency:'đ':'code'}} -->
+    </div>
+   </div>
+   <button (click)="cancel()" tds-button color="secondary" class="min-w-[100px]">
+    Hủy
+   </button>
+   <button form="formOrder" tds-button type="submit" color="primary" class="min-w-[100px]">
+    Tiến hành đặt hàng
+   </button>
+  </div>
+ </form>
+</tds-spin>
