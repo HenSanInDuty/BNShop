@@ -3,6 +3,8 @@ import { Component, OnInit, ViewContainerRef } from '@angular/core';
 import { ResourceTypeDto } from '@commom/hrm/models';
 import { ResourceTypeService } from '@commom/hrm/services';
 import { takeUntil } from 'rxjs';
+import { getOrderDetailDTO } from 'src/app/dto/orderDetail.dto';
+import { OrderDetailService } from 'src/app/services/order-detail.service';
 import { TDSDestroyService } from 'tds-ui/core/services';
 import { TDSMessageService } from 'tds-ui/message';
 import { TDSModalService } from 'tds-ui/modal';
@@ -26,13 +28,14 @@ export class ResourceTypeManagementComponent implements OnInit {
   loading:boolean = false;
   listOfCurrentPageData:  Array<string> = [];
   setOfCheckedId = new Set<TDSSafeAny>();
-  public lstAccsetType:Array<ResourceTypeDto> = []
+  public lstAccsetType: Array<getOrderDetailDTO> = []
 
   constructor(
     private resourceTypeService: ResourceTypeService,
     private modalService: TDSModalService,
     private viewContainerRef: ViewContainerRef,
     private message: TDSMessageService,
+    private orderDetailService: OrderDetailService,
     private destroy$ : TDSDestroyService
   ) { }
 
@@ -84,7 +87,7 @@ export class ResourceTypeManagementComponent implements OnInit {
     this.loading = true
     this.setOfCheckedId = new Set<TDSSafeAny>();
     this.refreshCheckedStatus();
-    this.resourceTypeService.getResourceType_Json().pipe(takeUntil(this.destroy$))
+    this.orderDetailService.getOrderDetail().pipe(takeUntil(this.destroy$))
     .subscribe({
       next: (res:TDSSafeAny) => {
         this.lstAccsetType = res;
@@ -139,30 +142,49 @@ export class ResourceTypeManagementComponent implements OnInit {
   //     }
   //   )
   // }
-
-  onDeleteOne(data: TDSSafeAny): void {
-    const modal = this.modalService.error({
-      title: 'Xác nhận loại tài sản',
-      content: `<span  class="text-error-500">
-      Lưu ý: Không thể khôi phục thông tin  loại tài sản này sau khi xóa
-    </span>`,
+  accept(data: TDSSafeAny): void {
+    const modal = this.modalService.info({
+      title: 'Xác nhận phê duyệt đơn hàng',
       onOk: () => {
-        this.resourceTypeService.deleteResourceTypeId_Response({ id: data.id }).subscribe(
+        this.orderDetailService.editOrderDetailId(data.id, 2).subscribe(
           {
             next: (res) => {
               modal.destroy(null);
-              this.message.success("Xóa loại tài sản thành công")
+              this.message.success("Phê duyệt đơn hàng thành công")
               this.getListAccsetType()
             },
             error: (err) => {
-              this.message.error(err.code)
+              this.message.error("Phê duyệt đơn hàng thất bại")
               this.getListAccsetType()
             }
           })
       },
       onCancel: () => { },
-      confirmIcon: 'tdsi-trash-fill',
-      okText: "Xóa",
+      okText: "Phê duyệt",
+      cancelText: "Hủy"
+    });
+  }
+
+  onship(data: TDSSafeAny): void {
+    const modal = this.modalService.info({
+      title: 'Xác nhận giao hàng',
+      onOk: () => {
+        this.orderDetailService.editOrderDetailId(data.id,3).subscribe(
+          {
+            next: (res) => {
+              modal.destroy(null);
+              this.message.success("Đã xác nhận giao hàng")
+              this.getListAccsetType()
+            },
+            error: (err) => {
+              this.message.error("Giao hàng không thành công")
+              this.getListAccsetType()
+            }
+          })
+      },
+      onCancel: () => { },
+      confirmIcon: 'tdsi-truck-fill',
+      okText: "Xác nhận giao hàng",
       cancelText: "Hủy"
     });
   }

@@ -33,7 +33,7 @@ export class CustomerGuardService implements CanActivate, CanActivateChild {
                         return of(this.router.parseUrl('/dasboard'))
                     }
                     else {
-                        this.message.error("Người quản trị không đăng nhập vào hệ thống này")
+                        this.message.error("Người dùng không được phép đăng nhập vào hệ thống này")
                         return of(this.router.parseUrl('/account/login'));
                     }
                 }

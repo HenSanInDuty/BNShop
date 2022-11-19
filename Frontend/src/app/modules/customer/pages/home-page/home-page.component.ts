@@ -100,14 +100,19 @@ export class HomePageComponent implements OnInit {
   }
 
   getType() {
+    this.loading = true;
     this.productService.getType()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (value) => {
           this.lstType = value;
+          this.loading = false;
+          this.cd.detectChanges()
         },
         error: (err) => {
+          this.loading = false;
           this.message.error("Đã có lỗi từ server")
+          this.cd.detectChanges()
         },
 
       });

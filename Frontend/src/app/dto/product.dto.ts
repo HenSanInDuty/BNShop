@@ -1,10 +1,10 @@
 
 export interface paramGetProductDTO {
- page: number
- type: string
- brand: string
- category: string
- agency: number
+ page?: number
+ type?: string
+ brand?: string
+ category?: string
+ agency?: number
 }
 
 export interface ProductDTO {
@@ -19,7 +19,7 @@ export interface ProductDTO {
  detail: Detail
  quantity: number
  price: number
- attachment: Attachment
+ attachment: AttachmentDTO
 }
 export interface getProductDTO {
  id: number
@@ -36,7 +36,7 @@ export interface getProductDTO {
  describe: any
  last_price: LastPrice
  pre_price: any
- attachment: Attachment[]
+ attachment: AttachmentDTO[]
 }
 
 export interface Agency {
@@ -59,12 +59,10 @@ export interface LastPrice {
  product: number
 }
 
-export interface Attachment {
+export interface AttachmentDTO {
  id: number
  url: string
  type: string
  product: number
 }
 export interface Detail { }
-
-export interface Attachment { }

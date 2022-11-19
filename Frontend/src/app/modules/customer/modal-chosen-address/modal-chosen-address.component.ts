@@ -135,6 +135,7 @@ export class ModalChosenAddressComponent implements OnInit {
           {
             next: (item: any) => {
               this.isSubmit = false;
+              this.orderService.listIdOrderObsevable.next([])
               this.orderService.dataObsevable.next(true)
               this.orderDetailService.dataObsevable.next(true)
               this.message.success("Đặt hàng thành công")

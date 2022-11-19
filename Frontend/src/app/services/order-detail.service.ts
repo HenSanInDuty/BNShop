@@ -19,8 +19,8 @@ export class OrderDetailService {
     return this.http.get<getOrderDetailDTO>(
       environment.apiBNShop + `orders/order-detail/${id}/`)
   }
-  editOrderDetailId(id:string, status:number): Observable<any> {
-    return this.http.patch<any>(environment.apiBNShop + `orders/order-detail/${id}/`, status)
+  editOrderDetailId(id:number, status:number): Observable<any> {
+    return this.http.patch<any>(environment.apiBNShop + `orders/order-detail/${id}/`, {status: status})
   }
 
   createOrder(data: OrderDetailDTO): Observable<OrderDetailDTO> {

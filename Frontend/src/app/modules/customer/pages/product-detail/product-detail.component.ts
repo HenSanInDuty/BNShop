@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewContainerRef } from '@angular/core';
+import { Route, Router } from '@angular/router';
 import { CoreAuthService } from '@core/authentication';
 import { takeUntil } from 'rxjs';
 import { GetAddressDTO } from 'src/app/dto/address.dto';
@@ -24,6 +25,7 @@ import { ModalChosenAddressComponent } from '../../modal-chosen-address/modal-ch
 })
 export class ProductDetailComponent implements OnInit {
 
+  loading = false;
   placeholder = "./assets/images/dowload.gif";
   fallback = "./assets/images/default.png";
   product?: getProductDTO
@@ -37,12 +39,14 @@ export class ProductDetailComponent implements OnInit {
   userProfile$: any;
   address?: string = '';
   lstAddress?: GetAddressDTO;
+  lstImg?:  any;
   idOrder$: any;
   constructor(
     private productSevice: ProductService,
     private destroy$: TDSDestroyService,
     private cd: ChangeDetectorRef,
     private message: TDSMessageService,
+    private router: Router,
     private orderService: OrdersService,
     private authService: CoreAuthService,
     private addressService: AddressService,
@@ -52,13 +56,16 @@ export class ProductDetailComponent implements OnInit {
 
   listImage: string[] = []
   ngOnInit(): void {
+    this.loading = true;
     this.authService.getObsUserProfile().pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: TDSSafeAny) => {
         this.userProfile$ = res;
+        this.loading = false;
         // this.nameProfile = this.userProfile$?.name.split(" ")[this.userProfile$?.name.split(" ").length - 1].charAt(0);
         this.cd.detectChanges();
       },
       error: (err: TDSSafeAny) => {
+        this.loading = false;
         this.message.error(err.error.message)
         this.cd.detectChanges()
       },
@@ -75,7 +82,6 @@ export class ProductDetailComponent implements OnInit {
         }
       },
     })
-    this.getList()
     this.orderService.listIdOrderObsevable.subscribe({
       next: (value) => {
         this.idOrder$ = value;
@@ -85,19 +91,25 @@ export class ProductDetailComponent implements OnInit {
   }
 
   getList() {
-    for (let index = 0; index < 5; index++) {
-      this.listImage.push(`https://picsum.photos/1000?random=${index}`);
+    this.lstImg
+    for (let index = 0; index < this.lstImg.length; index++) {
+      this.listImage.push(this.lstImg[index].url);
     }
   }
   getProductDetail(id: number) {
+    this.loading = true;
     this.productSevice.getProductId(id)
       .pipe(takeUntil(this.destroy$)).subscribe(
         {
           next: (item: any) => {
             this.product = item
+            this.lstImg = item.attachment
+            this.getList()
+            this.loading = false;
             this.cd.detectChanges()
           },
           error: (err) => {
+            this.loading = false;
             this.cd.detectChanges()
           }
         }
@@ -110,9 +122,11 @@ export class ProductDetailComponent implements OnInit {
           {
             next: (item: any) => {
               this.lstAddress = item
+              this.loading = false;
               this.cd.detectChanges()
             },
             error: (err) => {
+              this.loading = false;
               this.cd.detectChanges()
             }
           }
@@ -129,13 +143,22 @@ export class ProductDetailComponent implements OnInit {
       }
     }
     if (param == -1) {
-      if (this.quantity <= 0) {
-        this.quantity = 0;
+      if (this.quantity <= 1) {
+        this.quantity = 1;
       }
       else {
         this.quantity += param;
 
       }
+    }
+  }
+
+  moveToOrder(){
+    if(TDSHelperObject.hasValue(this.userProfile$)){
+      this.router.navigate(["customer/order-detail"])
+    }
+    else {
+      this.message.warning("Bạn phải đăng nhập trước khi thực hiện thao tác")
     }
   }
 
@@ -156,6 +179,7 @@ export class ProductDetailComponent implements OnInit {
   }
 
   addAmountOrder(data: TDSSafeAny) {
+    this.loading = true;
     this.paramCreateOrder = {
       qty: this.quantity,
       product: data.id,
@@ -170,9 +194,11 @@ export class ProductDetailComponent implements OnInit {
           }
           else {
           }
+          this.loading = false;
           this.cd.detectChanges()
         },
         error: (err) => {
+          this.loading = false;
           this.message.error("Thêm không thành công")
           this.cd.detectChanges()
         }

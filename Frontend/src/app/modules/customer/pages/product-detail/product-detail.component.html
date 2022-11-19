@@ -1,89 +1,80 @@
-<div class="flex flex-col items-center  h-full w-full bg-neutral-3-50 px-[157px]">
-  <div class="flex flex-col gap-8 w-full bg-white">
-    <div class="flex gap-4 items-start w-full p-4">
-      <div class="w-1/3 flex flex-col gap-4">
-        <div class="w-full h-[450px]">
-          <img tds-image width="460px" [placeholder]="placeholder" height="450px" [fallback]="fallback" alt=""
-            [tdsSrc]="product?.display_image!" alt="" />
+<tds-spin [spinning]="loading">
+  <div class="flex flex-col items-center  h-full w-full bg-neutral-3-300 py-4 px-[157px]">
+    <div class="flex flex-col gap-8 w-full bg-white">
+      <div class="flex gap-4 items-start w-full p-4">
+        <div class="w-2/5 flex flex-col gap-32">
+          <div class="w-full h-[450px]">
+            <img tds-image width="570px" [placeholder]="placeholder" height="450px" [fallback]="fallback" alt=""
+              [tdsSrc]="product?.display_image!" alt="" />
+          </div>
+          <tds-image-group class="grid grid-cols-5">
+            <div *ngFor="let item of listImage; let i = index" class="mt-2 mr-2">
+              <img tds-image height="200px" alt="" [tdsSrc]="item" alt="" />
+            </div>
+          </tds-image-group>
         </div>
-        <tds-image-group class="grid grid-cols-5">
-          <div *ngFor="let item of listImage; let i = index" class="mt-2 mr-2">
-            <img tds-image height="200px" alt="" [tdsSrc]="item" alt="" />
+        <div class="w-3/5  flex flex-col gap-4">
+          <div class="text-neutral-1-900 text-heading-3 font-semibold font-sans">{{product?.name}} - {{product?.brand?.name}}</div>
+          <div class=" bg-neutral-3-50 p-4 text-primary-1 text-heading-4 font-semibold">{{product?.last_price?.price| currency:'VND'}}</div>
+          <div class=" bg-neutral-3-50 flex flex-col gap-4">
+            <div class="flex gap-4 items-center p-4">
+              <div class="text-neutral-1-900 text-body-2 font-normal font-sans">Số lượng còn lại</div>
+              <div class="text-primary-1 text-body-2 font-semibold font-sans">{{product?.quantity}}</div>
+            </div>
           </div>
-        </tds-image-group>
-      </div>
-      <div class="w-2/3  flex flex-col gap-4">
-        <div class="bg-zinc-200">{{product?.name}} - {{product?.brand?.name}}</div>
-        <div class=" bg-zinc-200">{{product?.last_price?.price| currency:'đ':'code'}}</div>
-        <div class=" bg-zinc-200 flex flex-col gap-4">
-          <div class="flex gap-4 items-center">
-            <div class="">Vận chuyển</div>
-            <div (click)="showAddress()" class=""><button class="min-w-[100px]" tds-button type="submit" color="primary">
-                Chọn địa chỉ vận chuyển
-              </button></div>
-              <div class="">{{address}}</div>
+          <div class="flex gap-8 items-center mb-4">
+            <div class="text-neutral-1-900 text-header-1 font-semibold font-sans">Số lượng</div>
+            <div class="flex gap-4 items-center">
+              <button (click)="changeQuantity(-1)" tds-button-icon class="!bg-neutral-3-50 border-0">
+                <i class="tdsi-arrow-left-line text-neutral-1-500"></i>
+              </button>
+              <div class="text-body-2 font-semibold text-neutral-1-800">{{quantity}}</div>
+              <button (click)="changeQuantity(1)" tds-button-icon class="!bg-neutral-3-50 border-0">
+                <i class="tdsi-arrow-right-line text-neutral-1-500"></i>
+              </button>
+            </div>
           </div>
-          <div class="flex gap-4 items-center">
-            <div class="">Màu sắc</div>
-            <div class="">123</div>
-          </div>
-          <div class="flex gap-4 items-center">
-            <div class="">Số lượng còn lại</div>
-            <div class="">{{product?.quantity}}</div>
-          </div>
-        </div>
-        <div class="flex gap-8 items-center">
-          <div class="">Số lượng</div>
-          <div class="flex gap-4 items-center">
-            <button (click)="changeQuantity(-1)" tds-button-icon class="!bg-neutral-3-50 border-0">
-              <i class="tdsi-arrow-left-line text-neutral-1-500"></i>
+          <div class="flex gap-8 items-center">
+            <button (click)="addOrder(product)" type="button" tds-button class="mr-2 min-w-[100px]" color="secondary">
+              Thêm vào giỏ hàng
             </button>
-            <div class="text-body-2 font-semibold text-neutral-1-800">{{quantity}}</div>
-            <button (click)="changeQuantity(1)" tds-button-icon class="!bg-neutral-3-50 border-0">
-              <i class="tdsi-arrow-right-line text-neutral-1-500"></i>
+            <button  (click)="moveToOrder()" class="min-w-[100px]" tds-button type="submit" color="primary">
+              Mua ngay
             </button>
           </div>
-        </div>
-        <div class="flex gap-8 items-center">
-          <button (click)="addOrder(product)" type="button" tds-button class="mr-2 min-w-[100px]" color="secondary">
-            Thêm vào giỏ hàng
-          </button>
-          <button class="min-w-[100px]" tds-button type="submit" color="primary">
-            Mua ngay
-          </button>
         </div>
       </div>
-    </div>
-    <div class="flex justify-between items-start p-4 bg-white">
-      <div class="flex gap-4">
-        <div class="h-20 w-20 bg-black">123</div>
-        <div class="flex flex-col gap-3">
+      <!-- <div class="flex justify-between items-start p-4 bg-white">
+        <div class="flex gap-4">
+          <div class="h-20 w-20 bg-black">123</div>
+          <div class="flex flex-col gap-3">
+            <div class="flex flex-col gap-2">
+              <div class="">Tên shop</div>
+              <div class="">123</div>
+            </div>
+            <div class="flex items-center gap-2">
+              <div class="">123</div>
+              <div class="">123</div>
+            </div>
+          </div>
+        </div>
+        <div class="">123</div>
+      </div>
+      <div class="flex gap-4  mb-4">
+        <div class="flex flex-col gap-4 w-4/5 bg-white p-4">
+          <div class="bg-black">123</div>
+          <div class="flex gap-4 items-center">
+            <div class="">Danh mục</div>
+            <div class="">213</div>
+          </div>
+        </div>
+        <div class="w-1/5 bg-white">
           <div class="flex flex-col gap-2">
-            <div class="">Tên shop</div>
-            <div class="">123</div>
-          </div>
-          <div class="flex items-center gap-2">
-            <div class="">123</div>
-            <div class="">123</div>
+            <div class="">Voucher của shop</div>
+            <div class=""></div>
           </div>
         </div>
-      </div>
-      <div class="">123</div>
-    </div>
-    <div class="flex gap-4  mb-4">
-      <div class="flex flex-col gap-4 w-4/5 bg-white p-4">
-        <div class="bg-black">123</div>
-        <div class="flex gap-4 items-center">
-          <div class="">Danh mục</div>
-          <div class="">213</div>
-        </div>
-      </div>
-      <div class="w-1/5 bg-white">
-        <div class="flex flex-col gap-2">
-          <div class="">Voucher của shop</div>
-          <div class=""></div>
-        </div>
-      </div>
+      </div> -->
     </div>
   </div>
-</div>
+</tds-spin>

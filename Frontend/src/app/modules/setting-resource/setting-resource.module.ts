@@ -82,7 +82,7 @@ import { CategoryManagementComponent } from './pages/category-management/categor
     ProductComponent,
     ProductManagementComponent,
     CategoryManagementComponent,
-    ModalAddEditProductComponent
+    ModalAddEditProductComponent,
   ],
   imports: [
     CommonModule,

@@ -100,6 +100,7 @@ export class LayoutComponent implements OnInit {
         this.cd.detectChanges()
       },
       error: (err) => {
+        this.isLoading = false;
         this.message.error(err.error.message)
         this.cd.detectChanges()
       },
@@ -205,6 +206,7 @@ export class LayoutComponent implements OnInit {
         },
       }
     );
+    this.isLoading = false;
     this.cd.detectChanges()
   }
 

@@ -38,6 +38,7 @@ export class OrderDetailComponent implements OnInit {
   lstOrder: getOrderDTO = [];
   lstOrderBackup: getListOrderDTO[] = [];
   total:number =0 ;
+  loading = false;
   constructor(
     private productSevice: ProductService,
     private destroy$: TDSDestroyService,
@@ -54,6 +55,7 @@ export class OrderDetailComponent implements OnInit {
   ngOnInit(): void {
     this.authService.getObsUserProfile().pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: TDSSafeAny) => {
+        this.loading= true;
         this.userProfile$ = res;
         this.getListOrder()
         // this.nameProfile = this.userProfile$?.name.split(" ")[this.userProfile$?.name.split(" ").length - 1].charAt(0);
@@ -91,14 +93,17 @@ export class OrderDetailComponent implements OnInit {
     }
   }
   getProductDetail(id: number) {
+    this.loading = true
     this.productSevice.getProductId(id)
       .pipe(takeUntil(this.destroy$)).subscribe(
         {
           next: (item: any) => {
+            this.loading = false;
             this.product = item
             this.cd.detectChanges()
           },
           error: (err) => {
+            this.loading = false;
             this.cd.detectChanges()
           }
         }
@@ -106,14 +111,17 @@ export class OrderDetailComponent implements OnInit {
   }
   getAddress() {
     if (TDSHelperObject.hasValue(this.userProfile$)) {
+      this.loading = true;
       this.addressService.getAddress()
         .pipe(takeUntil(this.destroy$)).subscribe(
           {
             next: (item: any) => {
               this.lstAddress = item
+              this.loading = false;
               this.cd.detectChanges()
             },
             error: (err) => {
+              this.loading = false;
               this.cd.detectChanges()
             }
           }
@@ -212,7 +220,7 @@ export class OrderDetailComponent implements OnInit {
   // Lấy danh sách order từ api
   getListOrder() {
     if (TDSHelperObject.hasValue(this.userProfile$)) {
-      // this.loadingOrder = true;
+      this.loading = true;
       this.lstOrderBackup = [];
       this.orderService.getOrder()
         .pipe(takeUntil(this.destroy$))
@@ -263,7 +271,7 @@ export class OrderDetailComponent implements OnInit {
                     }
                   )
               }
-              // this.loadingOrder = false
+              this.loading = false
               this.cd.detectChanges()
             }
             else {
@@ -304,6 +312,7 @@ export class OrderDetailComponent implements OnInit {
           next: (res) => {
             if (TDSHelperObject.hasValue(res)) {
               this.getListOrder()
+              this.loading = false;
             }
           },
           error: (err) => {

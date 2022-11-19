@@ -12,6 +12,9 @@ import { TDSDestroyService } from 'tds-ui/core/services';
 import { TDSContextMenuService, TDSDropdownMenuComponent } from 'tds-ui/dropdown';
 import { ProductService } from '../../services/product.service';
 import { getProductDTO, ProductDTO } from '../../models/product.dto';
+import { paramGetProductDTO } from 'src/app/dto/product.dto';
+import { CoreUserInitDTO } from '@core/dto';
+import { CoreAuthService } from '@core/authentication';
 
 @Component({
   selector: 'hrm-product-management',
@@ -23,7 +26,7 @@ import { getProductDTO, ProductDTO } from '../../models/product.dto';
 })
 
 export class ProductManagementComponent implements OnInit {
-
+  params?:paramGetProductDTO
   public lstResource: getProductDTO[] = []
   public lstBackup: getProductDTO[] = []
   lstData: Array<FilterStatusItemDTO> = [
@@ -66,14 +69,12 @@ export class ProductManagementComponent implements OnInit {
   loading: boolean = true
   active: boolean = true;
   indeterminate = false;
-  params: ParamGetListAccsetDTO = {
-    SkipCount: 0,
-    MaxResultCount: 0,
-  };
+  userProfile$?: CoreUserInitDTO
   constructor(
     private destroy$: TDSDestroyService,
     private modalService: TDSModalService,
     private viewContainerRef: ViewContainerRef,
+    private authService: CoreAuthService,
     private message: TDSMessageService,
     private tdsContextMenuService: TDSContextMenuService,
     private productService: ProductService,
@@ -81,6 +82,17 @@ export class ProductManagementComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.authService.getObsUserProfile().pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: TDSSafeAny) => {
+        this.userProfile$ = res;
+        // this.nameProfile = this.userProfile$?.name.split(" ")[this.userProfile$?.name.split(" ").length - 1].charAt(0);
+        this.cd.detectChanges()
+      },
+      error: (err: TDSSafeAny) => {
+        this.message.error(err.error.message)
+        this.cd.detectChanges()
+      },
+    });
   }
 
   contextMenu($event: MouseEvent, menu: TDSDropdownMenuComponent): void {
@@ -117,7 +129,7 @@ export class ProductManagementComponent implements OnInit {
       this.cd.detectChanges()
     }
     else {
-      this.getListProduct()
+      this.getListProduct(this.params!)
       this.cd.detectChanges()
     }
   }
@@ -166,7 +178,7 @@ export class ProductManagementComponent implements OnInit {
   }
 
   onFilter() {
-    this.getListProduct();
+    // this.getListProduct();
   }
 
   // panigation
@@ -175,10 +187,7 @@ export class ProductManagementComponent implements OnInit {
   }
 
   onQueryParamsChange(params: TDSTableQueryParams): void {
-    this.params.SkipCount = (params.pageIndex - 1) * this.pageSize;
-    this.params.MaxResultCount = params.pageSize;
-    this.skipCount = this.params.SkipCount;
-    this.getListProduct();
+    this.getListProduct(this.params!);
   }
 
   // get status Resource
@@ -198,11 +207,9 @@ export class ProductManagementComponent implements OnInit {
   }
 
   // Lấy danh sách product từ api
-  getListProduct() {
+  getListProduct(params: paramGetProductDTO) {
     this.loading = true
-    this.resetPage()
-    this.setOfCheckedId = new Set<TDSSafeAny>();
-    this.productService.getProduct()
+    this.productService.getProduct(params)
       .pipe(finalize(() => {
       }), takeUntil(this.destroy$))
       .subscribe({
@@ -251,7 +258,7 @@ export class ProductManagementComponent implements OnInit {
       {
         next: (res) => {
           if (TDSHelperObject.hasValue(res))
-            this.getListProduct();
+            this.getListProduct(this.params!);
             this.selected = 1;
         },
         error: (err) => {
@@ -260,7 +267,7 @@ export class ProductManagementComponent implements OnInit {
     )
   }
 
-  // modal chỉnh sửa tài sản
+  // modal chỉnh sửa 
   showModalEdit(data: TDSSafeAny): void {
     const modalEdit = this.modalService.create({
       title: 'Chỉnh sửa sản phẩm',
@@ -275,7 +282,7 @@ export class ProductManagementComponent implements OnInit {
       {
         next: (res) => {
           if (TDSHelperObject.hasValue(res))
-            this.getListProduct();
+            this.getListProduct(this.params!);
             this.selected = 2;
         },
         error: (err) => {
@@ -286,13 +293,9 @@ export class ProductManagementComponent implements OnInit {
 
   search(event: TDSSafeAny): void {
     if (event.value != null) {
-      this.params.SkipCount = 0;
-      this.resetPage();
-      this.params.SearchText = event.value;
-      this.getListProduct();
+      this.getListProduct(this.params!);
     }
   }
-
 
   // Modal xóa sản phẩm
   onDeleteOne(data: TDSSafeAny): void {
@@ -309,7 +312,7 @@ export class ProductManagementComponent implements OnInit {
               next: (res) => {
                 modal.destroy(this.params);
                 this.message.success("Xóa sản phẩm thành công")
-                this.getListProduct()
+                this.getListProduct(this.params!)
                 this.selected = 0;
               },
               error: (err) => {
@@ -323,28 +326,4 @@ export class ProductManagementComponent implements OnInit {
       cancelText: "Hủy"
     });
   }
-
-  // // Modal xóa nhiều tải sản
-  // onDeleteAll(): void {
-  //   let modalDelete = this.modalService.create({
-  //     title: "Xác nhận xóa tài sản ",
-  //     content: ModalDeleteAllComponent,
-  //     size: "lg",
-  //     viewContainerRef: this.viewContainerRef,
-  //     footer: null,
-  //     componentParams: {
-  //       lstAccset: [...this.setOfCheckedId]
-  //     },
-  //   })
-  //   modalDelete.afterClose.subscribe(
-  //     {
-  //       next: (res) => {
-  //         if (TDSHelperObject.hasValue(res))
-  //           this.getListResource(this.params);
-  //       },
-  //       error: (err) => {
-  //       }
-  //     }
-  //   )
-  // }
 }

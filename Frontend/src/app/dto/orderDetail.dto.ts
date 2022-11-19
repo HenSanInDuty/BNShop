@@ -17,6 +17,6 @@ export interface getOrderDetailDTO {
  status: string
  address: GetAddressDTO
  payment: string
- order: OrderDTO[]
+ order: any
 }
 

@@ -11,7 +11,7 @@ import { TDSModalService } from 'tds-ui/modal';
   selector: 'hrm-profile',
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss'],
-  host: { class: '  w-full h-full justify-center flex p-4 overflow-auto' },
+  host: { class: '  w-full h-full justify-center flex p-4 overflow-auto bg-neutral-3-50' },
   providers: [
     TDSDestroyService
   ]

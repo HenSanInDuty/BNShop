@@ -12,39 +12,64 @@
   </div>
   <div class="w-full h-full">
     <tds-table #rowSelectionTable showSizeChanger [loading]="loading" [listData]="lstAccsetType" [scroll]="{y:'auto'}"
-    (currentPageDataChange)="onCurrentPageDataChange($event)">
-    <thead>
-      <tr>
-        <th width="48px" [(checked)]="checked" [indeterminate]="indeterminate" (checkedChange)="onAllChecked($event)">
-        </th>
-        <th width="100px">STT</th>
-        <th width="200px">Mã loại tài sản</th>
-        <th width="600px">Tên loại tài sảnh</th>
-        <th width="400px">Mô tả</th>
-        <th width="206px" [tdsRight]="true">Thao tác</th>
-      </tr>
-    </thead>
-    <tbody>
-      <ng-template ngFor let-data [ngForOf]="rowSelectionTable.data" let-index='index' let-odd='odd'>
+      (currentPageDataChange)="onCurrentPageDataChange($event)">
+      <thead>
         <tr>
-          <td width="48px" [checked]="setOfCheckedId.has(data)" (checkedChange)="onItemChecked(data, $event)"></td>
-          <td width="100px">{{ index+1}}</td>
-          <td width="200px">{{data.code}}</td>
-          <td width="600px">{{ data.name }}</td>
-          <td width="400px">{{ data.description }}</td>
-          <td width="206px" [tdsRight]="true">
-            <div class="flex gap-2">
-              <button  tds-button-outline-icon color="secondary">
-                <i class="tdsi-edit-fill text-neutral-1-300 border-neutral-2-100"></i>
-              </button>
-              <button (click)="onDeleteOne(data)" tds-button-outline-icon color="secondary">
-                <i class="tdsi-trash-fill text-neutral-1-300 border-neutral-1-200"></i>
-              </button>
-            </div>
-          </td>
+          <th width="48px" [(checked)]="checked" [indeterminate]="indeterminate" (checkedChange)="onAllChecked($event)">
+          </th>
+          <th width="100px">STT</th>
+          <th width="200px">Địa chỉ đơn hàng</th>
+          <th width="400px">Chi tiết đơn hàng</th>
+          <th width="200px">Ngày đặt</th>
+          <th width="100px">Hình thức thanh toán</th>
+          <th width="200px">Trạng thái</th>
+          <th width="106px" [tdsRight]="true">Thao tác</th>
         </tr>
-      </ng-template>
-    </tbody>
-  </tds-table>
+      </thead>
+      <tbody>
+        <ng-template ngFor let-data [ngForOf]="rowSelectionTable.data" let-index='index' let-odd='odd'>
+          <tr>
+            <td width="48px" [checked]="setOfCheckedId.has(data)" (checkedChange)="onItemChecked(data, $event)"></td>
+            <td width="100px">{{ index+1}}</td>
+            <td width="200px">{{data.address.detail}} {{data.address.ward}} {{data.address.district}}
+              {{data.address.province}}</td>
+            <td width="400px">
+              <div *ngFor="let item of data.order; let i=index;" class="flex gap-4 ">
+                `{{item.product.name}} Số lượng {{item.buy}} Thành tiền: {{item.buy * item.amount | currency: "VND"}}`
+              </div>
+            </td>
+            <td width="200px">{{ data.date_order | date: "HH:mm dd/MM/YYYY"}}</td>
+            <td width="100px">{{ data.payment }}</td>
+            <td width="100px">
+              <div [ngSwitch]="data.status" class="">
+                <tds-tag *ngSwitchCase="'Waiting for confirm'" status='success' type="outline"
+                  class="text-body-2 font-regular text-neutral-1-900">Đang chờ phê duyệt</tds-tag>
+                <tds-tag *ngSwitchCase="2" status='error' type="outline"
+                  class="text-body-2 font-regular text-neutral-1-900">
+                  Đã phê duyệt</tds-tag>
+                <tds-tag *ngSwitchCase="3" status='warning' type="outline"
+                  class="text-body-2 font-regular text-neutral-1-900">Đã gửi vận chuyển</tds-tag>
+                <tds-tag *ngSwitchCase="4" status='secondary' type="outline"
+                  class="text-body-2 font-regular text-neutral-1-900">{{
+                  data.status }}</tds-tag>
+                <tds-tag *ngSwitchCase="5" status='info' type="outline"
+                  class="text-body-2 font-regular text-neutral-1-900">{{
+                  data.status }}</tds-tag>
+              </div>
+            </td>
+            <td width="106px" [tdsRight]="true">
+              <div class="flex gap-2 justify-center">
+                <button *ngIf="data.status === 'Waiting for confirm'" (click)="accept(data)" tds-button-outline-icon color="secondary">
+                  <i class="tdsi-edit-fill text-neutral-1-300 border-neutral-2-100"></i>
+                </button>
+                <button *ngIf="data.status == '2'" (click)="onship(data)" tds-button-outline-icon color="secondary">
+                  <i class="tdsi-truck-fill text-neutral-1-300 border-neutral-1-200"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </tbody>
+    </tds-table>
   </div>
 </div>

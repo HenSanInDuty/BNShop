@@ -4,7 +4,7 @@
       <!-- header -->
       <div class="flex flex-col fixed z-50 bg-white w-full ">
         <div class="w-full py-1">
-          <tds-header>
+          <tds-header >
             <tds-form-field class="w-full" [tdsClass]="'bg-neutral-3-100'">
               <input tdsInput placeholder="Tìm kiếm" autocomplete="off" />
               <span class="bg-neutral-3-100" tdsPrefix><i class="text-neutral-1-500 tdsi-search-fill "></i></span>
@@ -47,11 +47,11 @@
                                 </ng-template>
                               </tds-filter-status>
                               <div class="flex items-center justify-between w-full px-4 pt-8">
-                                <div class="">Đơn hàng</div>
+                                <div class="text-neutral-1-900 font-semibold text-header-1">Đơn hàng</div>
                                 <div class="flex gap-10 items-center">
-                                  <div class="">Trạng thái đơn hàng</div>
-                                  <div class="">Hình thức thanh toán</div>
-                                  <div class="">Thao tác</div>
+                                  <div class="text-neutral-1-900 font-semibold text-header-1">Trạng thái đơn hàng</div>
+                                  <div class="text-neutral-1-900 font-semibold text-header-1">Hình thức thanh toán</div>
+                                  <div class="text-neutral-1-900 font-semibold text-header-1">Thao tác</div>
                                 </div>
                               </div>
                             </div>
@@ -119,7 +119,7 @@
                     [placement]="'bottomRight'" overlayClassName='indexClass' [autoClose]=false></i>
                   <tds-dropdown-menu #menu1="tdsDropdownMenu" class="w-full" selected="true">
                     <tds-spin [spinning]="loadingOrder">
-                      <div class="min-w-[500px] h-[400px] overflow-auto tds-custom-scroll">
+                      <div class="min-w-[700px] max-h-[400px] overflow-auto tds-custom-scroll">
                         <div class="flex justify-between items-center border-b border-neutral-2-200 px-4 py-3 ">
                           <div class="font-semibold text-header-1 text-neutral-1-900">Giỏ hàng</div>
                           <div class="flex gap-7 items-center">
@@ -143,7 +143,7 @@
                                       </tds-avatar>
                                     </div>
                                     <div class="flex flex-col gap-2">
-                                      <div class="text-neutral-1-900 text-heading-4 font-semibold">
+                                      <div class="text-neutral-1-900 text-header-1 font-semibold">
                                         {{order.product.name}}
                                       </div>
                                       <div class="text-neutral-1-900 text-lg font-regular">Nhãn hiệu:
@@ -151,10 +151,10 @@
                                     </div>
                                   </div>
                                   <div class="flex flex-col gap-5">
-                                    <div class="text-primary-1 text-body-2 font-semibold">
+                                    <div class="text-primary-1 text-body-1 font-semibold">
                                       {{order.product.last_price.price
                                       |currency:'đ':'code'}}</div>
-                                    <div (click)="deleteOrder(order)" class="text-error-500 text-body-2 font-semibold">
+                                    <div (click)="deleteOrder(order)" class="text-error-500 text-body-1 font-semibold">
                                       Xóa</div>
                                   </div>
                                 </div>
@@ -169,7 +169,7 @@
                               </div>
                             </ng-template>
                             <ng-template #elseTemplate2>
-                              <tds-empty notFoundImage="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
+                              <tds-empty class="py-8" notFoundImage="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
                                 [notFoundContent]="contentTpl">
                                 <ng-template #contentTpl>
                                   Không có sản phẩm nào
@@ -243,6 +243,11 @@
                     <i class="tdsi-lock-fill text-lg leading-none mr-2"></i>Đăng nhập
                   </span>
                 </button>
+                <button class="ml-4" tds-button [routerLink]="['/customer/signUp']" color="primary">
+                  <span class="flex items-center">
+                    <i class="tdsi-plus-circle-fill text-lg leading-none mr-2"></i>Đăng Ký
+                  </span>
+                </button>
               </ng-template>
             </div>
           </tds-header>
@@ -253,7 +258,7 @@
         <router-outlet></router-outlet>
       </div>
       <!-- <footer>-->
-      <footer class="bg-neutral-1-900 mt-10">
+      <footer class="bg-neutral-1-900">
         <div class="flex flex-col gap-6 md:gap-[13px] lg:gap-[42px] px-[24px] md:px-[57px] xl:max-w-7xl mx-auto">
           <div
             class="relative flex flex-col md:flex-row md:flex-wrap  justify-between pt-[26px] gap-y-6 md:gap-y-8 lg:pt-[57px] md:pt-9  ">
