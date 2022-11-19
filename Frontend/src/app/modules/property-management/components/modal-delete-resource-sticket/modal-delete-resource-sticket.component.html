@@ -1,0 +1,14 @@
+<div class="flex gap-6 items-start pl-2 pt-3">
+  <i class="tdsi-trash-fill p-2 text-white bg-error-400 rounded-full"></i>
+  <div class="flex flex-col gap-4">
+    <div class="text-title-1 font-semibold text-neutral-1-900">Xóa vé thuê tài sản </div>
+    <div class="font-regular text-body-2 text-neutral-1-900">Bạn có chắc chắn muốn xoá vé thuê tài sản này ?</div>
+</div>
+<div *tdsModalFooter class="flex justify-end gap-3 p-4">
+  <button (click)="cancel()" tds-button color="secondary" class="min-w-[100px]">
+    Hủy
+  </button>
+  <button (click)="onDelete()" tds-button type="submit" color="error" class="min-w-[100px]">
+    xóa
+  </button>
+</div>

@@ -1,0 +1,72 @@
+<tds-spin [spinning]="false" class="w-full">
+  <div class="bg-white  w-full pb-2.5 h-full  rounded-lg  overflow-hidden  flex flex-col">
+    <div class="flex items-center  justify-end px-4 py-2.5">
+      <div class="flex gap-2">
+        <button (click)="showModalAdd()" tds-button color="primary">
+          <span class="flex items-center">
+            <i class="tdsi-plus-circle-fill text-lg leading-none mr-2"></i>Thêm mới
+          </span>
+        </button>
+        <tds-form-field>
+          <input class="w-96" tdsInput autocomplete="off" [tdsInputDebounce]="500"
+            placeholder="Tìm kiếm theo tên loại nghỉ phép" (inputKeyup)="search($event)" />
+          <span tdsPrefix><i class="tdsi-search-fill"></i></span>
+        </tds-form-field>
+        <button (click)="onDeleteAll()" tds-button-outline-icon color="secondary">
+          <i class="tdsi-trash-fill text-neutral-1-500 border-neutral-2-200"></i>
+        </button>
+      </div>
+    </div>
+    <div class="w-full h-full">
+      <tds-table #rowSelectionTable showSizeChanger [frontPagination]="false" [listData]="lstFurloughKind.items!"
+        [scroll]="{y:'auto'}" [total]="lstFurloughKind.totalCount!" [loading]="loading" [(pageSize)]="pageSize"
+        [(pageIndex)]="pageIndex" (currentPageDataChange)="onCurrentPageDataChange($event)"
+        (queryParams)="onQueryParamsChange($event)">
+        <thead>
+          <tr>
+            <th width="48px" [(checked)]="checked" [indeterminate]="indeterminate"
+              (checkedChange)="onAllChecked($event)">
+            </th>
+            <th width="54px">STT</th>
+            <th width="240px">Tên loại nghỉ</th>
+            <th width="140px">Ký hiệu</th>
+            <th width="140px">Năm áp dụng</th>
+            <th width="200px">Số ngày nghỉ tối đa</th>
+            <th width="200px">Hình thức nghỉ</th>
+            <th width="160px">Hệ số lương</th>
+            <th width="263px">Mô tả</th>
+            <th width="115px" [tdsRight]="true">Thao tác</th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-template ngFor let-data [ngForOf]="rowSelectionTable.data" let-index='index' let-odd='odd'>
+            <tr>
+              <td width="48px" [checked]="setOfCheckedId.has(data)" (checkedChange)="onItemChecked(data, $event)"></td>
+              <td width="54px">{{(pageIndex-1) * pageSize + index + 1}}</td>
+              <td width="240px">{{data.name}}</td>
+              <td width="140px">{{data.code}}</td>
+              <td width="140px">{{data.year}}</td>
+              <td width="200px">{{data.maxDay}}</td>
+              <td *ngIf="data.isPaid;else other_content" width="200px">Có Lương</td>
+              <ng-template #other_content>
+                <td width="200px">Không lương</td>
+              </ng-template>
+              <td width="160px">{{data.factor}}</td>
+              <td width="263px">{{data.description}}</td>
+              <td width="115px" [tdsRight]="true">
+                <div class="flex gap-2">
+                  <button (click)="showModalEdit(data)" tds-button-outline-icon color="secondary">
+                    <i class="tdsi-edit-fill text-neutral-1-300 border-neutral-2-100"></i>
+                  </button>
+                  <button (click)="onDeleteOne(data)" tds-button-outline-icon color="secondary">
+                    <i class="tdsi-trash-fill text-neutral-1-300 border-neutral-1-200"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+        </tbody>
+      </tds-table>
+    </div>
+  </div>
+</tds-spin>

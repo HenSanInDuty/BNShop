@@ -1,0 +1,45 @@
+<div class="flex flex-col w-full h-full">
+    <div class="flex flex-col bg-white p-4">
+        <div class="flex justify-between items-center pb-4">
+            <h1 class="text-header-1 font-semibold">Xác nhận công</h1>
+            <div class="flex items-center">
+                <span class="text-body-2 font-regular text-neutral-1-400">Xác nhận dưới vai trò là:</span>
+                <button
+                    [ngClass]="checkedPermission == 'hr'?'text-primary-1 border border-primary-1':'text-neutral-1-400 border border-neutral-2-200'"
+                    (click)="changePermission('hr')"
+                    class="text-body-2 font-semibold py-1.5 px-4 rounded-full ml-4 mr-2">HR
+                    Admin</button>
+                <button
+                    [ngClass]="checkedPermission == 'leader'?'text-primary-1 border border-primary-1':'text-neutral-1-400 border border-neutral-2-200'"
+                    (click)="changePermission('leader')"
+                    class="text-body-2 font-semibold py-1.5 px-4 rounded-full">Leader</button>
+            </div>
+        </div>
+        <div>
+            <tds-page-header-content>
+                <div class="w-full">
+                    <a routerLink="/time-keepper/confirm-work/confirm-work-form" routerLinkActive
+                        #rls="routerLinkActive">
+                        <tds-tag mode="checkable" [disabled]="true" [checked]="rls.isActive"
+                            [rounded]='rls.isActive ? "rounded-full":"rounded-full rounded-full !border-0"'
+                            class="mr-2">
+                            Đơn xin xác nhận công
+                        </tds-tag>
+                    </a>
+                    <a routerLink="/time-keepper/confirm-work/leave-absence-and-woking-form" routerLinkActive #rlp="routerLinkActive">
+                        <tds-tag mode="checkable" [disabled]="true" [checked]="rlp.isActive"
+                            [rounded]='rlp.isActive ? "rounded-full":"rounded-full rounded-full !border-0"'
+                            class="mr-2">
+                            Đơn nghỉ phép và hình thức làm việc
+                        </tds-tag>
+                    </a>
+                </div>
+            </tds-page-header-content>
+        </div>
+    </div>
+    <div class="p-4 h-full">
+        <div class="bg-white w-full h-full rounded-xl">
+            <router-outlet></router-outlet>
+        </div>
+    </div>
+</div>

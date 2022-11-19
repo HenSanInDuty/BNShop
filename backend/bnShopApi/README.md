@@ -1,0 +1,9 @@
+-Install python 3.10
+-pip install virtualenv
+-Make sure you in bnShopApi folder
+-py -m venv venv
+-Type "./venv/Scripts/activate"
+-pip install -r requirements.txt
+-py manage.py makemigrations #Tao csdl
+-py manage.py migrate #Tao csdl
+-py manage.py runserver #Chay server

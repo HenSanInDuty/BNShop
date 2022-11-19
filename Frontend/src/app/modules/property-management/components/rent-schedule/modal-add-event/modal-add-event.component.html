@@ -1,0 +1,232 @@
+<tds-spin [spinning]="isLoading || isLoadingCheckFreeTimeOfParticipant || isLoadingCheckFreeTimeOfResource">
+    <form [formGroup]="addEventForm" class="flex" id="addEventForm" (ngSubmit)="onSubmit()">
+        <div class="w-7/12 flex flex-col items-center">
+            <div class="flex w-full justify-between items-center mb-4">
+                <div class="w-1/4 text-body-2 font-semibold text-neutral-1-900">
+                    Tiêu đề <span class="text-error-500">*</span>
+                </div>
+                <div class="w-3/4">
+                    <tds-form-field>
+                        <input tdsInput autocomplete="off" placeholder="Nhập tiêu đề" [required]='true'
+                            formControlName="title" />
+                        <tds-error>Vui lòng nhập tiêu đề cho sự kiện</tds-error>
+                    </tds-form-field>
+                </div>
+            </div>
+            <div class="flex w-full justify-between items-center mb-3">
+                <div class="w-1/4 text-body-2 font-semibold text-neutral-1-900">
+                    Ngày thuê <span class="text-error-500">*</span>
+                </div>
+                <div class="w-3/4">
+                    <tds-date-picker (ngModelChange)="checkResource()" placeholder="Chọn ngày thuê"
+                        [disabledDate]="disabledDate" formControlName="startDate" [allowClear]="false">
+                    </tds-date-picker>
+                    <div *ngIf="suggestTimeWhenAddParticipant?.suggestTime?.rangeTimeFrees != undefined  && suggestTimeWhenAddParticipant.suggestTime?.rangeTimeFrees?.length != 0 && suggestTimeWhenAddParticipant.userAndIsBusy?.length! > 0"
+                        class="mt-4 flex items-start">
+                        <span class="text-body-2 font-regular text-neutral-1-900 mr-4">Khung giờ trống của khách mời:
+                        </span>
+                        <div *ngFor="let data of suggestTimeWhenAddParticipant?.suggestTime?.rangeTimeFrees"
+                            class="flex flex-col">
+                            <span class="text-body-2 font-regular text-primary-1">{{data.startTime | date: 'h:mm a'}} -
+                                {{data.endTime | date: 'h:mm a'}}&nbsp;&nbsp;&nbsp;</span>
+                        </div>
+                    </div>
+                    <div *ngIf="suggestTimeWhenAddParticipant?.suggestTime?.rangeTimeSuggests != undefined 
+                    && suggestTimeWhenAddParticipant.suggestTime?.rangeTimeSuggests?.length != 0 && suggestTimeWhenAddParticipant.userAndIsBusy?.length! > 0"
+                        class="mt-4 flex flex-wrap justify-start items-center w-full">
+                        <span class="text-body-2 font-regular text-primary-1 mr-4">Gợi ý:</span>
+                        <ng-container
+                            *ngFor="let data of suggestTimeWhenAddParticipant?.suggestTime?.rangeTimeSuggests">
+                            <tds-tag (click)="setTimeSuggestParticipants(data)" class="mr-2 mb-2 cursor-pointer"
+                                status='success' type="outline">{{data.startTime | date: 'h:mm a'}} - {{data.endTime |
+                                date:
+                                'h:mm a'}}</tds-tag>
+                        </ng-container>
+                    </div>
+                </div>
+            </div>
+            <div class="flex w-full justify-between items-center mb-4">
+                <div class="w-1/4 text-body-2 font-semibold text-neutral-1-900">
+                    {{resourceTypeName}} <span class="text-error-500">*</span>
+                </div>
+                <div class="w-3/4">
+                    <tds-form-field>
+                        <tds-select class="w-full" [required]='true' valueField="id" textField="name"
+                            (ngModelChange)="checkResource()" formControlName="resourceId"
+                            placeholder='Chọn {{resourceTypeName}}' [data]="listDataOfResource" [allowClear]="false">
+                        </tds-select>
+                        <tds-error>Vui lòng chọn {{resourceTypeName}}</tds-error>
+                    </tds-form-field>
+                    <div class="flex items-center mt-1"
+                        *ngIf="listSuggestRangeTimeFreeByDateAndResource?.isBusy == true && !idOfEdit">
+                        <span class="tdsi-warning-2-fill text-error-500 mr-1.5 text-caption-2"></span><span
+                            class="text-caption-2 font-regular text-error-500">Phòng họp không có khung giờ trống</span>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="listResourceSuggest.length > 0" class="flex justify-between items-start w-full mb-4">
+                <div class="w-1/4"></div>
+                <div class="w-3/4 flex flex-wrap items-center">
+                    <span class="text-body-2 font-regular text-primary-1 mr-4">Gợi ý:</span>
+                    <div *ngFor="let data of listResourceSuggest">
+                        <tds-tag (click)="setResourceSuggest(data)" class="mr-2 mb-2 cursor-pointer" status='success'
+                            type="outline">{{data.name}}</tds-tag>
+                    </div>
+                </div>
+            </div>
+            <div class="flex w-full justify-between items-start mb-4">
+                <div class="w-1/4 text-body-2 font-semibold text-neutral-1-900">
+                    Thời gian <span class="text-error-500">*</span>
+                </div>
+                <div class="w-3/4 flex flex-col">
+                    <div class="flex items-start">
+                        <div class="w-1/2 flex flex-col items-start mr-6">
+                            <h1 class="text-caption-2 font-semibold text-neutral-1-600 mb-2">Bắt đầu</h1>
+                            <tds-form-field>
+                                <tds-time-picker placeholder="Chọn giờ" formControlName="startTime" [use12Hours]="true">
+                                </tds-time-picker>
+                                <tds-error *ngIf="addEventForm.controls['startTime'].errors?.['required']">
+                                    Vui lòng chọn thời gian bắt đầu !
+                                </tds-error>
+                                <tds-error
+                                    *ngIf="!addEventForm.controls['startTime'].errors?.['required'] && addEventForm.controls['startTime'].errors?.['startTimeInvalid']">
+                                    Thời gian bắt đầu không được nhỏ hơn thời gian hiện tại !
+                                </tds-error>
+                                <tds-error
+                                    *ngIf="!addEventForm.controls['startTime'].errors?.['required'] && addEventForm.controls['startTime'].errors?.['startTimeMorningAndEveningInvalid']">
+                                    Thời gian bắt đầu phải nằm trong khoảng 8h00 - 18h30 !
+                                </tds-error>
+                            </tds-form-field>
+                        </div>
+                        <div class="w-1/2 flex flex-col items-start">
+                            <h1 class="text-caption-2 font-semibold text-neutral-1-600 mb-2">Kết thúc</h1>
+                            <tds-form-field>
+                                <tds-time-picker placeholder="Chọn giờ" formControlName="endTime" [required]='true'
+                                    (ngModelChange)="checkResourceFreeTime()" [use12Hours]="true">
+                                </tds-time-picker>
+                                <tds-error *ngIf="addEventForm.controls['endTime'].errors?.['required']">
+                                    Vui lòng chọn thời gian kết thúc !
+                                </tds-error>
+                                <tds-error
+                                    *ngIf="!addEventForm.controls['endTime']?.errors?.['required'] && addEventForm.controls['endTime']?.hasError('endTimeInvalid') ">
+                                    Thời gian kết thúc không được nhỏ hơn thời gian hiện tại !
+                                </tds-error>
+                                <tds-error
+                                    *ngIf="!addEventForm.controls['endTime']?.errors?.['required'] && addEventForm.controls['endTime']?.hasError('endTimeMorningAndEveningInvalid') ">
+                                    Thời gian kết thúc phải nằm trong khoảng 8h00 - 18h30 !
+                                </tds-error>
+                            </tds-form-field>
+                        </div>
+                    </div>
+                    <div
+                        *ngIf="!addEventForm.controls['endTime'].errors?.['required'] && addEventForm.controls['endTime'].hasError('timeInvalid')">
+                        <tds-error>
+                            Thời gian bắt đầu và kết thúc không hợp lệ !
+                        </tds-error>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="listSuggestRangeTimeFreeByDateAndResource?.rangeTimeFrees?.length! > 0"
+                class="flex w-full justify-between items-start mb-4">
+                <div class="w-1/4"></div>
+                <div class="w-3/4 flex items-center">
+                    <span class="text-body-2 font-regular text-neutral-1-900 mr-4">Khung giờ trống của tài sản:
+                    </span>
+                    <div *ngFor="let data of listSuggestRangeTimeFreeByDateAndResource?.rangeTimeFrees"
+                        class="flex flex-col">
+                        <span class="text-body-2 font-regular text-primary-1">{{data.startTime | date: 'h:mm a'}} -
+                            {{data.endTime | date: 'h:mm a'}}&nbsp;&nbsp;&nbsp;</span>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="listSuggestRangeTimeFreeByDateAndResource?.rangeTimeSuggests != undefined 
+            && listSuggestRangeTimeFreeByDateAndResource.rangeTimeSuggests?.length! > 0"
+                class="flex w-full justify-between items-start mb-4">
+                <div class="w-1/4"></div>
+                <div class="flex flex-wrap justify-start items-center w-3/4">
+                    <span class="text-body-2 font-regular text-primary-1 mr-4">Gợi ý:</span>
+                    <div *ngFor="let data of listSuggestRangeTimeFreeByDateAndResource?.rangeTimeSuggests">
+                        <tds-tag (click)="setTimeSuggestParticipants(data)" class="mr-2 mb-2 cursor-pointer"
+                            status='success' type="outline">{{data.startTime | date: 'h:mm a'}} - {{data.endTime |
+                            date:
+                            'h:mm a'}}</tds-tag>
+                    </div>
+                </div>
+            </div>
+            <div class="flex w-full justify-between items-center">
+                <div class="w-1/4 text-body-2 font-semibold text-neutral-1-900">
+                    Mô tả
+                </div>
+                <div class="w-3/4">
+                    <tds-form-field>
+                        <input class="pb-11" tdsInput autocomplete="off" placeholder="Nhập mô tả"
+                            formControlName="description" />
+                    </tds-form-field>
+                </div>
+            </div>
+            <!-- <div class="flex w-full justify-between items-center mb-4">
+                <div class="w-1/4 text-body-2 font-semibold text-neutral-1-900">
+                    Tài liệu
+                </div>
+                <div class="w-3/4 text-body-2 font-regular text-neutral-1-400">
+                    <tds-upload type="drag" [multiple]="true">
+                        <div
+                            class="w-full h-[74px] border border-dashed border-neutral-2-200 rounded flex items-center justify-center flex-col">
+                            <div class="">
+                                <span class="tdsi-upload-fill text-3xl text-neutral-1-500"></span>
+                            </div>
+                            <div class="text-neutral-1-900">
+                                Thêm tài liệu đính kèm
+                            </div>
+                        </div>
+                    </tds-upload>
+                </div>
+            </div> -->
+        </div>
+        <div class="flex flex-col h-full w-5/12 ml-8 border border-neutral-2-100 rounded-md p-2 overflow-hidden">
+            <div class="flex items-center">
+                <i class="tdsi-group-people-fill text-neutral-1-300 text-header-1"></i>
+                <h1 class="text-title-1 font-semibold text-neutral-1-900 mx-2">Danh sách thành viên</h1>
+                <span *ngIf="amountMember > 0"
+                    class="rounded-full h-6 w-6 flex justify-center items-center bg-primary-4 text-caption-1 text-primary-1 font-semibold">{{amountMember}}</span>
+            </div>
+            <div class="pt-4">
+                <button (click)="showModalAddGuest()" class="w-full" type="button" tds-button color="secondary">
+                    <span class="flex items-center text-primary-1">
+                        <i class="tdsi-add-fill text-lg leading-none mr-2"></i>Thêm khách mời
+                    </span>
+                </button>
+            </div>
+            <div class="min-h-0 max-h-96 flex flex-col overflow-auto tds-custom-scroll">
+                <div *ngFor="let data of listMember"
+                    class="group flex items-start justify-between py-2 px-1 text-neutral-1-900 bg-neutral-3-50 rounded-md mt-2"
+                    [ngClass]="(data | checkBusyParticipant : userAndIsBusy)? 'rounded-md bg-base-red-50 text-error-500 hover:bg-base-red-50':''">
+                    <div class="flex items-center">
+                        <tds-avatar size="md" [tdsSrc]="data.avatarUrl!"></tds-avatar>
+                        <div class="flex flex-col text-body-2 font-regular ml-4">
+                            <p>{{data.fullName}}</p>
+                            <p>{{data.email}}</p>
+                        </div>
+                    </div>
+                    <button class="hidden group-hover:block" (click)="deleteMemberOfChoose(data.userId!)" type="button">
+                        <i class="tdsi-trash-fill text-neutral-1-500"
+                            [ngClass]="(data | checkBusyParticipant : userAndIsBusy)? 'text-error-500':''"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="w-full flex justify-end p-4" *tdsModalFooter>
+            <button tds-button class="mr-2 min-w-[100px]" type="button" color="secondary" (click)="cancel()">
+                Hủy
+            </button>
+            <button *ngIf="!idOfEdit || idOfCopy" class="min-w-100 w-[100px]" type="submit" form="addEventForm"
+                tds-button color="primary">
+                Thêm
+            </button>
+            <button *ngIf="idOfEdit" class="min-w-100 w-[100px]" type="submit" form="addEventForm" tds-button
+                color="primary">
+                Lưu
+            </button>
+        </div>
+    </form>
+</tds-spin>

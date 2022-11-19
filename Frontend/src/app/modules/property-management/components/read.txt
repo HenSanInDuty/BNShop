@@ -1,0 +1,1 @@
+lưu các component dùng trong module

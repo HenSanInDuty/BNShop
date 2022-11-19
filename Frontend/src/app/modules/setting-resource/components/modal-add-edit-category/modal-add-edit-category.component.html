@@ -1,0 +1,20 @@
+<tds-spin [spinning]="loading">
+    <form [formGroup]="addEditTimeKeeperForm" id="addEditTimeKeeperForm" (ngSubmit)="onSubmit()">
+        <div class="flex flex-col gap-4">
+            <tds-form-field>
+                <tds-label>Tên danh mục</tds-label>
+                <input tdsInput autocomplete="off" placeholder="Nhập tên danh mục" [required]="true"
+                    formControlName="name" />
+                <tds-error>Vui lòng nhập tên danh mục</tds-error>
+            </tds-form-field>
+        </div>
+        <div *tdsModalFooter class="flex justify-end gap-3 p-4">
+            <button (click)="cancel()" tds-button color="secondary" class="min-w-[100px]">
+                Hủy
+            </button>
+            <button tds-button form='addEditTimeKeeperForm' type="submit" color="primary" class="min-w-[100px]">
+                Lưu
+            </button>
+        </div>
+    </form>
+</tds-spin>

@@ -1,0 +1,53 @@
+<tds-spin [spinning]="loading" class="w-full ">
+  <div class="flex flex-col gap-4 w-full overflow-hidden h-[calc(65vh)]">
+    <div class="flex flex-col rounded-lg tds-custom-scroll overflow-auto">
+      <tds-table templateMode>
+        <thead>
+          <tr>
+            <th width="359px">Họ tên</th>
+            <th width="307px">Email</th>
+            <th class="307px">Số điện thoại</th>
+            <th>Thao tác</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of lstAdminBioDevice; let indexOfelement = index">
+            <td width="359px">
+              <div class="flex gap-2 items-center">
+                <tds-avatar size="md" [tdsSrc]=data.avatar></tds-avatar>
+                {{data.fullName}}
+              </div>
+            </td>
+            <td width="307px">{{data.email}}</td>
+            <td width="307px">{{data.phoneNumber}}</td>
+            <td>
+              <button (click)="onDeleteOne(data.id)" tds-button-outline-icon color="secondary">
+                <i class="tdsi-trash-fill text-neutral-1-300 border-neutral-1-200"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </tds-table>
+    </div>
+    <div *ngIf="!error; else templateName" class="text-body-2 font-regular text-error-500">
+      <button (click)="getStaffAdmin()" tds-button-flat size="sm" color="primary" rounded="!rounded-full">
+        <span class="flex items-center">
+          <i class="tdsi-plus-fill text-xl leading-5 mr-2"></i>Thêm người quản lý
+        </span>
+      </button>
+    </div>
+    <ng-template #templateName>
+      <div class="text-body-2 font-regular text-error-500 mb-8">
+        {{error}}
+      </div>
+    </ng-template>
+  </div>
+  <div *tdsModalFooter class="flex justify-end gap-3 p-4">
+    <button (click)="cancel()" tds-button color="secondary" class="min-w-[100px]">
+      Đóng
+    </button>
+    <button (click)="onSave()" tds-button type="submit" color="info" class="min-w-[100px]">
+      Lưu
+    </button>
+  </div>
+</tds-spin>

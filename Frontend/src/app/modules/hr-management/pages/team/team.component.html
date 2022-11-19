@@ -1,0 +1,72 @@
+<div class="flex flex-col w-full h-full">
+    <div class="flex justify-between items-center p-4 bg-white w-full">
+        <div>
+            <h1 class="text-header-1 font-semibold">Team</h1>
+        </div>
+        <div>
+            <button (click)="showModalAddTeam()" tds-button color="primary">
+                <span class="flex items-center">
+                    <i class="tdsi-add-fill text-lg leading-none mr-2"></i>Thêm mới
+                </span>
+            </button>
+        </div>
+    </div>
+    <div class="p-4 w-full h-full">
+        <div class="bg-white flex flex-col rounded-xl w-full h-full">
+            <div class="flex justify-end items-center px-4 py-2.5">
+                <tds-form-field class="w-80">
+                    <input [tdsInputDebounce]="500" (inputKeyup)="search($event)" autocomplete="off" tdsInput
+                        placeholder="Tìm kiếm" [required]='true' />
+                    <span tdsPrefix><i class="tdsi-search-fill"></i></span>
+                </tds-form-field>
+            </div>
+            <div class="w-full h-full pb-2.5">
+                <tds-table #headerTable showSizeChanger [listData]="listDataOfTeam" [scroll]="{y:'auto'}"
+                    [frontPagination]="false" [loading]="loadingTeamList" [total]="total" [(pageSize)]="pageSize"
+                    [(pageIndex)]="pageIndex" (queryParams)="onQueryParamsChange($event)">
+                    <thead>
+                        <tr>
+                            <th [tdsLeft]="true" width="32px"></th>
+                            <th [tdsLeft]="true" width="80px">STT</th>
+                            <th [tdsLeft]="true" width="300px">Tên team</th>
+                            <th width="280px">Leader</th>
+                            <th width="150px">Số thành viên</th>
+                            <th width="350px">Mô tả</th>
+                            <th [tdsRight]="true" width="150px">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <ng-template ngFor let-data [ngForOf]="headerTable.data" let-index='index' let-odd='odd'>
+                            <tr>
+                                <td [tdsLeft]="true" [expand]="expandSet.has(data.id!)"
+                                    (expandChange)="onExpandChange(data.id!, $event)">
+                                </td>
+                                <td [tdsLeft]="true">{{ (pageIndex-1) * pageSize + index + 1 }}</td>
+                                <td [tdsLeft]="true">{{data.name}}</td>
+                                <td>{{data.leaderName}}</td>
+                                <td>{{data.members?.length}}</td>
+                                <td>{{data.description}}</td>
+                                <td [tdsRight]="true">
+                                    <div class="flex">
+                                        <button (click)="showModalEditTeam(data.id!)" class="mr-2" tds-button-icon
+                                            color="secondary">
+                                            <i class="tdsi-edit-fill text-neutral-1-400"></i>
+                                        </button>
+                                        <button (click)="deleteTeam(data)" tds-button-icon color="secondary">
+                                            <i class="tdsi-trash-fill text-neutral-1-400"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr [expand]="expandSet.has(data.id!)"
+                                class="border-b border-neutral-2-100 text-neutral-1-900 bg-neutral-3-50">
+                                <hrm-member-list *ngIf="expandSet.has(data.id!)" [teamId]="data.id!" [leaderId]="data.leaderId!" (onLstMember)="onLstMember($event)">
+                                </hrm-member-list>
+                            </tr>
+                        </ng-template>
+                    </tbody>
+                </tds-table>
+            </div>
+        </div>
+    </div>
+</div>

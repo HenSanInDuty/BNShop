@@ -1,0 +1,179 @@
+<div class="w-full h-full flex flex-col gap-4 p-4">
+  <div class="flex justify-between items-center w-full px-4 bg-white rounded-t-xl">
+    <tds-filter-status [(ngModel)]='selectedStatusTab' (selectChange)="onSelectStatus($event)">
+      <ng-template ngFor let-item [ngForOf]="lstStatus" let-i="index">
+        <tds-filter-status-item [name]='item.name' [count]='item.count!' [value]="item.value">
+          <ng-template tds-filter-status-template let-active='active' let-disabled="disabled" let-count='count'
+            let-name='name' let-value>
+            <div class="p-4 flex items-center" [ngClass]="{'border-b-3 border-primary-1':active,'hover:border-b-3
+                  hover:border-primary-1 group':!disabled}">
+              <div class="text-body-2 mr-2 font-semibold" [ngClass]="{'text-primary-1':active,'text-neutral-1-400
+                      group-hover:text-neutral-1-900':!active}">
+                {{name}}
+              </div>
+            </div>
+          </ng-template>
+        </tds-filter-status-item>
+      </ng-template>
+    </tds-filter-status>
+    <div class="flex gap-4 items-center">
+      <tds-range-picker [format]="'dd/MM/YYYY'" [(ngModel)]="date" (ngModelChange)="onChangeDateTime($event)">
+      </tds-range-picker>
+      <div class="w-60">
+        <tds-select valueField="value" textField="name" [(ngModel)]="selected" [data]="listStatus"
+          (selectChange)="onChangeStatusTicket($event)" classIcon="tdsi-arrow-down-fill">
+        </tds-select>
+      </div>
+    </div>
+  </div>
+  <tds-spin [spinning]="loading" class="w-full h-full">
+    <div class="grid grid-cols-4 gap-6">
+      <div [ngSwitch]="item.currentResourceTicketStatus" *ngFor="let item of lstResourceTicket; let i=index"
+        class="flex flex-col rounded-md justify-center">
+        <div *ngSwitchCase="0" class="flex justify-between items-center bg-info-400 rounded-t-md px-4 py-2">
+          <div class="flex">
+            <tds-badge status="bg-white" class="text-white" text="Sắp diễn ra"></tds-badge>
+          </div>
+          <ng-container *ngIf="valueTab == 0; else personalTicketTemplate">
+            <div class="flex gap-1">
+              <button (click)="showInvitee(item)" tds-tooltip tooltipTitle="Danh sách khách mời">
+                <i class=" p-1 tdsi-group-people-fill text-xl text-white"></i>
+              </button>
+              <button (click)="onDelete(item)" tds-tooltip tooltipTitle="Hủy vé">
+                <i class="p-1 tdsi-error-fill text-xl text-white"></i>
+              </button>
+              <button (click)="onParticipan(item)" tds-tooltip tooltipTitle="Từ chối tham gia">
+                <i class=" p-1 tdsi-edit-paper-fill text-xl text-white"></i>
+              </button>
+              <button (click)="showModalSchuduleDetails(item)" tds-tooltip tooltipTitle="Chỉnh sửa">
+                <i class=" p-1 tdsi-edit-fill text-xl text-white"></i>
+              </button>
+            </div>
+          </ng-container>
+          <ng-template #personalTicketTemplate>
+            <div class="flex gap-1">
+              <button (click)="showInvitee(item)" tds-tooltip tooltipTitle="Danh sách khách mời">
+                <i class=" p-1 tdsi-group-people-fill text-xl text-white"></i>
+              </button>
+              <button (click)="onParticipan(item)" tds-tooltip tooltipTitle="Từ chối tham gia">
+                <i class=" p-1 tdsi-edit-paper-fill text-xl text-white"></i>
+              </button>
+            </div>
+          </ng-template>
+        </div>
+        <div *ngSwitchCase="1" class="flex justify-between items-center bg-success-400 rounded-t-md px-4 py-2">
+          <div class="flex">
+            <tds-badge status="bg-white" class="text-white" text="Đang diễn ra"></tds-badge>
+          </div>
+          <ng-container *ngIf="valueTab == 0; else personalTicketTemplate">
+            <div class="flex gap-1">
+              <button (click)="showInvitee(item)" tds-tooltip tooltipTitle="Danh sách khách mời">
+                <i class=" p-1 tdsi-group-people-fill text-xl text-white"></i>
+              </button>
+              <button (click)="onParticipan(item)" tds-tooltip tooltipTitle="Từ chối tham gia">
+                <i class=" p-1 tdsi-edit-paper-fill text-xl text-white"></i>
+              </button>
+            </div>
+          </ng-container>
+          <ng-template #personalTicketTemplate>
+            <div class="flex gap-1">
+              <button (click)="showInvitee(item)" tds-tooltip tooltipTitle="Danh sách khách mời">
+                <i class=" p-1 tdsi-group-people-fill text-xl text-white"></i>
+              </button>
+              <button (click)="onParticipan(item)" tds-tooltip tooltipTitle="Từ chối tham gia">
+                <i class=" p-1 tdsi-edit-paper-fill text-xl text-white"></i>
+              </button>
+            </div>
+          </ng-template>
+        </div>
+        <div *ngSwitchCase="2" class="flex justify-between items-center bg-neutral-1-300 rounded-t-md px-4 py-2">
+          <div class="flex">
+            <tds-badge status="bg-white" class="text-white" text="Đã kết thúc"></tds-badge>
+          </div>
+          <ng-container *ngIf="valueTab == 0; else personalTicketTemplate">
+            <div class="flex gap-1">
+              <button (click)="showInvitee(item)" tds-tooltip tooltipTitle="Danh sách khách mời">
+                <i class=" p-1 tdsi-group-people-fill text-xl text-white"></i>
+              </button>
+            </div>
+          </ng-container>
+          <ng-template #personalTicketTemplate>
+            <div class="flex gap-1">
+              <button (click)="showInvitee(item)" tds-tooltip tooltipTitle="Danh sách khách mời">
+                <i class=" p-1 tdsi-group-people-fill text-xl text-white"></i>
+              </button>
+            </div>
+          </ng-template>
+        </div>
+        <div *ngSwitchCase="3" class="flex justify-between items-center bg-error-400 rounded-t-md px-4 py-2">
+          <div class="flex">
+            <tds-badge status="bg-white" class="text-white" text="Đã hủy"></tds-badge>
+          </div>
+          <ng-container *ngIf="valueTab == 0; else personalTicketTemplate">
+            <div class="flex gap-1">
+              <button (click)="showInvitee(item)" tds-tooltip tooltipTitle="Danh sách khách mời">
+                <i class=" p-1 tdsi-group-people-fill text-xl text-white"></i>
+              </button>
+            </div>
+          </ng-container>
+          <ng-template #personalTicketTemplate>
+            <div class="flex gap-1">
+              <button (click)="showInvitee(item)" tds-tooltip tooltipTitle="Danh sách khách mời">
+                <i class=" p-1 tdsi-group-people-fill text-xl text-white"></i>
+              </button>
+            </div>
+          </ng-template>
+        </div>
+        <div class="flex flex-col py-2 px-4 gap-2 bg-white rounded-b-md">
+          <div class="text-header-1 font-semibold text-neutral-1-900">{{item.title || "Chưa có title"}}</div>
+          <div class="grid grid-cols-2">
+            <div class="grid grid-rows-2 gap-2">
+              <div class="flex gap-1.5 items-center">
+                <i class="tdsi-location-fill text-xl text-neutral-1-300"></i>
+                <div class="font-regular text-body-2 text-neutral-1-900">{{item.branchName}}</div>
+              </div>
+              <div class="flex gap-1.5 items-center">
+                <i class="tdsi-calendar-fill text-xl text-neutral-1-300"></i>
+                <div class="font-regular text-body-2 text-neutral-1-900">{{item.startTime| date: "dd/MM/YYYY"}}</div>
+              </div>
+            </div>
+            <div class="grid grid-rows-2 gap-2">
+              <div class="flex gap-1.5 items-center">
+                <i class="tdsi-building-fill text-xl text-neutral-1-300"></i>
+                <div class="font-regular text-body-2 text-neutral-1-900">{{item.resourceName}}</div>
+              </div>
+              <div class="flex gap-1.5 items-center">
+                <i class="tdsi-time-fill text-xl text-neutral-1-300"></i>
+                <div class="font-regular text-body-2 text-neutral-1-900">{{item?.startTime | date: "HH:mm"}} -
+                  {{item.endTime | date: "HH:mm"}}</div>
+              </div>
+            </div>
+          </div>
+          <div [ngClass]="item.description ? '' : 'invisible' " class="font-regular text-neutral-1-500 text-body-2">
+            {{item.description || "Không có gì cả"}}</div>
+          <div class="flex justify-between p-2 bg-neutral-3-50">
+            <div class="flex gap-2">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M9.99991 2.5C6.14574 2.5 2.96491 5.4225 2.54907 9.1675H8.33324V6.6675L12.4999 10.0008L8.33324 13.3342V10.8342H2.54991C2.96657 14.5783 6.14657 17.5 9.99991 17.5C14.1357 17.5 17.4999 14.1358 17.4999 10C17.4999 5.86417 14.1357 2.5 9.99991 2.5Z"
+                  fill="#4378FF" />
+              </svg>
+              <div class="font-regular text-neutral-1-900 text-body-2">{{item.startTime | date: "HH:mm"}}</div>
+            </div>
+            <div class="flex gap-2">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M10.0001 17.5C13.8543 17.5 17.0351 14.5775 17.4509 10.8325L11.6668 10.8325L11.6668 13.3325L7.5001 9.99917L11.6668 6.66583L11.6668 9.16583L17.4501 9.16583C17.0334 5.42167 13.8534 2.5 10.0001 2.5C5.86426 2.5 2.5001 5.86417 2.5001 10C2.50009 14.1358 5.86426 17.5 10.0001 17.5Z"
+                  fill="#EE5543" />
+              </svg>
+              <div class="font-regular text-neutral-1-900 text-body-2">{{item.endTime | date: "HH:mm"}}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="isShow" class="h-full bg-white rounded-md">
+      <tds-empty></tds-empty>
+    </div>
+  </tds-spin>
+</div>

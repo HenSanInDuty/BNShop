@@ -1,0 +1,140 @@
+<tds-spin [spinning]="isSubmit">
+  <form id="addEditShiftForm" [formGroup]="addEditShiftForm" (ngSubmit)="onSubmit()">
+    <div class="flex flex-col gap-4 w-full">
+      <div class="flex justify-between items-center">
+        <div class="text-header-2 font-semibold text-neutral-1-600">Thông tin ca</div>
+        <div class="flex items-center gap-2 text-body-2 font-regular text-neutral-1-900">
+          <tds-switch size="lg"></tds-switch>
+          Hoạt động
+        </div>
+      </div>
+      <tds-form-field>
+        <tds-label>Tên ca làm việc</tds-label>
+        <div class="flex items-start ">
+          <input tdsInput autocomplete="off" placeholder="Nhập tên ca" formControlName="name" />
+        </div>
+        <tds-error>Vui lòng nhập tên ca làm việc</tds-error>
+      </tds-form-field>
+      <div class="grid grid-cols-2 gap-8">
+        <div class="flex-row space-y-4">
+          <div class="grid grid-cols-2 gap-2">
+            <div class="flex items-center ">
+              <tds-label>Giờ vào</tds-label>
+              <span class="ml-1 text-error-500 text-body-2 font-semibold ng-tns-c193-48 ng-star-inserted">*</span>
+            </div>
+            <div class="flex space-x-2">
+              <tds-form-field>
+                <tds-time-picker placeholder="hh:mm" formControlName="start"></tds-time-picker>
+              </tds-form-field>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div class="h-8 flex items-center w-full">
+              <tds-label>Nghỉ giữa ca</tds-label>
+            </div>
+            <div class="flex space-x-2  w-full">
+              <tds-form-field>
+                <tds-time-picker placeholder="hh:mm" formControlName="midStart"></tds-time-picker>
+              </tds-form-field>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div class="h-8 flex items-center">
+              <tds-label>Số công</tds-label>
+            </div>
+            <div class="flex space-x-2 ">
+              <tds-form-field>
+                <div class="flex items-start w-full">
+                  <input tdsInput autocomplete="off" placeholder="0" formControlName="keepingNumber" />
+                </div>
+              </tds-form-field>
+            </div>
+          </div>
+        </div>
+        <div class="flex-row space-y-4">
+          <div class="grid grid-cols-2 gap-2 ">
+            <div class="h-8 flex items-center">
+              <tds-label>Giờ ra</tds-label>
+              <span class="ml-1 text-error-500 text-body-2 font-semibold ng-tns-c193-48 ng-star-inserted">*</span>
+            </div>
+            <div class="flex space-x-2 ">
+              <tds-form-field>
+                <tds-time-picker placeholder="hh:mm" formControlName="end">
+                </tds-time-picker>
+              </tds-form-field>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-2 ">
+            <div class="h-8 flex items-center">
+              <tds-label>Kết thúc nghỉ giữa ca</tds-label>
+            </div>
+            <div class="flex space-x-2 ">
+              <tds-form-field>
+                <tds-time-picker placeholder="hh:mm" formControlName="midEnd">
+                </tds-time-picker>
+                <tds-error>Vui lòng nhập thời gian kết thúc giữa ca</tds-error>
+              </tds-form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="flex flex-col gap-8">
+        <div class="text-header-2 font-semibold text-neutral-1-600">
+          Đi trễ về sớm
+        </div>
+        <div class="flex items-center gap-2 text-body-2 font-regular text-neutral-1-900">
+          <tds-switch size="lg" [ngModel]="isDeviation" (change)="modelChangeisDeviation()"
+            formControlName="isDeviation"></tds-switch>
+          Cho phép đi trễ về sớm
+        </div>
+      </div>
+      <div *ngIf="error" class="text-body-2 font-regular text-error-500">
+        {{error}}
+      </div>
+      <div *ngIf="isDeviation" class="flex flex-col gap-4">
+        <div class="grid grid-cols-2 gap-8">
+          <div class="flex-row space-y-4">
+            <div class="grid grid-cols-2 gap-2">
+              <div class="flex items-center ">
+                <tds-label>Được phép đi trễ (phút)</tds-label>
+              </div>
+              <div class="flex space-x-2">
+                <tds-form-field>
+                  <tds-input-number [min]="1" [max]="100" [step]="1" placeholder="nhập số"
+                    formControlName="startDeviation">
+                  </tds-input-number>
+                </tds-form-field>
+              </div>
+            </div>
+          </div>
+          <div class="flex-row space-y-4">
+            <div class="grid grid-cols-2 gap-2">
+              <div class="flex items-center ">
+                <tds-label>Được phép về sớm (phút)</tds-label>
+              </div>
+              <div class="flex space-x-2">
+                <tds-form-field>
+                  <tds-input-number [min]="1" [max]="100" [step]="1" placeholder="nhập số"
+                    formControlName="endDeviation">
+                  </tds-input-number>
+                </tds-form-field>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="flex gap-2 items-center text-body-2 font-regular text-neutral-1-900">
+          <tds-checkbox [checked]="false" formControlName="ignoreDeviation"></tds-checkbox>
+          Trừ giờ công
+        </div>
+      </div>
+    </div>
+    <div *tdsModalFooter class="flex justify-end gap-3 p-4">
+      <button (click)="cancel()" tds-button color="secondary" class="min-w-[100px]">
+        Hủy
+      </button>
+      <button tds-button form='addEditShiftForm' type="submit" color="primary" class="min-w-[100px]">
+        Thêm
+      </button>
+    </div>
+  </form>
+</tds-spin>

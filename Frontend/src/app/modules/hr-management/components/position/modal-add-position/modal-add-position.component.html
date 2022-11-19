@@ -1,0 +1,27 @@
+<tds-spin [spinning]="isSubmit">
+    <form [formGroup]="positionForm" id="positionForm" (ngSubmit)="onSubmit()"
+        class="flex flex-col text-body-2 font-semibold text-neutral-1-900">
+        <div class="flex flex-col">
+            <tds-form-field>
+                <tds-label>Tên chức vụ</tds-label>
+                <input class="text-body-2 font-regular placeholder:text-body-2 placeholder:font-regular placeholder:text-neutral-1-400" tdsInput
+                    autocomplete="off" placeholder="Nhập tên chức vụ" formControlName="name" [required]='true' />
+                <tds-error>Vui lòng nhập tên chức vụ</tds-error>
+            </tds-form-field>
+            <tds-form-field class="mt-4">
+                <tds-label>Mô tả</tds-label>
+                <input
+                    class="text-body-2 font-regular pt-0.5 pb-10 placeholder:text-body-2 placeholder:font-regular placeholder:text-neutral-1-400"
+                    tdsInput autocomplete="off" placeholder="Nhập mô tả" formControlName="description" />
+            </tds-form-field>
+        </div>
+        <div *tdsModalFooter class="flex items-center justify-end py-4 pr-4">
+            <button class="min-w-100 w-[100px] mr-2" (click)="cancel()" type="button" tds-button color="secondary">
+                Hủy
+            </button>
+            <button class="min-w-100 w-[100px]" type="submit" form="positionForm" tds-button color="primary">
+                Lưu
+            </button>
+        </div>
+    </form>
+</tds-spin>

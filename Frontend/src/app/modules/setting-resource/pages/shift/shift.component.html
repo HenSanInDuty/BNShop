@@ -1,0 +1,77 @@
+<tds-spin [spinning]="false" class="w-full">
+  <div class="bg-white  w-full pb-2.5 h-full  rounded-lg  overflow-hidden  flex flex-col">
+    <div class="flex items-center  justify-end px-4 py-2.5">
+      <div class="flex gap-2">
+        <button (click)="showModalAdd()" tds-button color="primary">
+          <span class="flex items-center">
+            <i class="tdsi-plus-circle-fill text-lg leading-none mr-2"></i>Thêm mới
+          </span>
+        </button>
+        <tds-form-field>
+          <input class="w-96" tdsInput autocomplete="off" [tdsInputDebounce]="500" (inputKeyup)="search($event)"
+            placeholder="Tìm kiếm theo ca làm việc" />
+          <span tdsPrefix><i class="tdsi-search-fill"></i></span>
+        </tds-form-field>
+        <button (click)="onDeleteAll()" tds-button-outline-icon color="secondary">
+          <i class="tdsi-trash-fill text-neutral-1-500 border-neutral-2-200"></i>
+        </button>
+      </div>
+    </div>
+    <div class="w-full h-full">
+      <tds-table #rowSelectionTable showSizeChanger [frontPagination]="true" [listData]="lstShift.items!"
+        [scroll]="{y:'auto'}" [total]="total" [loading]="loading" [(pageSize)]="pageSize" [(pageIndex)]="pageIndex"
+        (currentPageDataChange)="onCurrentPageDataChange($event)" (queryParams)="onQueryParamsChange($event)">
+        <thead>
+          <tr>
+            <th width="48px" [(checked)]="checked" [indeterminate]="indeterminate"
+              (checkedChange)="onAllChecked($event)"></th>
+            <th class="text-body-2 font-semibold text-neutral-1-900" width="54px">STT</th>
+            <th class="text-body-2 font-semibold text-neutral-1-900" width="158px">Tên ca làm việc</th>
+            <th class="text-body-2 font-semibold text-neutral-1-900" width="135px">Thời gian</th>
+            <th class="text-body-2 font-semibold text-neutral-1-900" width="140px">Ca trong ngày</th>
+            <th class="text-body-2 font-semibold text-neutral-1-900" width="140px">Nghỉ giữa ca</th>
+            <th class="text-body-2 font-semibold text-neutral-1-900" width="80px">Số công</th>
+            <th class="text-body-2 font-semibold text-neutral-1-900" width="140px">Đi trễ về sớm</th>
+            <th class="text-body-2 font-semibold text-neutral-1-900" width="170px">Cho phép đi trễ (phút)</th>
+            <th class="text-body-2 font-semibold text-neutral-1-900" width="175px">Cho phép về sớm (phút)</th>
+            <th class="text-body-2 font-semibold text-neutral-1-900" width="170px">Tổng giờ công (phút)</th>
+            <th class="text-body-2 font-semibold text-neutral-1-900" width="100px" [tdsRight]="true">Thao tác</th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-template ngFor let-data [ngForOf]="rowSelectionTable.data" let-index='index' let-odd='odd'>
+            <tr>
+              <td class="text-body-2 font-regular text-neutral-1-900" width="48px" [checked]="setOfCheckedId.has(data)" (checkedChange)="onItemChecked(data, $event)"></td>
+              <td class="text-body-2 font-regular text-neutral-1-900" width="54px">{{(pageIndex-1) * pageSize + index + 1}}</td>
+              <td class="text-body-2 font-regular text-neutral-1-900" width="158px">{{data.name}}</td>
+              <td class="text-body-2 font-regular text-neutral-1-900" width="135px">{{data.start!.split(':')[0]+':'+data.start!.split(':')[1]}} -
+                {{data.end!.split(':')[0]+':'+data.end!.split(':')[1]}}</td>
+              <td *ngIf="data.startEndIsDay" class="text-body-2 font-regular text-neutral-1-900" width="147px">Có</td>
+              <td *ngIf="data.startEndIsDay == false" class="text-body-2 font-regular text-neutral-1-900" width="140px">Không</td>
+              <td *ngIf="data.midStartEndIsDay ==false" class="text-body-2 font-regular text-neutral-1-900" width="140px">Không</td>
+              <td *ngIf="data.midStartEndIsDay " class="text-body-2 font-regular text-neutral-1-900" width="147px">
+                {{data.midStart!.split(':')[0]+':'+data.start!.split(':')[1]}} -
+                {{data.midEnd!.split(':')[0]+':'+data.midEnd!.split(':')[1]}}</td>
+              <td class="text-body-2 font-regular text-neutral-1-900" width="80px">{{data.keepingNumber}}</td>
+              <td *ngIf="data.isDeviation" class="text-body-2 font-regular text-neutral-1-900" width="140px">Được phép</td>
+              <td *ngIf="data.isDeviation ==false" class="text-body-2 font-regular text-neutral-1-900" width="140px">Không được phép</td>
+              <td class="text-body-2 font-regular text-neutral-1-900" width="170px">{{data.startDeviation}}</td>
+              <td class="text-body-2 font-regular text-neutral-1-900" width="175px">{{data.endDeviation}}</td>
+              <td class="text-body-2 font-regular text-neutral-1-900" width="170px">{{data.workingTimeNumber}}</td>
+              <td class="text-body-2 font-regular text-neutral-1-900" width="100px" [tdsRight]="true">
+                <div class="flex gap-2">
+                  <button (click)="showModalEdit(data)" tds-button-outline-icon color="secondary">
+                    <i class="tdsi-edit-fill text-neutral-1-300 border-neutral-2-100"></i>
+                  </button>
+                  <button (click)="onDeleteOne(data)" tds-button-outline-icon color="secondary">
+                    <i class="tdsi-trash-fill text-neutral-1-300 border-neutral-1-200"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+        </tbody>
+      </tds-table>
+    </div>
+  </div>
+</tds-spin>

@@ -1,0 +1,36 @@
+<div class="flex  bg-white rounded-xl p-3.5 flex-col w-2/3">
+  <tds-spin [spinning]="loading">
+    <div class="flex justify-between items-center">
+      <div class="text-header-1 font-semibold text-neutral-1-900 items-center">Thông tin cá nhân</div>
+      <div class="flex gap-2.5 items-center">
+        <button (click)="showModaChangePassword()" tds-button-outline color="primary">
+          <span class="flex items-center">
+            <i class="tdsi-lock-fill text-lg leading-none mr-2"></i>Đổi Mật khẩu
+          </span>
+        </button>
+      </div>
+    </div>
+    <div class="flex gap-16  p-16">
+      <div class="flex flex-col items-center gap-4 w-1/3">
+        <tds-avatar [size]="208" [tdsSrc]="userProfile$?.avatar"></tds-avatar>
+      </div>
+      <tds-divider tdsClass='h-full' tdsType="vertical"></tds-divider>
+      <div class="flex justify-start items-center w-full">
+        <div class="grid grid-cols-2 gap-6 w-full">
+          <div class="grid grid-rows-4 gap-8">
+            <div class="text-body-2 font-regular text-neutral-1-900 ">Họ & tên:</div>
+            <div class="text-body-2 font-regular text-neutral-1-900">Điện thoại:</div>
+            <div class="text-body-2 font-regular text-neutral-1-900">Vai trò:</div>
+            <div class="text-body-2 font-regular text-neutral-1-900">Email:</div>
+          </div>
+          <div class="grid grid-rows-4 gap-8">
+            <div class="text-body-2 font-semibold text-neutral-1-900">{{userProfile$?.name}}</div>
+            <div class="text-body-2 font-semibold text-neutral-1-900">----</div>
+            <div class="text-body-2 font-semibold text-neutral-1-900">----</div>
+            <div class="text-body-2 font-semibold text-neutral-1-900">{{userProfile$?.email}}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </tds-spin>
+</div>

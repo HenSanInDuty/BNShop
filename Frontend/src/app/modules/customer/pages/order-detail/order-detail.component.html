@@ -1,0 +1,54 @@
+<tds-spin [spinning]="loading">
+  <div class="flex flex-col items-center gap-8 min-h-[600px] h-full w-full bg-neutral-3-50 px-[250px]">
+    <ng-container *ngIf="lstOrder.length >0; then thenTemplate; else elseTemplate"></ng-container>
+    <ng-template #thenTemplate>
+     <div class="flex flex-col gap-8 w-full h-full pt-8">
+      <div class="flex justify-between items-center w-full">
+       <div class="w-3/5 text-header-2 font-semibold font-sans text-neutral-1-900">Sản phẩm</div>
+       <div class="grid grid-cols-5 w-2/5">
+        <div class="text-header-2 font-semibold font-sans text-neutral-1-900">Đơn giả</div>
+        <div class="text-header-2 font-semibold font-sans text-neutral-1-900">Số lượng</div>
+        <div class="text-header-2 font-semibold font-sans text-neutral-1-900">Số tiền</div>
+        <div class="text-header-2 font-semibold font-sans text-neutral-1-900">Thao tác</div>
+       </div>
+      </div>
+      <div class="flex flex-col gap-8 w-full">
+       <div *ngFor="let order of lstOrderBackup; let i=index;"
+        class="flex justify-between items-center w-full pb-8 border-b border-neutral-2-200">
+        <div class="flex items-center gap-8 w-3/5">
+         <tds-avatar [shape]="'square'" [size]="100" [tdsSrc]="order.product.display_image">
+         </tds-avatar>
+        </div>
+        <div class="grid grid-cols-5 w-2/5">
+         <div class="text-header-2 font-normal font-sans text-neutral-1-900">{{order.amount |currency: "VND"}}</div>
+         <div class="text-header-2 font-normal font-sans text-neutral-1-900">{{order.qty}}</div>
+         <div class="text-header-2 font-normal font-sans text-neutral-1-900">{{order.amount * order.qty | currency: "VND"}}</div>
+         <div class="text-header-2 font-normal font-sans text-neutral-1-900">Thao tác</div>
+        </div>
+       </div>
+       <div class="flex justify-end gap-32 pr-[200px]">
+        <div class="text-heading-3 font-semibold font-sans text-neutral-1-900">Tổng cộng: </div>
+        <div class="text-heading-3 font-normal font-sans text-primary-1">{{total | currency: "VND"}}</div>
+       </div>
+       <div class="flex justify-end gap-32 pr-[50px]">
+        <Button (click)="sumbmit()" class="px-8 py-3 rounded-md hover:bg-primary-2  bg-primary-1 text-white text-body-2 font-normal">Tiến hành đặt hàng</Button>
+       </div>
+      </div>
+      <div class=""></div>
+     </div>
+    </ng-template>
+    <ng-template #elseTemplate>
+      <div class="w-full h-full flex items-center justify-center">
+       <tds-empty
+        [notFoundContent]="contentTpl">
+        <ng-template #contentTpl>
+        <div class="text-heading-2 text-neutral-1-900 font-semibold">
+          Không có đơn hàng nào
+        </div>
+        </ng-template>
+       </tds-empty>
+      </div>
+    </ng-template>
+    
+  </div>
+</tds-spin>

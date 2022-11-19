@@ -1,0 +1,86 @@
+<tds-spin [spinning]="isLoadingData">
+    <div class="flex flex-col">
+        <form class="flex">
+            <div class="w-7/12 flex flex-col gap-4 items-center text-body-2 text-neutral-1-900">
+                <div class="flex w-full justify-between items-center mb-4">
+                    <div class="w-1/4 font-semibold">
+                        Tiêu đề <span class="text-error-500">*</span>
+                    </div>
+                    <div class="w-3/4 font-regular">
+                        <p>{{scheduleDetails?.title}}</p>
+                    </div>
+                </div>
+                <div class="flex w-full justify-between items-center mb-4">
+                    <div class="w-1/4 font-semibold">
+                        Ngày họp
+                    </div>
+                    <div class="w-3/4 font-regular">
+                        <p>{{scheduleDetails?.startTime | date: 'dd-MM-YYYY'}}</p>
+                    </div>
+                </div>
+                <div class="flex w-full justify-between items-center mb-4">
+                    <div class="w-1/4 font-semibold">
+                        Khung giờ
+                    </div>
+                    <div class="w-3/4 flex items-center">
+                        <div class="w-3/4 font-regular">
+                            <p>{{frameTime}}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex w-full justify-between items-center mb-4">
+                    <div class="w-1/4 font-semibold">
+                        Phòng họp
+                    </div>
+                    <div class="w-3/4 font-regular">
+                        <p>{{scheduleDetails?.resourceName}}</p>
+                    </div>
+                </div>
+                <div class="flex w-full justify-between items-center mb-4">
+                    <div class="w-1/4 font-semibold">
+                        Mô tả
+                    </div>
+                    <div class="w-3/4 font-regular">
+                        <p>{{scheduleDetails?.description}}</p>
+                    </div>
+                </div>
+                <!-- <div class="flex w-full justify-between items-center mb-4">
+                <div class="w-1/4 text-body-2 font-semibold text-neutral-1-900">
+                    Tài liệu
+                </div>
+            </div> -->
+            </div>
+            <div class="flex flex-col h-full w-5/12 ml-8 border border-neutral-2-100 rounded-md p-2 overflow-hidden">
+                <div class="flex items-center">
+                    <i class="tdsi-group-people-fill text-neutral-1-300 text-header-1"></i>
+                    <h1 class="text-title-1 font-semibold text-neutral-1-900 mx-2">Thành viên tham gia</h1>
+                    <span *ngIf="amountMember > 0"
+                        class="rounded-full h-6 w-6 flex justify-center items-center bg-primary-4 text-caption-1 text-primary-1 font-semibold">{{amountMember}}</span>
+                </div>
+                <div class="min-h-0 max-h-96 flex flex-col pt-2 overflow-auto tds-custom-scroll">
+                    <div *ngFor="let data of members"
+                        class=" mb-2 group flex items-start justify-between py-2 px-1 bg-neutral-3-50 rounded-md">
+                        <div class="flex items-center">
+                            <tds-avatar size="md" [tdsSrc]="data.avatarUrl!"></tds-avatar>
+                            <div class="flex flex-col text-body-2 font-regular text-neutral-1-900 ml-4">
+                                <p>{{data.fullName}}</p>
+                                <p>{{data.email}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <div class="w-full flex justify-end pr-4 pb-4" *tdsModalFooter>
+            <div class="flex items-center gap-4">
+                <button tds-button class="min-w-[100px]" type="submit" color="secondary" (click)="close()">
+                    Đóng
+                </button>
+                <button (click)="deleteTicket()" tds-button class="min-w-[100px]" color="error">Xóa</button>
+                <button (click)="showModalCopyEvent(scheduleDetails?.id!)" tds-button class="min-w-[100px]" color="info">Nhân
+                    bản</button>
+                <button (click)="showModalEditSchedule()" tds-button class="min-w-[100px]" color="info">Chỉnh sửa</button>
+            </div>
+        </div>
+    </div>
+</tds-spin>

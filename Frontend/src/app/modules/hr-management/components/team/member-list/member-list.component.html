@@ -1,0 +1,42 @@
+<div class="flex flex-col">
+    <div class="bg-white flex justify-between px-4 py-2.5 rounded-tl-md rounded-tr-md">
+        <div class="flex items-center">
+            <span class="tdsi-paper-fill text-neutral-1-500 text-header-2 mr-2.5"></span>
+            <h1 class="text-title-1 font-semibold text-neutral-1-900">Danh sách thành viên trong team</h1>
+        </div>
+        <button (click)="showModalAddMember()" tds-button color="info">
+            <span class="flex items-center">
+                <i class="tdsi-add-fill text-lg leading-none mr-2"></i>Thêm thành viên
+            </span>
+        </button>
+    </div>
+    <div class="w-full h-full bg-white rounded-bl-md rounded-br-md">
+        <tds-table [loading]="isLoading" [frontPagination]="false" #basicTable [listData]="memberListByTeam">
+            <thead>
+                <tr>
+                    <th>STT</th>
+                    <th>Họ tên</th>
+                    <th>Email</th>
+                    <th>Số điện thoại</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                <ng-template ngFor let-data [ngForOf]="basicTable.data" let-index=index>
+                    <tr>
+                        <td>{{index + 1}}</td>
+                        <td>{{data.fullName}}</td>
+                        <td>{{data.email}}</td>
+                        <td>{{data.phoneNumber}}</td>
+                        <td>
+                            <button (click)="deleteMember(data)"
+                                tds-button-icon color="secondary" [disabled]="data.id == leaderId">
+                                <i class="tdsi-trash-fill text-neutral-1-400"></i>
+                            </button>
+                        </td>
+                    </tr>
+                </ng-template>
+            </tbody>
+        </tds-table>
+    </div>
+</div>
