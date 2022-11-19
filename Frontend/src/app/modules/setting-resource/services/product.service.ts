@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { CoreCommonService } from '@core/services';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
 import { TDSSafeAny } from 'tds-ui/shared/utility';
@@ -13,19 +13,23 @@ import { TypeProductDTO } from '../models/typeProduct.dto';
   providedIn: 'root'
 })
 export class ProductService {
-
+  public idProduct: BehaviorSubject<number> = new BehaviorSubject<number>(1);
   constructor(private apiService: CoreCommonService, private http: HttpClient) { }
 
   getProduct(): Observable<getProductDTO> {
     return this.http.get<getProductDTO>(
       environment.apiBNShop + `products/`)
   }
+  getProductId(id:number): Observable<getProductDTO> {
+    return this.http.get<getProductDTO>(
+      environment.apiBNShop + `products/${id}`)
+  }
   getCategory(): Observable<getCategoryDTO> {
     return this.http.get<getCategoryDTO>(
       environment.apiBNShop + `products/category/`)
   }
-  getType(): Observable<TypeProductDTO> {
-    return this.http.get<TypeProductDTO>(
+  getType(): Observable<TypeProductDTO[]> {
+    return this.http.get<TypeProductDTO[]>(
       environment.apiBNShop + `products/type/`)
   }
   createProduct(data: ProductDTO): Observable<ProductDTO> {

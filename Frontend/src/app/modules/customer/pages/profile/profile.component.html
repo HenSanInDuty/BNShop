@@ -1,0 +1,89 @@
+<div class="w-full h-full flex gap-4">
+ <div class="flex rounded-xl flex-col w-3/4  gap-6">
+  <div class="flex flex-col gap-6 bg-white rounded-xl p-4">
+   <div class="flex justify-between items-center">
+    <div class="font-semibold text-header-2 text-neutral-1-900">Thông tin cá nhân</div>
+    <div class="flex gap-4">
+     <button (click)="showModaChangePassword()" tds-button-outline color="primary">
+      <span class="flex items-center">
+       <i class="tdsi-lock-fill text-lg leading-none mr-2"></i>Đổi Mật khẩu
+      </span>
+     </button>
+     <button tds-button color="primary">
+      <span class="flex items-center">
+       <i class="tdsi-edit-fill text-lg leading-none mr-2"></i>
+       Chỉnh sửa thông tin
+      </span>
+     </button>
+    </div>
+   </div>
+   <div class="flex flex-col gap-4 mb-10">
+    <div class="flex gap-8">
+     <tds-avatar class="bg-base-orange-500 dark:bg-d-base-orange-500 text-white" [size]="'lg'" [shape]="'square'"
+      [text]="nameProfile" [tdsSrc]="userProfile$?.avatar">
+     </tds-avatar>
+    </div>
+    <div class="grid grid-cols-2 gap-8">
+     <div class="flex gap-4">
+      <div class="w-1/3">
+       <div class="grid grid-rows-3 gap-4">
+        <div class="text-body-2 font-semibold text-neutral-1-900">Họ và tên</div>
+        <div class="text-body-2 font-semibold text-neutral-1-900">Giới tính</div>
+        <div class="text-body-2 font-semibold text-neutral-1-900">Ngày sinh</div>
+       </div>
+      </div>
+      <div class="w-2/3">
+       <div class="grid grid-rows-3 gap-4">
+        <div class="text-body-2 font-regular text-neutral-1-900">{{userProfile$?.name}}</div>
+        <div class="text-body-2 font-regular text-neutral-1-900">---</div>
+        <div class="text-body-2 font-regular text-neutral-1-900">---</div>
+       </div>
+      </div>
+     </div>
+     <div class="flex gap-4">
+      <div class="w-1/3">
+       <div class="grid grid-rows-3 gap-4">
+        <div class="text-body-2 font-semibold text-neutral-1-900">Danh xưng</div>
+        <div class="text-body-2 font-semibold text-neutral-1-900">Số điện thoại</div>
+        <div class="text-body-2 font-semibold text-neutral-1-900">Email cá nhân</div>
+       </div>
+      </div>
+      <div class="w-2/3">
+       <div class="grid grid-rows-3 gap-4">
+        <div class="text-body-2 font-regular text-neutral-1-900">---</div>
+        <div class="text-body-2 font-regular text-neutral-1-900">---</div>
+        <div class="text-body-2 font-regular text-neutral-1-900">{{userProfile$?.email}}</div>
+       </div>
+      </div>
+     </div>
+    </div>
+   </div>
+  </div>
+
+ </div>
+ <div class="w-1/4">
+  <div class="flex flex-col gap-4 px-4 py-6 rounded-xl bg-white">
+   <div class="font-semibold text-header-2 text-neutral-1-900">Các hoạt động gần đây</div>
+   <tds-timeline class="mt-4">
+    <tds-timeline-item>
+     <h1 class="text-body-2 font-semibold text-neutral-1-900">Mua hàng tại shop X</h1>
+     <h3 class="text-body-2 font-regular text-neutral-1-400">04/04/2022</h3>
+    </tds-timeline-item>
+    <tds-timeline-item>
+     <h1 class="text-body-2 font-semibold text-neutral-1-900">Boom hàng shop Y</h1>
+     <h3 class="text-body-2 font-regular text-neutral-1-400">04/01/2022 </h3>
+    </tds-timeline-item>
+    <tds-timeline-item>
+     <h1 class="text-body-2 font-semibold text-neutral-1-900">Phản hồi của shop</h1>
+     <h3 class="text-body-2 font-regular text-neutral-1-400">04/01/2022</h3>
+    </tds-timeline-item>
+    <!-- <tds-timeline-item *ngFor="let items of listHistory">
+            <h1 class="text-body-2 font-semibold text-neutral-1-900">{{items.oldValueText}} sang
+                {{items.newValueText}}</h1>
+            <h3 class="text-body-2 font-regular text-neutral-1-400">{{items.creationTime | date:
+                'dd-MM-YYYY'}} - lý do: {{items.description}}</h3>
+        </tds-timeline-item> -->
+   </tds-timeline>
+  </div>
+ </div>
+</div>

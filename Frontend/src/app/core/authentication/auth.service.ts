@@ -5,7 +5,7 @@ import { BehaviorSubject, EMPTY, Observable, of, pipe, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { TDSSafeAny, TDSHelperObject, TDSHelperString } from 'tds-ui/shared/utility';
-import { CoreTokenDTO, CoreUserInitDTO } from '@core/dto';
+import { CoreCustomerInitDTO, CoreTokenDTO, CoreUserInitDTO } from '@core/dto';
 import { CoreApiMethodType } from '@core/enum';
 import { CoreCacheService } from '@core/utility';
 import { CoreCommonService } from '@core/services';
@@ -21,6 +21,7 @@ export class CoreAuthService {
     private readonly authenObs = new BehaviorSubject<boolean>(false);
     private _isLogin: boolean = false;
     private readonly _userProfileObs = new BehaviorSubject<CoreUserInitDTO | undefined>(undefined);
+    private readonly _customerProfileObs = new BehaviorSubject<CoreCustomerInitDTO | undefined>(undefined);
     private readonly _roleObs = new BehaviorSubject<Array<string> | null>([]);
 
     constructor(
@@ -75,6 +76,17 @@ export class CoreAuthService {
             })
         );
     };
+    getCustomerProfile() {
+        return this.http.get<CoreCustomerInitDTO | undefined>(
+            environment.apiBNShop + environment.apiServer.userProfile,
+            // this.apiService.getHeaderJSon(true),
+            // false
+        ).pipe(
+            tap((res: TDSSafeAny) => {
+                this._customerProfileObs.next(res);
+            })
+        );
+    };
     //Thực thi việc gọi về Server để refresh token
     refreshToken(token: CoreTokenDTO | null): Observable<TDSSafeAny> {
         console.log("vô")
@@ -120,6 +132,21 @@ export class CoreAuthService {
                 return token
             }));
     }
+    //Thực thi get token vào cache theo function đã được định nghĩa trong authen.service.xxxx.ts
+    getCacheTokenCustomer(): Observable<TDSSafeAny> {
+        return this.cacheService.getItem(this.__keyBearerToken)
+            .pipe(map((ops: TDSSafeAny) => {
+                let token: CoreTokenDTO | null = null;
+                if (TDSHelperObject.hasValue(ops)) {
+                    token = JSON.parse(ops.value).value;
+                    this.setAccessToken(token);
+                    this.updateIsLogin((TDSHelperObject.hasValue(token) &&
+                        TDSHelperString.hasValueString(token?.access)));
+                    return token
+                }
+                return false
+            }));
+    }
     //Thực thi set token vào cache theo function đã được định nghĩa trong authen.service.xxxx.ts
     setCacheToken(token: CoreTokenDTO): void {
         this.cacheService.setItem(this.__keyBearerToken, token);
@@ -162,6 +189,9 @@ export class CoreAuthService {
      */
     getObsUserProfile() {
         return this._userProfileObs.asObservable();
+    }
+    getObsCustomerProfile() {
+        return this._customerProfileObs.asObservable();
     }
 
     afterRequestToken = () =>

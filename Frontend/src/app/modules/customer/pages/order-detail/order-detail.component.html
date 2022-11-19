@@ -1,0 +1,50 @@
+<div class="flex flex-col items-center gap-8  h-full w-full bg-neutral-3-50 px-[250px]">
+  <ng-container *ngIf="lstOrder.length >0; then thenTemplate; else elseTemplate"></ng-container>
+  <ng-template #thenTemplate>
+   <div class="flex flex-col gap-8 w-full h-full">
+    <div class="flex justify-between items-center w-full">
+     <div class="w-3/5">Sản phẩm</div>
+     <div class="grid grid-cols-5 w-2/5">
+      <div class="">Đơn giả</div>
+      <div class="">Số lượng</div>
+      <div class="">Số tiền</div>
+      <div class="">Thao tác</div>
+     </div>
+    </div>
+    <div class="flex flex-col gap-8 w-full">
+     <div *ngFor="let order of lstOrderBackup; let i=index;"
+      class="flex justify-between items-center w-full pb-8 border-b border-neutral-2-200">
+      <div class="flex items-center gap-8 w-3/5">
+       <tds-avatar [shape]="'square'" [size]="100" [tdsSrc]="order.product.display_image">
+       </tds-avatar>
+      </div>
+      <div class="grid grid-cols-5 w-2/5">
+       <div class="">{{order.amount}}</div>
+       <div class="">{{order.qty}}</div>
+       <div class="">{{order.amount * order.qty }}</div>
+       <div class="">Thao tác</div>
+      </div>
+     </div>
+     <div class="flex justify-end gap-32 pr-[200px]">
+      <div class="">Tổng cộng</div>
+      <div class="">{{total}}</div>
+     </div>
+     <div class="flex justify-end gap-32 pr-[50px]">
+      <Button (click)="sumbmit()" class="px-8 py-3  bg-primary-1 text-white text-body-1">Tiến hành đặt hàng</Button>
+     </div>
+    </div>
+    <div class=""></div>
+   </div>
+  </ng-template>
+  <ng-template #elseTemplate>
+    <div class="w-full">
+     <tds-empty notFoundImage="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
+      [notFoundContent]="contentTpl">
+      <ng-template #contentTpl>
+       Không có đơn hàng nào
+      </ng-template>
+     </tds-empty>
+    </div>
+  </ng-template>
+  
+</div>

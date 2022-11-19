@@ -50,9 +50,6 @@ export class LoginComponent implements OnInit {
         .subscribe(
           {
             next: (data: TDSSafeAny) => {
-              // localStorage.setItem('access', data.access)
-              if (data.data.role === 'Admin') {
-              }
               switch (data.data.role) {
                 case 'Admin':
                   that.router.navigate(['/dashboard']);
@@ -83,6 +80,7 @@ export class LoginComponent implements OnInit {
             },
             complete: () => {
               this.isSubmit = false;
+              this.cd.detectChanges();
             }
           }
 

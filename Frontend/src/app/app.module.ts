@@ -21,7 +21,7 @@ import { InterceptorCore } from '@core/authentication/HttpInterceptor';
 registerLocaleData(localeVi);
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
   ],
   imports: [
     BrowserModule,

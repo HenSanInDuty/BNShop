@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { CoreAuthService } from '@core/authentication';
 import { CoreTokenDTO, CoreUserInitDTO } from '@core/dto';
@@ -23,11 +23,14 @@ export class AccountService {
   ) { }
   //Thực thi việc đăng nhập và lấy token
   signInPassword(username: string, password: string): Observable<TDSSafeAny>{
+    const headers = new HttpHeaders()
+      .set('content-type', 'application/json')
+      .set('Access-Control-Allow-Origin', '*');
     const data = {
       phone: username,
       password: password,
     };
-    return this.http.post<any>(environment.apiBNShop + `account/sign-in/`, data).pipe(
+    return this.http.post<TDSSafeAny>(environment.apiBNShop + `account/sign-in/`, data).pipe(
       this.authenService.afterRequestToken()
     );
 

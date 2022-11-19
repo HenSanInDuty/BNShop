@@ -15,7 +15,7 @@ const routes: Routes = [
     children:[
       {
         path: '',
-        redirectTo: 'dashboard',
+        redirectTo: 'customer',
         pathMatch: 'full',
       },
       {
@@ -46,6 +46,7 @@ const routes: Routes = [
   },
   {
     path: 'customer',
+    canActivate: [CustomerGuardService],
     loadChildren: () => import('./modules/customer/customer.module').then(m => m.CustomerModule)
   },
 ];

@@ -103,7 +103,7 @@ export class CoreCommonService {
     //Tạo mới dữ liệu
     public create<T>(api: CoreAPIDTO, param: any): Observable<T> {
         let that = this;
-        return that.connect<T>(api.method, api.url, param, that.getHeaderJSon());
+        return that.connect<T>(api.method, api.url, param);
     }
     //Cập nhật dữ liệu
     public updateData<T>(api: CoreAPIDTO, param: any): Observable<T> {
