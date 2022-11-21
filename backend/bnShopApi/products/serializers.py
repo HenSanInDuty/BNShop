@@ -89,7 +89,10 @@ class ProductRegisterSerializer(serializers.Serializer):
                                          brand=brand,)
         Quantity.objects.create(quantity=validated_data['quantity'],
                                            product=product,
-                                           note="Init")
+                                           types=1,
+                                           note="Init",
+                                           change_num=validated_data['quantity'],
+                                           price_once=validated_data['price'])
         Price.objects.create(price=validated_data['price'],
                                      product=product)
         
@@ -194,7 +197,7 @@ class ProductUpdateSerializer(serializers.Serializer):
                                                 product=instance,
                                                 quantity=validated_data.get('quantity'),
                                                 change_num = change_num,
-                                                   note=note,)
+                                                note=note,)
             instance.quantity.add(new_quantity)
             instance.save()
         #Add price

@@ -1,13 +1,10 @@
-from unittest import result
-from django.shortcuts import render
-from rest_framework import generics
+from rest_framework import generics, status
 from rest_framework.response import Response
-from rest_framework.decorators import permission_classes, api_view
 from rest_framework.permissions import IsAuthenticated
-
+from address.serializers import AddressSerializer
 from orders.models import Order, OrderDetail, Payment
 from orders.serializers import CreateOrdersDetailSerializer, OrdersSerializer, PaymentSerializer, UpdateOrderDetailSerializer, UpdateOrdersSerializer, ViewOrderDetailSerializer, ViewOrdersSerializer
-from permissions.permissions import AgencyPermission, ShipperPermission
+from permissions.permissions import AgencyPermission, AgencyShipperMixPermission, ShipperPermission
 from products.models import Product
 from products.views import get_info_product
 from drf_yasg.utils import swagger_auto_schema
@@ -29,19 +26,30 @@ class OrderViewAll(generics.GenericAPIView):
     
     def post(self,request):
         customer = request.user.user.customer
-        if customer:
+        product = None
+        if request.data.get('product'):
+            product = Product.objects.filter(id=request.data.get('product'),
+                                            is_approved=True,
+                                            is_delete=False).first()
+        
+        if customer and product:
             data = request.data
             data['customer'] = customer.id
+
+            if product.quantity.last().quantity < data['qty']:
+                return Response({"detail":"Don't have anymore product"},status=status.HTTP_400_BAD_REQUEST)
+
             serializer = self.serializer_class(data=data)
             if serializer.is_valid():
                 instance = serializer.save()
-                print(instance.id)
                 order = Order.objects.filter(id = instance.id)
                 result = ViewOrdersSerializer(order[0])
                 return Response(result.data)
             else:
                 return Response(serializer.errors)    
-        return Response()
+        return Response(
+            {"detail":"Can't find product or customer"},
+            status=status.HTTP_404_NOT_FOUND)
 
 #Lấy giỏ hàng chi tiết
 @swagger_auto_schema()
@@ -60,7 +68,17 @@ class OrderViewDetail(generics.GenericAPIView):
                     'qty':order[0].qty
                 })   
         return Response()
-        
+    
+    def delete(self,request,id):
+        customer = request.user.user.customer
+        if customer:
+            order = Order.objects.filter(customer = customer, pk = id)
+            if order:
+                order.delete()
+                return Response({"detail":"Delete success"},status=status.HTTP_200_OK)
+            
+        return Response({"detail":"Not found"},status=status.HTTP_404_NOT_FOUND)
+
     def patch(self,request,id):
         customer = request.user.user.customer
         if customer:
@@ -78,12 +96,13 @@ class OrderViewDetail(generics.GenericAPIView):
         return Response()
 
 def get_order_detail(od):
+    address_serializer = AddressSerializer(od.address)
     result = {
         "id":od.id,
         "date_order":od.date_order,
         "date_receive":od.date_receive,
         "status":od.status,
-        "address":od.address and {**od.address} ,
+        "address":address_serializer.data,
         "payment":od.payment.name,
         "order":[
            {
@@ -105,11 +124,19 @@ class OrderDetailViewAll(generics.GenericAPIView):
     serializer_class = CreateOrdersDetailSerializer
     
     def get(self,request):
-        order_detail = OrderDetail.objects.all()
-        result = []
-        for od in order_detail:
-            result.append(get_order_detail(od))
-        return Response(result)
+        user = request.user
+        if user.is_customer:
+            order_detail = OrderDetail.objects.filter(customer=user.user.customer)
+            result = []
+            for od in order_detail:
+                result.append(get_order_detail(od))
+            return Response(result)
+        else:
+            order_detail = OrderDetail.objects.all()
+            result = []
+            for od in order_detail:
+                result.append(get_order_detail(od))
+            return Response(result)
     
     def post(self,request):
         serializer = self.serializer_class(data=request.data)
@@ -125,12 +152,27 @@ class OrderDetailViewDetail(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = UpdateOrderDetailSerializer
     
-    def get(self,request,id):
-        od = OrderDetail.objects.filter(id = id)
-        if od:
-            return Response(od[0])
+    def get_permissions(self):
+        per = super().get_permissions()
+        if self.request.method != "GET":
+            return [*per,AgencyShipperMixPermission()]
         else:
-            return Response({})
+            return per
+
+    def get(self,request,id):
+        user = request.user
+        if user.is_customer:
+            od = OrderDetail.objects.filter(id = id,customer=user.user.customer).first()
+            if od:
+                return Response(get_order_detail(od))
+            else:
+                return Response({})
+        else:
+            od = OrderDetail.objects.filter(id = id).first()
+            if od:
+                return Response(get_order_detail(od))
+            else:
+                return Response({})
         
     def patch(self,request,id):
         od = OrderDetail.objects.filter(id=id)
@@ -147,7 +189,7 @@ class PaymentViewAll(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = PaymentSerializer
     
-    def get(self,request,id):
+    def get(self,request):
         payment_all = Payment.objects.all()
         serializer = self.serializer_class(payment_all,many=True)
         return Response(serializer.data)

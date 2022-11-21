@@ -1,6 +1,5 @@
 from datetime import datetime
-from rest_framework import serializers
-
+from rest_framework import serializers,status
 from products.models import Quantity
 from address.models import Address
 from .models import Order, OrderDetail, Payment, STATUS
@@ -47,15 +46,17 @@ class CreateOrdersDetailSerializer(serializers.Serializer):
     
     def save(self,customer):
         validated_data = self.validated_data
+        
         address = Address.objects.filter(user_id=customer.user.id,
-                                        id=validated_data.get('address')).first()
-                                
+                                        id=validated_data.get('address')).first()                 
         if not address:
             raise serializers.ValidationError({"address":"Please re put address"})
         
         order_detail = OrderDetail.objects.create(status="Waiting for confirm",
                                                 payment=Payment.objects.filter(id=validated_data['payment'])[0],
-                                                address=address)
+                                                address=address,
+                                                customer=customer)
+        agency = None
         total = 0.0
         for order in validated_data['order']:
             order_model = Order.objects.filter(id=int(order),
@@ -64,13 +65,24 @@ class CreateOrdersDetailSerializer(serializers.Serializer):
                 raise serializers.ValidationError({"order":"Wrong order, maybe order in order detail"})
             #Get product
             product = order_model.product
+            price_of_product = product.price.all().reverse()
+            agency = product.agency.first()
+            for p in price_of_product:
+                if p.end_datetime:
+                    if p.end_datetime>=datetime.now():
+                        price_once = p.price
+                else:
+                    price_once = p.price
             if product.quantity.last().quantity < order_model.qty:
+                order_detail.delete()
                 raise serializers.ValidationError({"qty":"Don't have anymore product"})
             # Change quantity of product
             quantity = Quantity.objects.create(quantity=product.quantity.last().quantity-order_model.qty,
                                                 change_num=order_model.qty,
                                                 note="User buy items",
                                                 customer = customer,
+                                                types = 3,
+                                                price_once = price_once,
                                                 product = product)
             # Add note quantity to product
             product.quantity.add(quantity)
@@ -78,7 +90,9 @@ class CreateOrdersDetailSerializer(serializers.Serializer):
             total+=order_model.amount
             order_detail.save()
         order_detail.total = total
+        order_detail.agency = agency
         order_detail.save()
+
         validated_data['id'] = order_detail.id
         return validated_data
     

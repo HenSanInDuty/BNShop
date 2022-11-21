@@ -75,11 +75,20 @@ class Price(models.Model):
         Product, on_delete=models.CASCADE, related_name='price')
 
 class Quantity(models.Model):
+    TYPES_QUANTITY = (
+        (1,"Add goods"),
+        (2,"Drop goods"),
+        (3,"Customer buy"),
+        (4,"Customer cancel")
+    )
+
     quantity = models.IntegerField()
     change_num = models.IntegerField(null=True)
     note = models.CharField(max_length=100)
     from_date = models.DateTimeField(auto_now_add=True)
     customer = models.ForeignKey(Customer,on_delete=models.CASCADE,related_name="history", null=True)
+    types = models.IntegerField(null=True)
+    price_once = models.FloatField(null=True)
     product = models.ForeignKey(
         Product, related_name="quantity", on_delete=models.CASCADE)
     

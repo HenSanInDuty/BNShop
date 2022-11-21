@@ -10,7 +10,7 @@ from rest_framework.permissions import IsAdminUser,IsAuthenticated
 from rest_framework.pagination import PageNumberPagination
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
-from products.serializers import AttachmentSerializer, CategorySerializer, DetailSerializer, ProductRegisterSerializer, ProductSerializer, CategorySwagger, ProductUpdateSerializer, ReportProductSerializer, TypeSerializer
+from products.serializers import AttachmentSerializer, CategorySerializer, DetailSerializer, ProductRegisterSerializer, ProductSerializer, CategorySwagger, ProductUpdateSerializer, QuantitySerializer, ReportProductSerializer, TypeSerializer
 from .models import Brand, Category, Detail, Product, Quantity, Type
 from permissions.permissions import AgencyPermission
 
@@ -121,6 +121,7 @@ def get_info_product(p):
     now = datetime.now()
     list_price = list(p.price.all())
     list_price.reverse()
+    agency = p.agency.first()
     #Get price which are last and pre to compare price 
     last_price = None
     pre_price = None
@@ -131,13 +132,18 @@ def get_info_product(p):
             #if pre_price and last_price is present, we won't need to find anymore
             break
         
-        if not last_price and (not price.end_datetime or price.end_datatime >= now):
+        if not last_price and (not price.end_datetime):
                 last_price = price 
         
     #Result of product
     instance = {
                 'id':p.id,
                 'name':p.name,
+                'agency':{
+                    'id':agency.id,
+                    'name':agency.user.name,
+                    'avatar':agency.user.avatar
+                },
                 'display_image':p.display_image,
                 'is_delete':p.is_delete,
                 'is_approved':p.is_approved,
@@ -199,7 +205,7 @@ class ProductViewAll(generics.GenericAPIView):
         if request.GET.get('category'):
             category_filter = request.GET.get('category').split()
 
-        query = Q()
+        query = Q(is_approved=True,is_delete=False)
         if type_filter:
             for type in type_filter:
                 query.add(Q(type__id=int(type)),Q.OR)
@@ -217,11 +223,7 @@ class ProductViewAll(generics.GenericAPIView):
             else:
                 query.add(Q(agency__id=agency_filter),Q.AND)
 
-
-        if len(query.children) == 0:
-            product = Product.objects.all()
-        else:
-            product = Product.objects.filter(query)
+        product = Product.objects.filter(query)
 
         result = []
         for p in product:
@@ -261,9 +263,9 @@ class ProductViewDetail(generics.GenericAPIView):
     
     def get(self,request,id):
         try:
-            product = Product.objects.filter(id=id)
-            instance = get_info_product(product[0])
-            if product[0].is_delete or not product[0].is_approved:
+            product = Product.objects.filter(id=id).first()
+            instance = get_info_product(product)
+            if product.is_delete or not product.is_approved:
                 return Response(MESSAGE['notfind'],status=status.HTTP_400_BAD_REQUEST)
             else:
                 return Response(instance)
@@ -320,13 +322,16 @@ class WishList(generics.GenericAPIView):
 @permission_classes([IsAuthenticated])
 @swagger_auto_schema(method='get')
 def get_wish_list(request):
-    customer = request.user.user.customer
-    product = customer.favorite_product.all()
-    result = []
-    for p in product:
-        instance = get_info_product(p)
-        result.append(instance)
-    return Response(result)
+    if request.user.is_customer:
+        customer = request.user.user.customer
+        product = customer.favorite_product.all()
+        result = []
+        for p in product:
+            instance = get_info_product(p)
+            result.append(instance)
+        return Response(result)
+    else:
+        return Response({"detail":"Not found"},status=status.HTTP_404_NOT_FOUND)
 
 @swagger_auto_schema()
 class Report(generics.GenericAPIView):
@@ -487,7 +492,6 @@ class SatisfactionLevel(generics.GenericAPIView):
 
 class TypeProductViewAll(generics.GenericAPIView):
     serializer_class = TypeSerializer
-    permission_classes = [IsAuthenticated]
 
     def get(self,request,**kWargs):
         all_type = Type.objects.all()
@@ -495,3 +499,23 @@ class TypeProductViewAll(generics.GenericAPIView):
         return Response(serializer.data,status=status.HTTP_200_OK)
 
 
+class QuantityViewAll(generics.GenericAPIView):
+    serializer_class = QuantitySerializer
+    permission_classes = [IsAuthenticated,AgencyPermission]
+
+    def get(self,request,**kwargs):
+        agency = request.user.user.agency
+        all_quantity = Quantity.objects.filter(product__agency__id=agency.id).order_by("-from_date")
+        serializers = self.serializer_class(all_quantity,many=True)
+        return Response(serializers.data)
+
+class QuantityViewDetail(generics.GenericAPIView):
+    serializer_class = QuantitySerializer
+    permission_classes = [IsAuthenticated,AgencyPermission]
+
+    def get(self,request,productId,**kwargs):
+        agency = request.user.user.agency
+        all_quantity = Quantity.objects.filter(product__agency__id=agency.id,
+                                            product__id=productId).order_by("-from_date")
+        serializers = self.serializer_class(all_quantity,many=True)
+        return Response(serializers.data)

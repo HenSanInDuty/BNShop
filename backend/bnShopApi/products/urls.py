@@ -12,5 +12,7 @@ urlpatterns = [
     path('rate-return/',product_views.RateReturn.as_view(),name='rate-return'),
     path('satisfaction-level/',product_views.SatisfactionLevel.as_view(),name='satisfaction-level'),
     path('type/',product_views.TypeProductViewAll.as_view(),name='type-product'),
+    path('quantity/',product_views.QuantityViewAll.as_view(),name='quantity-product'),
+    path('quantity/<int:productId>/',product_views.QuantityViewDetail.as_view(),name='quantity-product'),
     path('',product_views.ProductViewAll.as_view(),name='product'),
 ]
