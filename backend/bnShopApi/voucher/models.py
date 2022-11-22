@@ -24,18 +24,19 @@ class Voucher(models.Model):
         (1,'Special')
     )
     
-    customer = models.ManyToManyField(Customer,related_name='voucher',through='VoucherCustomer')
+    customer = models.ManyToManyField(Customer,related_name='voucher',through='VoucherCustomer',blank=True)
     type = models.ForeignKey(Type,related_name='voucher',on_delete=models.CASCADE)
-    order_detail = models.ForeignKey(OrderDetail,related_name='voucher',on_delete=models.CASCADE,blank=True)
-    code = models.CharField(max_length=40)
+    code = models.CharField(max_length=40,unique=True)
     qty = models.IntegerField(null=True,blank=True)
     title = models.CharField(max_length=100)
     content = models.CharField(max_length=100,null=True,blank=True)
+    subcontent = models.CharField(max_length=100,null=True,blank=True)
     from_price = models.FloatField(null=True,blank=True)
     from_product = models.IntegerField(null=True,blank=True)
     reduce_price = models.FloatField(null=True,blank=True)
     reduce_persent = models.FloatField(null=True,blank=True)
     end_date = models.DateTimeField(null=True,blank=True)
+    is_delete = models.BooleanField(default=False)
     scope = models.IntegerField(default = 0,choices=SCOPE_VOUCHER)
     
     

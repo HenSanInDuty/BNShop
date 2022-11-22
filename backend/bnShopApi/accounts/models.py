@@ -60,6 +60,7 @@ class Account(AbstractBaseUser):
     is_customer = models.BooleanField(default=False)
     is_agency = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
+    is_shipper = models.BooleanField(default=False)
     
     objects = AccountManager()
     
@@ -100,6 +101,13 @@ class Customer(models.Model):
     birthday = models.DateField(auto_now_add=True)
     def __str__(self):
         return self.user.name
+
+class Shipper(models.Model):
+    user = models.OneToOneField(Users,on_delete=models.CASCADE,related_name='shipper')
+    companyName = models.CharField(max_length=3000)
+    def __str__(self):
+        return self.user.name + " "+self.companyName
+
 
 class Visit(models.Model):
     customer = models.ForeignKey(Customer,on_delete=models.CASCADE,related_name='customer_visit')

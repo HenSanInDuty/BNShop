@@ -21,7 +21,7 @@ class RatingViewAll(generics.GenericAPIView):
     def post(self,request,**kwargs):
         data = request.data
         customer = request.user.user.customer
-        data['customer'] = customer
+        data['customer'] = customer.id
         serializer = self.serializer_class(data=data)
         if serializer.is_valid():
             serializer.save()
@@ -30,7 +30,7 @@ class RatingViewAll(generics.GenericAPIView):
             return Response(serializer.errors)
         
 @swagger_auto_schema()      
-class RatingViewDetail(generics.GenericAPIView):
+class RatingViewReplyDetail(generics.GenericAPIView):
     serializer_class = RateSerializer
     permission_classes = [IsAuthenticated]
     
@@ -39,10 +39,12 @@ class RatingViewDetail(generics.GenericAPIView):
         serializer = self.serializer_class(rate,many=True)
         result = []
         for instance in serializer.data:
-            reply_objects = Reply.objects.filter(rate_id = instance.id).all()
+            reply_objects = Reply.objects.filter(rate_id = instance.get('id')).all()
             if reply_objects:
                 instance['reply'] =  reply_objects.values('content','user')
-                result.append(instance)
+            
+            result.append(instance)
+            
         return Response(result)
     
 @swagger_auto_schema()

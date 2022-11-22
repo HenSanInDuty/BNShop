@@ -6,8 +6,10 @@ from rest_framework.decorators import api_view
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 
-from .models import Account, Users
-from .serializers import AgencyRegister, AgencySerializer, CustomerRegister, CustomerSerializer, LogoutSerializer, AccountSerializer, UserSerializer, ChangePasswordSerializer
+from permissions.permissions import AgencyPermission
+
+from .models import Account, Customer, Users
+from .serializers import AgencyRegister, ProfileCustomerUpdateSerializer, AgencySerializer, CustomerRegister, CustomerSerializer, LogoutSerializer, AccountSerializer, UserSerializer, ChangePasswordSerializer
 from django.db.utils import IntegrityError
 
 from .utilities import get_tokens_for_user
@@ -156,13 +158,8 @@ class ChangePasswordView(generics.UpdateAPIView):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
-class ProfileView(generics.GenericAPIView):
-    permission_classes = [IsAuthenticated]
-    serializer_class = AccountSerializer
-    model = Users
-    
-    def get_profile_user(self,user):
+#Profile User
+def get_profile_user(user):
         return_result = {
             'id':user.id,
             'name':user.name,
@@ -177,13 +174,18 @@ class ProfileView(generics.GenericAPIView):
             return_result['main_industry'] = user.agency.main_industry
             return_result['identify'] = user.agency.identify
         return return_result
+
+class ProfileView(generics.GenericAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = AccountSerializer
+    model = Users
     
     def get(self,request):
         user = self.model.objects.get(id=request.user.user.id)
-        return_result = self.get_profile_user(user)
-        
+        return_result = get_profile_user(user)
         return Response(return_result)
 
+    @swagger_auto_schema(request_body=ProfileCustomerUpdateSerializer)
     def patch(self,request):
         user = self.model.objects.get(id=request.user.user.id)
         if user.account.is_agency:
@@ -206,9 +208,22 @@ class ProfileView(generics.GenericAPIView):
                 general_profile.save()
                 specific_profile.save()
                 user = self.model.objects.get(id=request.user.user.id)
-                return Response(self.get_profile_user(user))
+                return Response(get_profile_user(user))
             else:
                 return Response(specific_profile.errors)
         else:
             return Response(general_profile.errors)
 
+class ProfileViewCustomer(generics.GenericAPIView):
+    permission_classes = [IsAuthenticated,AgencyPermission]
+    serializer_class = AccountSerializer
+    model = Users
+    
+    def get(self,request,idCustom):
+        customer = Customer.objects.filter(id=idCustom).first()
+        if customer:
+            user = self.model.objects.filter(id=customer.user.id).first()
+            if user:
+                return_result = get_profile_user(user)
+                return Response(return_result)
+        return Response(status=status.HTTP_404_NOT_FOUND)

@@ -3,7 +3,9 @@ from email.policy import default
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import serializers
+from rest_framework.exceptions import PermissionDenied
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
+from django.contrib.auth import authenticate
 
 from .models import Account, Agency, Customer, Users
 
@@ -17,13 +19,37 @@ class MyTokenObtainPairViewSerializer(TokenObtainPairSerializer):
         return token
 
     def validate(self, attrs):
+        # Take username and password from request
+        phone = attrs.get('phone')
+        password = attrs.get('password')
+
+        if phone and password:
+            # Try to authenticate the user using Django auth framework.
+            user = authenticate(request=self.context.get('request'),
+                                phone=phone, password=password)
+            if not user:
+                # If we don't have a regular user, raise a PermissionDenied
+                msg = 'Access denied: wrong username or password.'
+                raise PermissionDenied(msg,code="permission_denied")
+        
+        
         data = super().validate(attrs)
         refresh = self.get_token(self.user)
+        if self.user.is_agency:
+            role = 'Agency'
+        if self.user.is_customer:
+            role = 'Customer'
+        if self.user.is_admin:
+            role = 'Admin'
+        if self.user.is_shipper:
+            role = 'Shipper'
+
         data['refresh'] = str(refresh)
         data['access'] = str(refresh.access_token)
         data['data'] = {
             'id': self.user.id,
-            'phoneNumber': self.user.phone
+            'phoneNumber': self.user.phone,
+            'role': role
         }
         return data
     
@@ -113,3 +139,12 @@ class AgencyRegister(serializers.Serializer):
     time_visited = serializers.FloatField(default=0,required = False)
     main_industry = serializers.CharField(max_length=100,required=True)
     identify = serializers.CharField(max_length=12,required=True)   
+
+class ProfileCustomerUpdateSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=100, required=False)
+    email = serializers.EmailField(required=False)
+    avatar = serializers.CharField(max_length=3000,required=False)
+    nationality = serializers.CharField(max_length=100,required=False)
+    gender = serializers.CharField(max_length=1,required=False)
+    nickname = serializers.CharField(max_length=100,required=False)
+    birthday = serializers.DateField(required=False)
