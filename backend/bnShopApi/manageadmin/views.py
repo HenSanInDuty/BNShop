@@ -1,7 +1,4 @@
-import datetime
-from django.shortcuts import render
 from rest_framework import generics, status, serializers
-from django.db.models import Q
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes,api_view
@@ -12,6 +9,8 @@ from drf_yasg import openapi
 from products.models import Product, Type as ProductType
 from products.serializers import TypeSerializer
 from products.views import get_info_product
+from rating.models import Rate
+from rating.serializers import RateSerializer
 # Create your views here.
 
 def get_profile_user(user):
@@ -127,22 +126,22 @@ class ProductManageViewAll(generics.GenericAPIView):
     type = request.GET.get('type')
     agency = request.GET.get('agency')
     products = Product.objects.all()
+    result = []
     if not agency == None:
       agency = Users.objects.filter(id=agency).first().agency
       if not agency:
         raise serializers.ValidationError({"detail":"Can't find"})
       # If agency has present
       products = products.filter(agency=agency)
-
-    if type == "1":
-      products = products.filter(is_approved = False,is_delete=False)
-    elif type == "2":
-      products = products.filter(is_approved = True,is_delete=False)
-    elif type == "3":
-      products = products.filter(is_delete=True)
-    result = []
-    for p in products:
-      result.append(get_info_product(p))
+    if not type == None :
+      if type == "1":
+        products = products.filter(is_approved = False,is_delete=False)
+      elif type == "2":
+        products = products.filter(is_approved = True,is_delete=False)
+      elif type == "3":
+        products = products.filter(is_delete=True)
+      for p in products:
+        result.append(get_info_product(p))
     return Response(result)
 
 @api_view(http_method_names=['patch'])
@@ -169,4 +168,43 @@ def deleteProduct(request,productId):
   else:
     return Response({"detail":"Delete product unsuccess"},status=status.HTTP_400_BAD_REQUEST)
 
+class RatingViewAll(generics.GenericAPIView):
+  permission_classes = [IsAuthenticated,AdminPermission]
+  type_param = openapi.Parameter('type', openapi.IN_QUERY, description="Neu type = 1 la rating chua approved, type = 2 la rating da approved ", type=openapi.TYPE_STRING)
+  
+  @swagger_auto_schema(mehotd='get',manual_parameters=[type_param])
+  def get(self,request):
+    type = request.GET.get('type')
+    all_rating = Rate.objects.all()
+    if not type == None:
+      if type == 1:
+        all_rating = all_rating.filter(is_approved=False)
+      elif type == 2:
+        all_rating = all_rating.filter(is_approved=True)
 
+    serializer = RateSerializer(all_rating,many=True)
+    return Response(serializer.data)
+
+
+@api_view(http_method_names=['patch'])
+@permission_classes([IsAuthenticated,AdminPermission])
+@swagger_auto_schema(method='patch')
+def activeRate(request,ratetId):
+  rate = Rate.objects.filter(id=ratetId).first()
+  if rate:
+    rate.is_approved = True
+    rate.save()
+    return Response({"detail":"Active rate success"})
+  else:
+    return Response({"detail":"Active rate unsuccess"},status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(http_method_names=['delete'])
+@permission_classes([IsAuthenticated,AdminPermission])
+@swagger_auto_schema(method='delete')
+def deleteRate(request,ratetId):
+  rate = Rate.objects.filter(id=ratetId).first()
+  if rate:
+    rate.delete()
+    return Response({"detail":"Delete rate success"})
+  else:
+    return Response({"detail":"Delete rate unsuccess"},status=status.HTTP_400_BAD_REQUEST)
