@@ -121,7 +121,7 @@ def get_info_product(p):
     now = datetime.now()
     list_price = list(p.price.all())
     list_price.reverse()
-    agency = p.agency.first()
+    agency = p.agency.first().user
     #Get price which are last and pre to compare price 
     last_price = None
     pre_price = None
@@ -141,8 +141,8 @@ def get_info_product(p):
                 'name':p.name,
                 'agency':{
                     'id':agency.id,
-                    'name':agency.user.name,
-                    'avatar':agency.user.avatar
+                    'name':agency.name,
+                    'avatar':agency.avatar
                 },
                 'display_image':p.display_image,
                 'is_delete':p.is_delete,
