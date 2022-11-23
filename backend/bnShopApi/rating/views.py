@@ -69,8 +69,18 @@ class RatingViewReplyDetail(generics.GenericAPIView):
                     rp_all.append(rp)
                 instance['reply'] = rp_all
             result.append(instance)
-            
         return Response(result)
+    
+    def post(self,request,id,**kwargs):
+        data = request.data
+        customer = request.user.user.customer
+        data['customer'] = customer.id
+        serializer = CreateRateSerializer(data=data,context={'customer':customer,'product':id})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        else:
+            return Response(serializer.errors)
     
 @swagger_auto_schema()
 class ReplyViews(generics.GenericAPIView):
@@ -92,4 +102,29 @@ class ReplyViews(generics.GenericAPIView):
         else:
             return Response(serializer.errors)
         
-            
+@swagger_auto_schema()
+class RatingProductViewAll(generics.GenericAPIView):
+    serializer_class = RateSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get(self,request,**kwargs):
+        customer = request.user.user.customer
+        rates = Rate.objects.filter(customer=customer, is_approved=True)
+        serializer = self.serializer_class(rates,many=True)
+        result = []
+        for instance in serializer.data:
+            reply_objects = Reply.objects.filter(rate_id = instance.get('id')).all()
+            if reply_objects:
+                rp_all = []
+                for rp in reply_objects:
+                    rp = {
+                        'content':rp.content,
+                        'user':{
+                            'name':rp.user.name,
+                            'time_joined':timezone.now() - rp.user.account.date_joined
+                        }
+                    }
+                    rp_all.append(rp)
+                instance['reply'] = rp_all
+            result.append(instance)
+        return Response(result)
