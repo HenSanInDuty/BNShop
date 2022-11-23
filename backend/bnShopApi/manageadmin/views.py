@@ -189,8 +189,8 @@ class RatingViewAll(generics.GenericAPIView):
 @api_view(http_method_names=['patch'])
 @permission_classes([IsAuthenticated,AdminPermission])
 @swagger_auto_schema(method='patch')
-def activeRate(request,ratetId):
-  rate = Rate.objects.filter(id=ratetId).first()
+def activeRate(request,rateId):
+  rate = Rate.objects.filter(id=rateId).first()
   if rate:
     rate.is_approved = True
     rate.save()

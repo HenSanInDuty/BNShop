@@ -28,25 +28,38 @@ class OrderViewAll(generics.GenericAPIView):
         customer = request.user.user.customer
         product = None
         if request.data.get('product'):
+
             product = Product.objects.filter(id=request.data.get('product'),
                                             is_approved=True,
                                             is_delete=False).first()
+
         
         if customer and product:
             data = request.data
             data['customer'] = customer.id
 
-            if product.quantity.last().quantity < data['qty']:
-                return Response({"detail":"Don't have anymore product"},status=status.HTTP_400_BAD_REQUEST)
-
-            serializer = self.serializer_class(data=data)
-            if serializer.is_valid():
-                instance = serializer.save()
-                order = Order.objects.filter(id = instance.id)
-                result = ViewOrdersSerializer(order[0])
-                return Response(result.data)
+            order = Order.objects.filter(product=product,
+                                    order_detail__isnull=True,
+                                    customer = customer).first()
+            if order:
+                order.qty = order.qty + data['qty']
+                if order.qty > product.quantity.last().quantity:
+                    order.qty = product.quantity.last().quantity
+                order.save()
+                serializer = ViewOrdersSerializer(order)
+                return Response(serializer.data)
             else:
-                return Response(serializer.errors)    
+                if product.quantity.last().quantity < data['qty']:
+                    return Response({"detail":"Don't have anymore product"},status=status.HTTP_400_BAD_REQUEST)
+
+                serializer = self.serializer_class(data=data)
+                if serializer.is_valid():
+                    instance = serializer.save()
+                    order = Order.objects.filter(id = instance.id)
+                    result = ViewOrdersSerializer(order[0])
+                    return Response(result.data)
+                else:
+                    return Response(serializer.errors)    
         return Response(
             {"detail":"Can't find product or customer"},
             status=status.HTTP_404_NOT_FOUND)

@@ -2,9 +2,17 @@ from rest_framework import serializers
 from .models import Rate, Reply, Image
 from products.models import Product
 class RateSerializer(serializers.ModelSerializer):
+    image = serializers.SerializerMethodField()
+
     class Meta:
         model = Rate
         fields = "__all__"
+    
+    def get_image(self,obj):
+        result = []
+        for img in obj.image.all():
+            result.append(img.image_url)
+        return result
 
 class CreateRateSerializer(serializers.Serializer):
     product = serializers.IntegerField()
