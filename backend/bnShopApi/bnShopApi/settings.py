@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 import os
 from pathlib import Path
 from datetime import timedelta
+import django
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -26,7 +28,7 @@ SECRET_KEY = 'django-insecure-$mocnf@6we!4-cf04qw-4j2o2v%)#*=*pbxwfx6)@2p%*305=e
 DEBUG = True
 DEBUG_PROPAGATE_EXCEPTIONS = True
 
-ALLOWED_HOSTS = ["*", "bnshop.herokuapp.com"]
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -45,21 +47,27 @@ INSTALLED_APPS = [
     'products.apps.ProductsConfig',
     'orders.apps.OrdersConfig',
     'rating.apps.RatingConfig',
+    'shipping',
     'rest_framework',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
-    'drf_yasg'
+    'drf_yasg',
+    'corsheaders'
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+CORS_ORIGIN_ALLOW_ALL=True
 
 ROOT_URLCONF = 'bnShopApi.urls'
 
@@ -85,18 +93,28 @@ WSGI_APPLICATION = 'bnShopApi.wsgi.application'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
     # 'default': {
-    #     'ENGINE': 'django.db.backends.postgresql_psycopg2',
-    #     'NAME': 'd9c5dis4k19kg5',
-    #     'USER': 'ogfzgrfphkapga',
-    #     'PASSWORD': 'c738d9b686114897158393bac3eb4cde79fedbe0112f4556217fd3b1eda7847a',
-    #     'HOST': 'ec2-54-85-56-210.compute-1.amazonaws.com',
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
+    # }
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.postgresql',
+    #     'NAME': 'd6gtpuluvtikat', 
+    
+    #     'USER': 'xkgphzhsefvfhh',
+    #     'PASSWORD': '082522d809637165419cd97be34c38722f48f68f80928330738f8783174fba2d',
+    #     'HOST': 'ec2-44-210-228-110.compute-1.amazonaws.com',
     #     'PORT': '5432',
     # }
+    #Docker
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "bnshop",
+        "USER": "postgres",
+        "PASSWORD": "12345678",
+        "HOST": "db",
+        "PORT": "5432",
+    }
 }
 
 
@@ -194,3 +212,7 @@ SWAGGER_SETTINGS = {
       }
    }
 }
+
+# Configure Django App for Heroku
+import django_heroku
+django_heroku.settings(locals())

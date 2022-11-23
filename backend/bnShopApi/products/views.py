@@ -1,14 +1,20 @@
+from collections import OrderedDict
 from datetime import datetime
+from django.core.paginator import Paginator
+from django.db.models import Q
 from django.forms.models import model_to_dict
 from rest_framework import generics,status
 from rest_framework.decorators import api_view,permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser,IsAuthenticated
+from rest_framework.pagination import PageNumberPagination
 from drf_yasg.utils import swagger_auto_schema
-
-from products.serializers import AttachmentSerializer, CategorySerializer, DetailSerializer, ProductRegisterSerializer, ProductSerializer, CategorySwagger, ProductUpdateSerializer
-from .models import Brand, Category, Detail, Product
+from drf_yasg import openapi
+from products.serializers import AttachmentSerializer, CategorySerializer, DetailSerializer, ProductRegisterSerializer, ProductSerializer, CategorySwagger, ProductUpdateSerializer, QuantitySerializer, ReportProductSerializer, TypeSerializer
+from .models import Brand, Category, Detail, Product, Quantity, Type
 from permissions.permissions import AgencyPermission
+
+from rating.models import Rate
 import json
 
 MESSAGE = {
@@ -115,6 +121,7 @@ def get_info_product(p):
     now = datetime.now()
     list_price = list(p.price.all())
     list_price.reverse()
+    agency = p.agency.first().user
     #Get price which are last and pre to compare price 
     last_price = None
     pre_price = None
@@ -125,13 +132,18 @@ def get_info_product(p):
             #if pre_price and last_price is present, we won't need to find anymore
             break
         
-        if not last_price and (not price.end_datetime or price.end_datatime >= now):
+        if not last_price and (not price.end_datetime):
                 last_price = price 
         
     #Result of product
     instance = {
                 'id':p.id,
                 'name':p.name,
+                'agency':{
+                    'id':agency.id,
+                    'name':agency.name,
+                    'avatar':agency.avatar
+                },
                 'display_image':p.display_image,
                 'is_delete':p.is_delete,
                 'is_approved':p.is_approved,
@@ -167,20 +179,66 @@ def product_agency(request,agencyid):
 class ProductViewAll(generics.GenericAPIView):
     permission_classes = []
     serializer_class = ProductRegisterSerializer
-    
+    pagination_class = PageNumberPagination
+    type_param = openapi.Parameter('type', openapi.IN_QUERY, description="Product type", type=openapi.TYPE_STRING)
+    brand_param = openapi.Parameter('brand', openapi.IN_QUERY, description="Brand name", type=openapi.TYPE_STRING)
+    agency_param = openapi.Parameter('agency', openapi.IN_QUERY, description="Agency id", type=openapi.TYPE_INTEGER)
+    category_param = openapi.Parameter('category', openapi.IN_QUERY, description="Category id", type=openapi.TYPE_STRING)
+
+
     def get_permissions(self):
         per = super().get_permissions()
         if self.request.method != "GET":
             return [*per,IsAuthenticated(),AgencyPermission()]
         else:
             return per
-    
-    def get(self,request):
-        product = Product.objects.all()
+            
+    @swagger_auto_schema(mehotd='get',manual_parameters=[type_param,brand_param,agency_param,category_param])
+    def get(self,request,**kwargs):
+        type_filter = None
+        brand_filter = request.GET.get('brand')
+        agency_filter = request.GET.get('agency')
+        category_filter = None 
+        if request.GET.get('type'):
+            type_filter = request.GET.get('type').split()
+
+        if request.GET.get('category'):
+            category_filter = request.GET.get('category').split()
+
+        query = Q(is_approved=True,is_delete=False)
+        if type_filter:
+            for type in type_filter:
+                query.add(Q(type__id=int(type)),Q.OR)
+
+        if brand_filter:
+            query.add(Q(brand__name__icontains=brand_filter),Q.OR)
+
+        if agency_filter:
+            if category_filter:
+                query_spec = Q()
+                for cate in category_filter:
+                    query_spec.add(Q(category__id=int(cate)),Q.OR)
+                query_spec.add(Q(agency__id=agency_filter),Q.AND)
+                query.add(query_spec,Q.AND)
+            else:
+                query.add(Q(agency__id=agency_filter),Q.AND)
+
+        product = Product.objects.filter(query)
+
         result = []
         for p in product:
             instance = get_info_product(p)
             result.append(instance)
+
+        if request.GET.get('page'):
+            page = Paginator(result,10)
+            if int(request.GET.get('page')) > page.num_pages:
+                return Response({
+                    'message':'Only have ' + str(page.num_pages) + ' pages'
+                },status=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE)
+        
+            return Response(page.page(request.GET.get('page')).object_list)
+
         return Response(result)
     
     def post(self,request):
@@ -205,9 +263,9 @@ class ProductViewDetail(generics.GenericAPIView):
     
     def get(self,request,id):
         try:
-            product = Product.objects.filter(id=id)
-            instance = get_info_product(product[0])
-            if product[0].is_delete or not product[0].is_approved:
+            product = Product.objects.filter(id=id).first()
+            instance = get_info_product(product)
+            if product.is_delete or not product.is_approved:
                 return Response(MESSAGE['notfind'],status=status.HTTP_400_BAD_REQUEST)
             else:
                 return Response(instance)
@@ -264,11 +322,200 @@ class WishList(generics.GenericAPIView):
 @permission_classes([IsAuthenticated])
 @swagger_auto_schema(method='get')
 def get_wish_list(request):
-    customer = request.user.user.customer
-    product = customer.favorite_product.all()
-    result = []
-    for p in product:
-        instance = get_info_product(p)
-        result.append(instance)
-    return Response(result)
+    if request.user.is_customer:
+        customer = request.user.user.customer
+        product = customer.favorite_product.all()
+        result = []
+        for p in product:
+            instance = get_info_product(p)
+            result.append(instance)
+        return Response(result)
+    else:
+        return Response({"detail":"Not found"},status=status.HTTP_404_NOT_FOUND)
 
+@swagger_auto_schema()
+class Report(generics.GenericAPIView):
+    permission_classes = [IsAuthenticated,AgencyPermission]
+    serializer_class = ReportProductSerializer
+    def post(self,request,**kwargs):
+        QUARTER = {
+            '1':[1,2,3],
+            '2':[4,5,6],
+            '3':[7,8,9],
+            '4':[10,11,12]
+        }
+
+        MIDYEAR = {
+            '1':[1,2,3,4,5,6],
+            '2':[7,8,9,10,11,12]
+        }
+
+        type = request.data.get('type')
+        detail = request.data.get('detail')
+        agency = request.user.user.agency
+        product_agency = Product.objects.filter(agency=agency).all()
+        
+        # Month
+        if type == "1":
+            all_quantity = Quantity.objects.filter(from_date__month=detail,
+                                                note='User buy items',
+                                                product__in=product_agency)
+            if not all_quantity:
+                return Response({"message":"Zero product were selled in this month"}) 
+        # Quarter
+        elif type == "2":
+            
+            all_quantity = Quantity.objects.filter(from_date__month__in=QUARTER[str(detail)],
+                                                note='User buy items',
+                                                product__in=product_agency)
+            if not all_quantity:
+                return Response({"message":"Zero product were selled in this quarter"}) 
+        # MidYear
+        elif type == "3":
+            all_quantity = Quantity.objects.filter(from_date__month__in=MIDYEAR[str(detail)],
+                                                note='User buy items',
+                                                product__in=product_agency)
+            if not all_quantity:
+                return Response({"message":"Zero product were selled in this midyear"}) 
+        # Year
+        elif type == "4":
+            all_quantity = Quantity.objects.filter(from_date__year=datetime.now().year,
+                                                note='User buy items',
+                                                product__in=product_agency)
+            if not all_quantity:
+                return Response({"message":"Zero product were selled in this year"}) 
+        else:
+            return Response({},status=status.HTTP_400_BAD_REQUEST)
+        
+        result = OrderedDict()
+        for rep in all_quantity:
+            key = str(rep.product.id)
+            value = rep.change_num
+            if key in result.keys():
+                result.update({str(rep.product.id):result[key]+value})
+            else:
+                result[key] = value    
+        compare_list = list(result.keys())
+        result_return = {'slowestSeller':compare_list[0],'bestSeller':compare_list[-1]}
+        return Response(result_return)
+
+@swagger_auto_schema()
+class RateReturn(generics.GenericAPIView):
+    permission_classes = [IsAuthenticated,AgencyPermission]
+    def get(self,request,**kwargs):
+        agency = request.user.user.agency
+        product_agency = Product.objects.filter(agency=agency).all()
+        all_quantity = Quantity.objects.filter(product__in = product_agency,
+                                                note='User buy items')
+        result = {}
+        for rep in all_quantity:
+            customer = 'customer-'+str(rep.customer.id)
+            info = {'product':rep.product.id,
+                    'num_buy':rep.change_num}
+            if customer in result.keys():
+                result[customer].append(info)
+            else:
+                result[customer] = [info]    
+        return_customer = 0
+        for cus,infor in result.items():
+            if len(infor) > 1:
+                return_customer +=1
+        return_percent = return_customer/len(result.keys()) * 100
+
+        result['statistical'] = {
+            'number_of_customer':len(result.keys()),
+            'return_percent': return_percent,
+            'unreturn_percent': 100 - return_percent
+        }
+        return Response(result)
+
+@swagger_auto_schema()
+class SatisfactionLevel(generics.GenericAPIView):
+    permission_classes = [IsAuthenticated,AgencyPermission]
+
+    def get(self,request,**kwargs):
+        agency = request.user.user.agency
+        product_agency = Product.objects.filter(agency=agency).all()
+        all_rate = Rate.objects.filter(product__in = product_agency)
+        rate_negative_total = 0
+        rate_netraul_total = 0
+        rate_positive_total = 0
+        result = {}
+        #Statistical
+        for rate in all_rate:
+            product = "product-"+str(rate.product.id)
+            star = rate.star
+
+            if star < 0:
+                star = 1
+            
+            if star > 5:
+                star = 5
+
+            if star in [1,2]:
+                rate_negative_total += 1
+
+            if star in [3,4]:
+                rate_netraul_total += 1
+
+            if star in [5]:
+                rate_positive_total += 1
+
+            if product in result.keys():
+                if star in [1,2]:
+                    result[product].update({'negative':result[product]['negative']+1})
+                elif star in [3,4]:
+                    result[product].update({'neutral':result[product]['neutral']+1})
+                elif star in [5]:
+                    result[product].update({'positive':result[product]['positive']+1})
+                
+                result[product].update({'total_star':result[product]['total_star']+star})
+                result[product].update({'total_rate':result[product]['total_rate']+1})
+            else:
+                if star in [1,2]:
+                    result[product] = {'negative':1}
+                elif star in [3,4]:
+                    result[product] = {'neutral':1}
+                elif star in [5]:
+                    result[product] = {'positive':1}
+
+                result[product]['total_star'] = star
+                result[product]['total_rate'] = 1
+
+        for product,value in result.items():
+            result[product]['avarage_rate'] = value['total_star'] / value['total_rate']
+
+        result['total_negative'] = rate_negative_total
+        result['total_neutral'] = rate_netraul_total
+        result['total_positive'] = rate_positive_total
+        return Response(result)
+
+class TypeProductViewAll(generics.GenericAPIView):
+    serializer_class = TypeSerializer
+
+    def get(self,request,**kWargs):
+        all_type = Type.objects.all()
+        serializer = self.serializer_class(all_type,many=True)
+        return Response(serializer.data,status=status.HTTP_200_OK)
+
+
+class QuantityViewAll(generics.GenericAPIView):
+    serializer_class = QuantitySerializer
+    permission_classes = [IsAuthenticated,AgencyPermission]
+
+    def get(self,request,**kwargs):
+        agency = request.user.user.agency
+        all_quantity = Quantity.objects.filter(product__agency__id=agency.id).order_by("-from_date")
+        serializers = self.serializer_class(all_quantity,many=True)
+        return Response(serializers.data)
+
+class QuantityViewDetail(generics.GenericAPIView):
+    serializer_class = QuantitySerializer
+    permission_classes = [IsAuthenticated,AgencyPermission]
+
+    def get(self,request,productId,**kwargs):
+        agency = request.user.user.agency
+        all_quantity = Quantity.objects.filter(product__agency__id=agency.id,
+                                            product__id=productId).order_by("-from_date")
+        serializers = self.serializer_class(all_quantity,many=True)
+        return Response(serializers.data)

@@ -1,3 +1,4 @@
+```python
 -Install python 3.10
 -pip install virtualenv
 -Make sure you in bnShopApi folder
@@ -7,3 +8,4 @@
 -py manage.py makemigrations #Tao csdl
 -py manage.py migrate #Tao csdl
 -py manage.py runserver #Chay server
+```
