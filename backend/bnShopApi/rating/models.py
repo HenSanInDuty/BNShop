@@ -14,6 +14,7 @@ class Rate(models.Model):
 class Reply(models.Model):
     content = models.TextField()
     date_created = models.DateTimeField(auto_now_add=True)
+    is_approved = models.BooleanField(default=False)
     rate = models.ForeignKey(Rate,on_delete=models.CASCADE,blank=True,related_name='reply')
     user = models.ForeignKey(Users,on_delete=models.CASCADE,blank=True,related_name='reply')
 
