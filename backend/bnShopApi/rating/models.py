@@ -7,6 +7,7 @@ class Rate(models.Model):
     content = models.TextField()
     star = models.IntegerField(default=1)
     date_created = models.DateTimeField(auto_now_add=True)
+    is_approved = models.BooleanField(default=False)
     product = models.ForeignKey(Product,on_delete=models.CASCADE,related_name='rate')
     customer = models.ForeignKey(Customer,on_delete=models.CASCADE,related_name='rate')
 

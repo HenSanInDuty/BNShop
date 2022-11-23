@@ -168,3 +168,5 @@ def deleteProduct(request,productId):
     return Response({"detail":"Delete product success"})
   else:
     return Response({"detail":"Delete product unsuccess"},status=status.HTTP_400_BAD_REQUEST)
+
+

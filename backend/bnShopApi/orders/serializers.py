@@ -89,6 +89,9 @@ class CreateOrdersDetailSerializer(serializers.Serializer):
             order_detail.order.add(order_model)
             total+=order_model.amount
             order_detail.save()
+            # Add product to history of customer
+            if not customer.bought_product.filter(id = product.id).exists():
+                customer.bought_product.add(product)
         order_detail.total = total
         order_detail.agency = agency
         order_detail.save()
