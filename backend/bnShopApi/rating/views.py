@@ -14,7 +14,7 @@ class RatingViewAll(generics.GenericAPIView):
     
     def get(self,request,**kwargs):
         customer = request.user.user.customer
-        rates = Rate.objects.filter(customer=customer)
+        rates = Rate.objects.filter(is_approved=True)
         serializer = self.serializer_class(rates,many=True)
         return Response(serializer.data)
     
@@ -35,7 +35,7 @@ class RatingViewReplyDetail(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
     
     def get(self,request,id,**kwargs):
-        rate = Rate.objects.filter(product_id=id)
+        rate = Rate.objects.filter(product_id=id,is_approved=True)
         serializer = self.serializer_class(rate,many=True)
         result = []
         for instance in serializer.data:
