@@ -1,4 +1,4 @@
-from rest_framework import generics, status
+from rest_framework import generics, status, serializers
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from address.serializers import AddressSerializer
@@ -28,25 +28,38 @@ class OrderViewAll(generics.GenericAPIView):
         customer = request.user.user.customer
         product = None
         if request.data.get('product'):
+
             product = Product.objects.filter(id=request.data.get('product'),
                                             is_approved=True,
                                             is_delete=False).first()
+
         
         if customer and product:
             data = request.data
             data['customer'] = customer.id
 
-            if product.quantity.last().quantity < data['qty']:
-                return Response({"detail":"Don't have anymore product"},status=status.HTTP_400_BAD_REQUEST)
-
-            serializer = self.serializer_class(data=data)
-            if serializer.is_valid():
-                instance = serializer.save()
-                order = Order.objects.filter(id = instance.id)
-                result = ViewOrdersSerializer(order[0])
-                return Response(result.data)
+            order = Order.objects.filter(product=product,
+                                    order_detail__isnull=True,
+                                    customer = customer).first()
+            if order:
+                order.qty = order.qty + data['qty']
+                if order.qty > product.quantity.last().quantity:
+                    order.qty = product.quantity.last().quantity
+                order.save()
+                serializer = ViewOrdersSerializer(order)
+                return Response(serializer.data)
             else:
-                return Response(serializer.errors)    
+                if product.quantity.last().quantity < data['qty']:
+                    return Response({"detail":"Don't have anymore product"},status=status.HTTP_400_BAD_REQUEST)
+
+                serializer = self.serializer_class(data=data)
+                if serializer.is_valid():
+                    instance = serializer.save()
+                    order = Order.objects.filter(id = instance.id)
+                    result = ViewOrdersSerializer(order[0])
+                    return Response(result.data)
+                else:
+                    return Response(serializer.errors)    
         return Response(
             {"detail":"Can't find product or customer"},
             status=status.HTTP_404_NOT_FOUND)
@@ -104,6 +117,14 @@ def get_order_detail(od):
         "status":od.status,
         "address":address_serializer.data,
         "payment":od.payment.name,
+        "customer":{
+            "user_id":od.customer.user.id,
+            "name":od.customer.user.name
+        },
+        "agency":{
+            "user_id":od.agency.user.id,
+            "name":od.agency.user.name
+        },
         "order":[
            {
                "id":o.id,
@@ -131,14 +152,16 @@ class OrderDetailViewAll(generics.GenericAPIView):
             for od in order_detail:
                 result.append(get_order_detail(od))
             return Response(result)
-        else:
-            order_detail = OrderDetail.objects.all()
+        elif user.is_agency:
+            order_detail = OrderDetail.objects.filter(agency=user.user.agency)
             result = []
             for od in order_detail:
                 result.append(get_order_detail(od))
             return Response(result)
     
     def post(self,request):
+        if not request.user.is_customer:
+            return Response({"detail":"Only customer can do this action"},status=status.HTTP_403_FORBIDDEN)
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             serializer.save(customer=request.user.user.customer)

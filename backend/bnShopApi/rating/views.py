@@ -4,6 +4,7 @@ from rest_framework import generics, serializers, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from drf_yasg.utils import swagger_auto_schema
+from products.models import Product
 from rating.models import Rate, Reply
 
 from rating.serializers import CreateRateSerializer, RateSerializer, ReplySerializer
@@ -108,8 +109,14 @@ class RatingProductViewAll(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
     
     def get(self,request,**kwargs):
-        customer = request.user.user.customer
-        rates = Rate.objects.filter(customer=customer, is_approved=True)
+        user = request.user
+        if user.is_customer:
+            customer = request.user.user.customer
+            rates = Rate.objects.filter(customer=customer, is_approved=True)
+        elif user.is_agency:
+            agency = request.user.user.agency
+            products = Product.objects.filter(agency = agency)
+            rates = Rate.objects.filter(product__in = products, is_approved=True)
         serializer = self.serializer_class(rates,many=True)
         result = []
         for instance in serializer.data:
