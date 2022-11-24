@@ -1,4 +1,4 @@
-from rest_framework import generics, status
+from rest_framework import generics, status, serializers
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from address.serializers import AddressSerializer
@@ -117,6 +117,14 @@ def get_order_detail(od):
         "status":od.status,
         "address":address_serializer.data,
         "payment":od.payment.name,
+        "customer":{
+            "user_id":od.customer.user.id,
+            "name":od.customer.user.name
+        },
+        "agency":{
+            "user_id":od.agency.user.id,
+            "name":od.agency.user.name
+        },
         "order":[
            {
                "id":o.id,
@@ -144,14 +152,16 @@ class OrderDetailViewAll(generics.GenericAPIView):
             for od in order_detail:
                 result.append(get_order_detail(od))
             return Response(result)
-        else:
-            order_detail = OrderDetail.objects.all()
+        elif user.is_agency:
+            order_detail = OrderDetail.objects.filter(agency=user.user.agency)
             result = []
             for od in order_detail:
                 result.append(get_order_detail(od))
             return Response(result)
     
     def post(self,request):
+        if not request.user.is_customer:
+            return Response({"detail":"Only customer can do this action"},status=status.HTTP_403_FORBIDDEN)
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             serializer.save(customer=request.user.user.customer)
