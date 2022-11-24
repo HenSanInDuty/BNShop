@@ -218,10 +218,10 @@ class ProductViewAll(generics.GenericAPIView):
                 query_spec = Q()
                 for cate in category_filter:
                     query_spec.add(Q(category__id=int(cate)),Q.OR)
-                query_spec.add(Q(agency__id=agency_filter),Q.AND)
+                query_spec.add(Q(agency__user__id=agency_filter),Q.AND)
                 query.add(query_spec,Q.AND)
             else:
-                query.add(Q(agency__id=agency_filter),Q.AND)
+                query.add(Q(agency__user__id=agency_filter),Q.AND)
 
         product = Product.objects.filter(query)
 

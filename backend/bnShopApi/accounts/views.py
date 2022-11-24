@@ -8,7 +8,7 @@ from drf_yasg.utils import swagger_auto_schema
 
 from permissions.permissions import AgencyPermission
 
-from .models import Account, Customer, Users
+from .models import Account, Agency, Customer, Users
 from .serializers import AgencyRegister, ProfileCustomerUpdateSerializer, AgencySerializer, CustomerRegister, CustomerSerializer, LogoutSerializer, AccountSerializer, UserSerializer, ChangePasswordSerializer
 from django.db.utils import IntegrityError
 
@@ -167,12 +167,18 @@ def get_profile_user(user):
             'avatar':user.avatar,
             'nationality':user.nationality
         }
+        role = "Shipper"
         if user.account.is_customer:
             return_result['nickname']=user.customer.nickname
             return_result['birthday']=user.customer.birthday
+            role = 'Customer'
+
         if user.account.is_agency:
             return_result['main_industry'] = user.agency.main_industry
             return_result['identify'] = user.agency.identify
+            role = 'Agency'
+        
+        return_result['role'] = role
         return return_result
 
 class ProfileView(generics.GenericAPIView):
@@ -214,16 +220,14 @@ class ProfileView(generics.GenericAPIView):
         else:
             return Response(general_profile.errors)
 
-class ProfileViewCustomer(generics.GenericAPIView):
+class ProfileView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated,AgencyPermission]
     serializer_class = AccountSerializer
     model = Users
     
-    def get(self,request,idCustom):
-        customer = Customer.objects.filter(id=idCustom).first()
-        if customer:
-            user = self.model.objects.filter(id=customer.user.id).first()
-            if user:
-                return_result = get_profile_user(user)
-                return Response(return_result)
+    def get(self,request,idUser):
+        user = self.model.objects.filter(id=idUser).first()
+        if user and not user.account.is_admin:
+            return_result = get_profile_user(user)
+            return Response(return_result)
         return Response(status=status.HTTP_404_NOT_FOUND)
