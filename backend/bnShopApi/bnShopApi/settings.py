@@ -97,24 +97,24 @@ DATABASES = {
     #     'ENGINE': 'django.db.backends.sqlite3',
     #     'NAME': BASE_DIR / 'db.sqlite3',
     # }
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.postgresql',
-    #     'NAME': 'd6gtpuluvtikat', 
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'd6gtpuluvtikat', 
     
-    #     'USER': 'xkgphzhsefvfhh',
-    #     'PASSWORD': '082522d809637165419cd97be34c38722f48f68f80928330738f8783174fba2d',
-    #     'HOST': 'ec2-44-210-228-110.compute-1.amazonaws.com',
-    #     'PORT': '5432',
-    # }
-    #Docker
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "bnshop",
-        "USER": "postgres",
-        "PASSWORD": "12345678",
-        "HOST": "db",
-        "PORT": "5432",
+        'USER': 'xkgphzhsefvfhh',
+        'PASSWORD': '082522d809637165419cd97be34c38722f48f68f80928330738f8783174fba2d',
+        'HOST': 'ec2-44-210-228-110.compute-1.amazonaws.com',
+        'PORT': '5432',
     }
+    #Docker
+    # "default": {
+    #     "ENGINE": "django.db.backends.postgresql",
+    #     "NAME": "bnshop",
+    #     "USER": "postgres",
+    #     "PASSWORD": "12345678",
+    #     "HOST": "db",
+    #     "PORT": "5432",
+    # }
 }
 
 

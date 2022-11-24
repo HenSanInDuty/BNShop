@@ -11,6 +11,6 @@ urlpatterns = [
     path('sign-out/',views.LogoutAPIView.as_view(),name='sign-out'),
     path('sign-in/refresh/',TokenRefreshView.as_view(),name='user-sign-in-refresh'),
     path('profile/',views.ProfileView.as_view(),name='profile'),
-    path('profile/<int:idUser>/',views.ProfileView.as_view(),name='profile-customer'),
+    path('profile/<int:idUser>/',views.ProfileViewOne.as_view(),name='profile-one'),
     path('profile/change-password/',views.ChangePasswordView.as_view(),name='change-password'),
 ]

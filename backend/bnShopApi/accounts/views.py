@@ -103,8 +103,6 @@ def register_agency(request):
 @api_view(['POST'])
 def register_customer(request):
     return register(request,'Customer')
-
-
     
 class LogoutAPIView(generics.GenericAPIView):
     serializer_class = LogoutSerializer
@@ -220,7 +218,7 @@ class ProfileView(generics.GenericAPIView):
         else:
             return Response(general_profile.errors)
 
-class ProfileView(generics.GenericAPIView):
+class ProfileViewOne(generics.GenericAPIView):
     permission_classes = [IsAuthenticated,AgencyPermission]
     serializer_class = AccountSerializer
     model = Users

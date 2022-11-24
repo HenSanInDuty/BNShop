@@ -142,7 +142,10 @@ def get_info_product(p):
                 'agency':{
                     'id':agency.id,
                     'name':agency.name,
-                    'avatar':agency.avatar
+                    'avatar':agency.avatar,
+                    'email':agency.email,
+                    'phone':agency.account.phone,
+                    'main_industry':agency.agency.main_industry
                 },
                 'display_image':p.display_image,
                 'is_delete':p.is_delete,
