@@ -1,0 +1,39 @@
+<tds-spin [spinning]="isSubmit">
+ <form [formGroup]="addAddress" id="addAddress" (ngSubmit)="onSubmit()" autocomplete="off" >
+  <div class="flex flex-col gap-4">
+   <tds-form-field>
+    <tds-label>Chọn tỉnh</tds-label>
+    <input tdsInput autocomplete="off" placeholder="Nhập tên hình thức làm việc" [required]="true"
+     formControlName="province" />
+    <tds-error>Vui lòng nhập tên loại nghỉ phép</tds-error>
+   </tds-form-field>
+   <tds-form-field>
+    <tds-label>Chọn quận/ huyện</tds-label>
+    <input tdsInput autocomplete="off" placeholder="Nhập tên hình thức làm việc" [required]="true"
+     formControlName="district" />
+    <tds-error>Vui lòng nhập tên loại nghỉ phép</tds-error>
+   </tds-form-field>
+   <tds-form-field>
+    <tds-label>Chọn phường xã</tds-label>
+    <input tdsInput autocomplete="off" placeholder="Nhập tên hình thức làm việc" [required]="true"
+     formControlName="ward" />
+    <tds-error>Vui lòng nhập tên loại nghỉ phép</tds-error>
+   </tds-form-field>
+   <tds-form-field>
+    <tds-label>Nhập tên địa chỉ tên đường</tds-label>
+    <div class="flex items-start h-16 border-neutral-2-200">
+     <input tdsInput autocomplete="off" placeholder="Nhập mô tả" formControlName="detail" />
+    </div>
+    <tds-error>Vui lòng nhập tên loại nghỉ phép</tds-error>
+   </tds-form-field>
+  </div>
+  <div *tdsModalFooter class="flex justify-end gap-3 p-4">
+   <button (click)="cancel()" tds-button color="secondary" class="min-w-[100px]">
+    Hủy
+   </button>
+   <button tds-button form='addAddress' type="submit" color="primary" class="min-w-[100px]">
+    Thêm
+   </button>
+  </div>
+ </form>
+</tds-spin>

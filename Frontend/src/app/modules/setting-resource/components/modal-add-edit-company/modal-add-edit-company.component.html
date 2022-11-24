@@ -1,0 +1,83 @@
+<tds-spin [spinning]="loading">
+  <form [formGroup]="addEditCompanyForm" id="addEditCompanyForm" (ngSubmit)="onSubmit()">
+    <div class="flex flex-col gap-8">
+      <div class="flex justify-center">
+        <tds-upload [(fileList)]="fileListAvatar" (fileListChange)="handleChangeFile($event)"  [showButton]="true" [showUploadList]="false"
+          [beforeUpload]="beforeUploadAvatar">
+          <div class="flex items-center justify-center w-32 h-32 rounded-2xl">
+            <ng-container *ngIf="previewAvatar; else elseTemplate">
+              <img class="w-32 h-32 rounded-2xl" [src]="previewAvatar" [ngStyle]="{ width: '100%' }" />
+            </ng-container>
+            <ng-template #elseTemplate>
+              <ng-container *ngIf="company?.avatarUrl; else elseTemplate1">
+                <img class="w-32 h-32 rounded-2xl" [src]="company?.avatarUrl" [ngStyle]="{ width: '100%' }" />
+              </ng-container>
+              <ng-template #elseTemplate1>
+                <div class="w-32 h-32 rounded-2xl cursor-pointer bg-primary-5 flex justify-center items-center">
+                  <i class="tdsi-camera-fill text-primary-1 text-heading-2"></i>
+                </div>
+              </ng-template>
+            </ng-template>
+          </div>
+        </tds-upload>
+      </div>
+      <div class="flex flex-col gap-4">
+        <tds-form-field>
+          <tds-label>Tên công ty</tds-label>
+          <input tdsInput autocomplete="off" placeholder="Tên công ty" [required]="true" formControlName="name" />
+        </tds-form-field>
+        <tds-form-field>
+          <tds-label>Tên viết tắt</tds-label>
+          <input tdsInput autocomplete="off" placeholder="Tên viết tắt" formControlName="shortName" />
+        </tds-form-field>
+        <tds-form-field>
+          <tds-label>Người đại diện</tds-label>
+          <input tdsInput autocomplete="off" placeholder="Người đại diện" formControlName="representative" />
+        </tds-form-field>
+        <tds-form-field>
+          <tds-label>Địa chỉ</tds-label>
+          <input tdsInput autocomplete="off" placeholder="Địa chỉ" formControlName="address" />
+        </tds-form-field>
+        <div class="grid grid-cols-2 gap-8">
+          <div class="grid grid-row-3 gap-4">
+            <tds-form-field>
+              <tds-label>Ngày thành lập</tds-label>
+              <tds-date-picker [(ngModel)]="date" (ngModelChange)="onChange($event)" formControlName="establishDay">
+              </tds-date-picker>
+            </tds-form-field>
+            <tds-form-field>
+              <tds-label>Điện thoại</tds-label>
+              <input tdsInput autocomplete="off" placeholder="Điện thoại" formControlName="phoneNumber" />
+            </tds-form-field>
+            <tds-form-field>
+              <tds-label>Email</tds-label>
+              <input tdsInput autocomplete="off" placeholder="Email" formControlName="email" />
+            </tds-form-field>
+          </div>
+          <div class="grid grid-row-3 gap-4">
+            <tds-form-field>
+              <tds-label>Mã số thuế</tds-label>
+              <input tdsInput autocomplete="off" placeholder="Mã số thuế" formControlName="taxCode" />
+            </tds-form-field>
+            <tds-form-field>
+              <tds-label>Fax</tds-label>
+              <input tdsInput autocomplete="off" placeholder="Fax" formControlName="fax" />
+            </tds-form-field>
+            <tds-form-field>
+              <tds-label>Website</tds-label>
+              <input tdsInput autocomplete="off" placeholder="Website" formControlName="websiteUrl" />
+            </tds-form-field>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div *tdsModalFooter class="flex justify-end gap-3 p-4">
+      <button (click)="cancel()" tds-button color="secondary" class="!px-9">
+        Hủy
+      </button>
+      <button tds-button form='addEditCompanyForm' type="submit" color="primary" class="!px-8">
+        Thêm
+      </button>
+    </div>
+  </form>
+</tds-spin>

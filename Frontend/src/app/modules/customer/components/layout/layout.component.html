@@ -1,0 +1,320 @@
+<tds-spin [spinning]="isLoading">
+  <div class="w-screen h-screen">
+    <div class="w-full flex flex-col h-full  overflow-y-auto overflow-x-visible tds-custom-scroll">
+      <!-- header -->
+      <div class="flex flex-col fixed z-50 bg-white w-full ">
+        <div class="w-full py-1">
+          <tds-header >
+            <tds-form-field class="w-full" [tdsClass]="'bg-neutral-3-100'">
+              <input tdsInput placeholder="Tìm kiếm" autocomplete="off" />
+              <span class="bg-neutral-3-100" tdsPrefix><i class="text-neutral-1-500 tdsi-search-fill "></i></span>
+            </tds-form-field>
+            <div class="inline-flex tds-header-toolbar-right items-end">
+              <div class="flex mr-8 gap-4 items-end">
+                <tds-badge class="cursor-pointer" [count]="lstOrderDetail.length" showZero>
+                  <i class="text-2xl text-neutral-1-500 tdsi-treatment-slip-fill " trigger="click" [visible]=isClick2
+                    tds-dropdown (visibleChange)="close2($event)" [tdsDropdownMenu]="menu2" clickHide=false
+                    [placement]="'bottomRight'" overlayClassName='indexClass' [autoClose]=false></i>
+                  <tds-dropdown-menu #menu2="tdsDropdownMenu" class="w-full" selected="true">
+                    <tds-spin [spinning]="loadingOrder">
+                      <div class="min-w-[800px] h-[400px] overflow-auto tds-custom-scroll">
+                        <div class="flex justify-between items-center border-b border-neutral-2-200 px-4 py-3 ">
+                          <div class="font-semibold text-header-1 text-neutral-1-900">Đơn hàng</div>
+                          <div class="flex gap-7 items-center">
+                            <i (click)="closeDropdown2()"
+                              class="tdsi-close-fill border-0 box-border dark:hover:bg-d-neutral-3-300 dark:text-d-neutral-1-500 focus:outline-none h-7 hover:bg-neutral-3-50 hover:rounded-md inline-flex items-center justify-center leading-4 p-1.5 relative text-base text-neutral-1-500 cursor-pointer"></i>
+                          </div>
+                        </div>
+                        <ng-container *ngIf="userProfile$; then thenTemplate3; else elseTemplate3"></ng-container>
+                        <ng-template #thenTemplate3>
+                          <div class="flex flex-col justify-between ">
+                            <div class="flex flex-col px-4 py-8 items-center">
+                              <tds-filter-status class="w-full" [(ngModel)]='selectedStatus'
+                                (selectChange)="onSelectStatus($event)">
+                                <ng-template ngFor let-item [ngForOf]="lstStatus" let-i="index">
+                                  <tds-filter-status-item [name]='item.name' [count]='item.count!' [value]="item.value">
+                                    <ng-template tds-filter-status-template let-active='active' let-disabled="disabled"
+                                      let-count='count' let-name='name' let-value>
+                                      <div class="py-1.5 px-4.5 flex items-center rounded-2xl" [ngClass]="{'text-white bg-primary-1':active,'
+                                                                hover:bg-primary-1 group':!disabled}">
+                                        <div class="text-body-2 font-semibold" [ngClass]="{'text-white':active,'text-neutral-1-400
+                                                          group-hover:text-white':!active}">
+                                          {{name}}
+                                        </div>
+                                      </div>
+                                    </ng-template>
+                                  </tds-filter-status-item>
+                                </ng-template>
+                              </tds-filter-status>
+                              <div class="flex items-center justify-between w-full px-4 pt-8">
+                                <div class="text-neutral-1-900 font-semibold text-header-1">Đơn hàng</div>
+                                <div class="flex gap-10 items-center">
+                                  <div class="text-neutral-1-900 font-semibold text-header-1">Trạng thái đơn hàng</div>
+                                  <div class="text-neutral-1-900 font-semibold text-header-1">Hình thức thanh toán</div>
+                                  <div class="text-neutral-1-900 font-semibold text-header-1">Thao tác</div>
+                                </div>
+                              </div>
+                            </div>
+                            <ng-container *ngIf="lstOrderDetail.length>0; then thenTemplate2; else elseTemplate2">
+                            </ng-container>
+                            <ng-template #thenTemplate2>
+                              <div *ngFor="let order of lstOrderDetail; let i=index;"
+                                class="flex flex-col p-4 border-b border-neutral-2-200">
+                                <div class="flex items-center justify-between">
+                                  <div class="">Lúc: {{order.date_order | pipeDate | date: "medium"}}</div>
+                                  <div class="flex gap-10">
+                                    <div [ngSwitch]="order.status" class="">
+                                      <tds-tag *ngSwitchCase="'Waiting for confirm'" status='success' type="outline"
+                                        class="text-body-2 font-regular text-neutral-1-900">Đang chờ phê duyệt</tds-tag>
+                                      <tds-tag *ngSwitchCase="2" status='error' type="outline"
+                                        class="text-body-2 font-regular text-neutral-1-900">
+                                        Đã phê duyệt</tds-tag>
+                                      <tds-tag *ngSwitchCase="3" status='warning' type="outline"
+                                        class="text-body-2 font-regular text-neutral-1-900">Đang
+                                        giao hàng</tds-tag>
+                                      <tds-tag *ngSwitchCase="4" status='secondary' type="outline"
+                                        class="text-body-2 font-regular text-neutral-1-900">{{
+                                        order.status }}</tds-tag>
+                                      <tds-tag *ngSwitchCase="5" status='info' type="outline"
+                                        class="text-body-2 font-regular text-neutral-1-900">{{
+                                        order.status }}</tds-tag>
+                                    </div>
+                                    <div *ngIf="order.payment" class="">Thanh toán khi nhận hàng</div>
+                                    <div
+                                      class="flex gap-3 items-center text-primary-1 font-semibold text-body-2 cursor-pointer">
+                                      Xem thêm
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </ng-template>
+                            <ng-template #elseTemplate2>
+                              <tds-empty notFoundImage="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
+                                [notFoundContent]="contentTpl">
+                                <ng-template #contentTpl>
+                                  Không có đơn hàng nào
+                                </ng-template>
+                              </tds-empty>
+                            </ng-template>
+                          </div>
+                        </ng-template>
+                        <ng-template #elseTemplate3>
+                          <tds-empty notFoundImage="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
+                            [notFoundContent]="contentTpl" [notFoundFooter]="footerTpl">
+                            <ng-template #contentTpl>
+                              Bạn phải đăng nhập trước chọn hàng
+                            </ng-template>
+                            <ng-template #footerTpl>
+                              <button tds-button>Đăng nhập ngay</button>
+                            </ng-template>
+                          </tds-empty>
+                        </ng-template>
+                      </div>
+                    </tds-spin>
+                  </tds-dropdown-menu>
+                </tds-badge>
+                <tds-badge class="cursor-pointer" [count]="lstOrderBackup.length" showZero>
+                  <i class="text-2xl text-neutral-1-500 tdsi-cart-fill-green-fill " trigger="click" [visible]=isClick
+                    tds-dropdown (visibleChange)="close($event)" [tdsDropdownMenu]="menu1" clickHide=false
+                    [placement]="'bottomRight'" overlayClassName='indexClass' [autoClose]=false></i>
+                  <tds-dropdown-menu #menu1="tdsDropdownMenu" class="w-full" selected="true">
+                    <tds-spin [spinning]="loadingOrder">
+                      <div class="min-w-[700px] max-h-[400px] overflow-auto tds-custom-scroll">
+                        <div class="flex justify-between items-center border-b border-neutral-2-200 px-4 py-3 ">
+                          <div class="font-semibold text-header-1 text-neutral-1-900">Giỏ hàng</div>
+                          <div class="flex gap-7 items-center">
+                            <i (click)="closeDropdown()"
+                              class="tdsi-close-fill border-0 box-border dark:hover:bg-d-neutral-3-300 dark:text-d-neutral-1-500 focus:outline-none h-7 hover:bg-neutral-3-50 hover:rounded-md inline-flex items-center justify-center leading-4 p-1.5 relative text-base text-neutral-1-500 cursor-pointer"></i>
+                          </div>
+                        </div>
+                        <ng-container *ngIf="userProfile$; then thenTemplate; else elseTemplate"></ng-container>
+                        <ng-template #thenTemplate>
+                          <div class="flex flex-col justify-between ">
+                            <ng-container *ngIf="lstOrder.length>0; then thenTemplate2; else elseTemplate2">
+                            </ng-container>
+                            <ng-template #thenTemplate2>
+                              <div *ngFor="let order of lstOrderBackup; let i=index;"
+                                class="flex flex-col p-4 border-b border-neutral-2-200">
+                                <div class="flex justify-between">
+                                  <div class="flex gap-4 items-start">
+                                    <div class="flex">
+                                      <tds-avatar [shape]="'square'" [size]="100"
+                                        [tdsSrc]="order.product.display_image">
+                                      </tds-avatar>
+                                    </div>
+                                    <div class="flex flex-col gap-2">
+                                      <div class="text-neutral-1-900 text-header-1 font-semibold">
+                                        {{order.product.name}}
+                                      </div>
+                                      <div class="text-neutral-1-900 text-lg font-regular">Nhãn hiệu:
+                                        {{order.product.brand.name}}</div>
+                                    </div>
+                                  </div>
+                                  <div class="flex flex-col gap-5">
+                                    <div class="text-primary-1 text-body-1 font-semibold">
+                                      {{order.product.last_price.price
+                                      |currency:'đ':'code'}}</div>
+                                    <div (click)="deleteOrder(order)" class="text-error-500 text-body-1 font-semibold">
+                                      Xóa</div>
+                                  </div>
+                                </div>
+                                <div class=""></div>
+                              </div>
+                              <div class="p-4 flex justify-center">
+                                <button [routerLink]="['/customer/order-detail']" tds-button color="primary">
+                                  <span class="flex items-center">
+                                    Đến trang thanh toán
+                                  </span>
+                                </button>
+                              </div>
+                            </ng-template>
+                            <ng-template #elseTemplate2>
+                              <tds-empty class="py-8" notFoundImage="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
+                                [notFoundContent]="contentTpl">
+                                <ng-template #contentTpl>
+                                  Không có sản phẩm nào
+                                </ng-template>
+                              </tds-empty>
+                            </ng-template>
+                          </div>
+                        </ng-template>
+                        <ng-template #elseTemplate>
+                          <tds-empty notFoundImage="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
+                            [notFoundContent]="contentTpl" [notFoundFooter]="footerTpl">
+                            <ng-template #contentTpl>
+                              Bạn phải đăng nhập trước chọn hàng
+                            </ng-template>
+                            <ng-template #footerTpl>
+                              <button tds-button>Đăng nhập ngay</button>
+                            </ng-template>
+                          </tds-empty>
+                        </ng-template>
+                      </div>
+                    </tds-spin>
+                  </tds-dropdown-menu>
+                </tds-badge>
+              </div>
+              <ng-container *ngIf="userProfile$; then thenTemplate1; else elseTemplate1"></ng-container>
+              <ng-template #thenTemplate1>
+                <div class="overflow-hidden">
+                  <tds-spin [spinning]="false">
+                    <div class="inline-flex pl-4 cursor-pointer" tds-dropdown [tdsDropdownMenu]="dropdownAvatar"
+                      trigger="click" clickHide=false>
+                      <div class="flex  items-center justify-center">
+                        <tds-avatar class="bg-base-orange-500 dark:bg-d-base-orange-500 text-white"
+                          [tdsSrc]="userProfile$?.avatar" [text]="nameProfile">
+                        </tds-avatar>
+                        <div class="ml-2 truncate">
+                          {{userProfile$?.name}}
+                        </div>
+                        <tds-dropdown-menu #dropdownAvatar="tdsDropdownMenu">
+                          <div class="w-56">
+                            <div tds-dropdown-item>
+                              <div class="flex w-full">
+                                <div class="flex gap-2">
+                                  <tds-avatar class="bg-base-orange-500 dark:bg-d-base-orange-500 text-white"
+                                    [shape]="'square'" [tdsSrc]="userProfile$?.avatar" [text]="nameProfile">
+                                  </tds-avatar>
+                                </div>
+                                <div class="flex flex-auto flex-col ml-2">
+                                  <div class="text-body-2 font-semibold">{{userProfile$?.name}}</div>
+                                  <!-- <div class="text-neutral-1-600 text-caption-1 font-regular"
+                                                                    *ngIf="(role$ | async) as roles">
+                                                                    {{roles.length > 0 ? roles.join(' | '): "---"}}
+                                                                  </div> -->
+                                </div>
+                              </div>
+                            </div>
+                            <div tds-dropdown-item routerLink="/customer/profile">Tài khoản</div>
+                            <div tds-dropdown-item (click)="showModalChangePassword()">Đổi mật khẩu</div>
+                            <div tds-dropdown-item (click)="onLogout($event)">
+                              <a class="text-error-400">Đăng xuất</a>
+                            </div>
+                          </div>
+                        </tds-dropdown-menu>
+                      </div>
+                    </div>
+                  </tds-spin>
+                </div>
+              </ng-template>
+              <ng-template #elseTemplate1>
+                <button tds-button [routerLink]="['/account']" color="primary">
+                  <span class="flex items-center">
+                    <i class="tdsi-lock-fill text-lg leading-none mr-2"></i>Đăng nhập
+                  </span>
+                </button>
+                <button class="ml-4" tds-button [routerLink]="['/customer/signUp']" color="primary">
+                  <span class="flex items-center">
+                    <i class="tdsi-plus-circle-fill text-lg leading-none mr-2"></i>Đăng Ký
+                  </span>
+                </button>
+              </ng-template>
+            </div>
+          </tds-header>
+        </div>
+      </div>
+      <!-- main -->
+      <div class="pt-[50px] flex-auto w-full  border-t border-neutral-2-200">
+        <router-outlet></router-outlet>
+      </div>
+      <!-- <footer>-->
+      <footer class="bg-neutral-1-900">
+        <div class="flex flex-col gap-6 md:gap-[13px] lg:gap-[42px] px-[24px] md:px-[57px] xl:max-w-7xl mx-auto">
+          <div
+            class="relative flex flex-col md:flex-row md:flex-wrap  justify-between pt-[26px] gap-y-6 md:gap-y-8 lg:pt-[57px] md:pt-9  ">
+            <div class="flex flex-col gap-4">
+              <div class="text-title-1 font-semibold font-sans text-white">BNZON - NỀN TẢNG THƯƠNG MẠI TRỰC TUYẾN
+              </div>
+              <div class="text-body-2 font-sans font-normal text-neutral-1-300">Tại TP. Hồ Chí Minh: Số 515 Hương lộ 2 Quận
+                Bình Tân</div>
+              <div class="text-body-2 font-sans font-normal text-neutral-1-300">Hotline: 0706694448</div>
+              <div class="text-body-2 font-sans font-normal text-neutral-1-300">Tại Cần Thơ: 91/4C, Nguyễn Văn Linh, P. Long
+                Hòa <br> Q. Bình Thủy, Cần Thơ</div>
+              <div class="text-body-2 font-sans font-normal text-neutral-1-300">Hotline: 0367720983</div>
+            </div>
+            <div class="flex flex-col lg:order-2">
+              <div class="text-title-2 font-semibold text-white mb-4">ĐĂNG KÝ EMAIL ĐỂ NHẬN THÔNG TIN <br> KHUYẾN MÃI
+              </div>
+              <div class="relative mb-6 w-2/3 md:w-full flex py-[11px]">
+                <input
+                  class="bg-transparent truncate border rounded-xl pl-4 pr-12 py-4  border-white text-caption-1 font-normal text-neutral-1-200 w-full md:w-full"
+                  placeholder="Địa chỉ email của bạn" type="text">
+                <i class="twi-22-send-line text-[28px] text-white absolute top-1/2 right-4 transform -translate-y-1/2"></i>
+              </div>
+              <div class="text-caption-1 font-normal text-neutral-1-300 mb-[30px]">Nhập email để có cơ hội giảm 50% cho
+                <br>
+                chuyến
+                đi tiếp theo của Quý khách
+              </div>
+            </div>
+            <div class="flex flex-col gap-6 ">
+              <div class="flex flex-col gap-4">
+                <div class="font-sans text-title-1 font-semibold text-white">GÓC KHÁCH KHÀNG</div>
+                <div class="font-sans text-body-2 font-normal text-neutral-1-300"><a href="#">Hình thức đăng ký, sử dụng</a>
+                </div>
+                <div class="font-sans text-body-2 font-normal text-neutral-1-300"><a href="#">Hướng dẫn đặt hàng</a>
+                </div>
+                <div class="font-sans text-body-2 font-normal text-neutral-1-300"><a href="#">Quyền lợi khách hàng
+                  </a></div>
+                <div class="font-sans text-body-2 font-normal text-neutral-1-300"><a href="#">Điều khoản, điều kiện
+                  </a></div>
+                <div class="font-sans text-body-2 font-normal text-neutral-1-300"><a href="#">Câu hỏi thường gặp</a>
+                </div>
+                <div class="font-sans text-body-2 font-normal text-neutral-1-300"><a href="#">Liên hệ</a></div>
+              </div>
+            </div>
+          </div>
+          <div class="flex flex-col gap-[13px] items-center justify-center pb-[18px] lg:pb-[21px]">
+            <div class="flex gap-8  pt-[5px]">
+              <i class="tdsi-facebook-2-fill text-neutral-1-400 text-[21px]"></i>
+              <i class="tdsi-instagram-fill text-neutral-1-400 text-[21px]"></i>
+              <i class="tdsi-linkedin-fill text-neutral-1-400 text-[21px]"></i>
+              <i class="tdsi-twitter-fill text-neutral-1-400 text-[21px]"></i>
+            </div>
+            <div class="text-body-2 font-normal text-white ">COPYRIGHT © 2022 BNZON. All Rights Reserved</div>
+          </div>
+        </div>
+      </footer>
+    </div>
+  </div>
+</tds-spin>

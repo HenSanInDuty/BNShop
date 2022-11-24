@@ -1,0 +1,82 @@
+<div class="flex flex-col w-full h-full">
+    <div class="flex justify-between items-center p-4 bg-white w-full">
+        <div>
+            <h1 class="text-header-1 font-semibold">Chức vụ</h1>
+        </div>
+        <div>
+            <button (click)="showModalAddStaff()" tds-button color="primary">
+                <span class="flex items-center">
+                    <i class="tdsi-add-fill text-lg leading-none mr-2"></i>Thêm mới
+                </span>
+            </button>
+        </div>
+    </div>
+    <div class="p-4 w-full h-full">
+        <div class="bg-white flex flex-col rounded-xl w-full h-full">
+            <div class="flex justify-between items-center px-4 py-2.5">
+                <div class="w-1/2">
+                    <div class="flex items-center" *ngIf="setOfCheckedId.size != 0">
+                        <span class="text-body-2 font-regular text-neutral-1-500 mr-6">{{setOfCheckedId.size}} dòng đã
+                            chọn</span>
+                        <button (click)="onDeleteSetOfCheck()"
+                            class="flex items-center justify-center bg-neutral-3-50 hover:bg-neutral-3-100 text-neutral-1-700 hover:text-neutral-1-900 rounded-md px-3 py-1">
+                            <i class="tdsi-close-fill text-neutral-1-500"></i>
+                            <span class="text-body-2 font-semibold ml-2">Xóa lựa chọn</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="w-1/2 flex justify-end">
+                    <button (click)="deleteMultipleDepartment()" *ngIf="setOfCheckedId.size != 0" class="mr-2" tds-button color="red">
+                        <span class="flex items-center">
+                            <i class="tdsi-trash-fill text-lg leading-none mr-2"></i>Xóa chức vụ
+                        </span>
+                    </button>
+                    <tds-form-field class="w-80">
+                        <input [tdsInputDebounce]="500" (inputKeyup)="search($event)" autocomplete="off" tdsInput placeholder="Tìm kiếm"
+                            [required]='true' />
+                        <span tdsPrefix><i class="tdsi-search-fill"></i></span>
+                    </tds-form-field>
+                </div>
+            </div>
+            <div class="w-full h-full pb-2.5">
+                <tds-table #headerTable showSizeChanger [listData]="listDataOfPosition"
+                    (currentPageDataChange)="onCurrentPageDataChange($event)" [scroll]="{y:'auto'}"
+                    [frontPagination]="false" [loading]="loadingPostionList" [total]="total" [(pageSize)]="pageSize"
+                    [(pageIndex)]="pageIndex" (queryParams)="onQueryParamsChange($event)">
+                    <thead>
+                        <tr>
+                            <th width="42px" [(checked)]="checked" [indeterminate]="indeterminate"
+                                (checkedChange)="onAllChecked($event)">
+                            </th>
+                            <th width="680px">Tên chức vụ</th>
+                            <th width="680px">Mô tả</th>
+                            <th [tdsRight]="true" width="150px">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <ng-template ngFor let-data [ngForOf]="headerTable.data" let-index='index' let-odd='odd'>
+                            <tr [ngClass]="{'tds-row-selected':setOfCheckedId.has(data.id!)}">
+                                <td [checked]="setOfCheckedId.has(data.id!)"
+                                    (checkedChange)="onItemChecked(data.id!, $event)">
+                                </td>
+                                <td>{{data.name}}</td>
+                                <td>{{data.description}}</td>
+                                <td [tdsRight]="true">
+                                    <div class="flex">
+                                        <button (click)="showModalEditPosition(data.id!)" class="mr-2" tds-button-icon
+                                            color="secondary">
+                                            <i class="tdsi-edit-fill text-neutral-1-400"></i>
+                                        </button>
+                                        <button (click)="deletePosition(data)" tds-button-icon color="secondary">
+                                            <i class="tdsi-trash-fill text-neutral-1-400"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </tbody>
+                </tds-table>
+            </div>
+        </div>
+    </div>
+</div>

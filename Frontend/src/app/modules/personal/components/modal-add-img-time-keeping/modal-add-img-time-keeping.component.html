@@ -1,0 +1,112 @@
+<tds-spin [spinning]="loading">
+  <div class="w-full flex-col gap-5 flex  h-[calc(60vh)]  ">
+    <tds-image-group class="flex-wrap flex  gap-4 py-4 ">
+      <div *ngFor="let item of listSampleCheckingImage; let i = index" class="flex flex-col gap-6">
+        <div class="border relative rounded-xl shadow-lg group">
+          <div class="absolute invisible group-hover:visible w-full h-full z-50">
+            <div
+              class="absolute invisible group-hover:visible z-50 flex items-center justify-center w-full h-full mt-0 rounded-xl group-hover:bg-black group-hover:bg-opacity-40">
+              <div class="w-[104px] h-[104px] rounded flex flex-col gap-3 justify-center items-center">
+                <div
+                  *ngIf="(item.direction == listImageDirection[i].direction)&& (listImageDirection[i].url != '') then tmp; else elseTemplate1">
+                </div>
+                <ng-template #tmp>
+                  <button type="button" (click)="onDeleteOne(item.id)" class="order-last z-10" tds-button color="error">
+                    Bỏ ảnh
+                  </button>
+                </ng-template>
+                <ng-template #elseTemplate1>
+                  <div class="flex flex-col gap-1.5 text-white items-center">
+                    <i class="tdsi-images-fill text-heading-2 "></i>
+                    <span classs="text-body-2 font-regular">Tải ảnh lên</span>
+                  </div>
+                </ng-template>
+                <tds-upload [(fileList)]="fileListImage" (fileListChange)="handleChangeFile($event, i)"
+                  [beforeUpload]="beforeUploadImage" [showUploadList]="false">
+                  <button tds-button color="primary">
+                    Chọn tệp
+                  </button>
+                </tds-upload>
+              </div>
+            </div>
+          </div>
+          <img
+            *ngIf="(item.direction == listImageDirection[i].direction) && (listImageDirection[i].url != ''); else elseTemplate"
+            class="rounded-xl  w-[204px] h-[204px] object-cover " alt="" src={{listImageDirection[i].url}} cdkDrag />
+          <ng-template #elseTemplate>
+            <img cdkDrag src={{item.url}} class="rounded-xl  w-[204px] h-[204px] object-cover " />
+          </ng-template>
+        </div>
+        <div class="flex flex-col">
+          <p class="w-full text-center text-body-2 font-semibold">{{item.text}}</p>
+          <p class="w-full text-center text-body-2 font-regular">{{item.description}}</p>
+        </div>
+      </div>
+    </tds-image-group>
+    <div class=" flex w-full h-full overflow-hidden">
+      <div class="border px-4 py-2 w-full rounded-md flex flex-col gap-4  tds-custom-scroll overflow-auto">
+        <div class="flex gap-2 items-center">
+          <i class="tdsi-images-fill text-neutral-1-300 text-2xl"></i>
+          <div class="text-title-1 font-semibold">Hình ảnh chấm công của bạn</div>
+        </div>
+        <tds-image-group class="grid grid-cols-8 gap-x-6 gap-y-3 items-center w-full">
+          <div class="border border-primary-1 rounded border-dashed flex items-start w-[104px] h-[104px]">
+            <div class="flex flex-col">
+              <label for="upload-photo">
+                <div class="flex items-start justify-center mt-0 rounded">
+                  <div class="w-[104px] h-[104px]  rounded flex flex-col justify-center items-center">
+                    <i class="tdsi-images-fill text-heading-2 text-primary-1"></i>
+                    <span class="text-body-2 font-regular text-primary-1">Tải ảnh lên</span>
+                  </div>
+                </div>
+              </label>
+              <input (change)="uploadMultiImg($event)" type="file" name="photo" class="hidden" id="upload-photo"
+                multiple />
+            </div>
+          </div>
+          <div *ngFor="let item of listImage" class="relative group  w-[107px]">
+            <div
+              class=" justify-center absolute w-[107px] h-[107px] text-white hidden rounded group-hover:flex pointer-events-none group-hover:bg-black group-hover:bg-opacity-40">
+              <div class="flex items-center">
+                <button tds-flat-button-icon class="bg-transparent p-2">
+                  <span class="flex items-center">
+                    <i (click)="showPreviewUploadImage(item.urlImageProxy)"
+                      class="pointer-events-auto tdsi-eye-open-fill  text-lg leading-5"></i>
+                  </span>
+                </button>
+              </div>
+              <div class="flex items-center">
+                <button tds-flat-button-icon class="bg-transparent p-2 pointer-events-auto"
+                  (click)="onDeleteOne(item.id!)">
+                  <span class="flex items-center">
+                    <i class="tdsi-trash-fill text-lg leading-5"></i>
+                  </span>
+                </button>
+              </div>
+            </div>
+            <img class="w-[107px] h-[107px] rounded  object-cover cursor-pointer" tds-image disablePreview="true"
+              width="280px" height="280px" [tdsSrc]="item.urlImageProxy!" />
+            </div>
+        </tds-image-group>
+          <tds-modal [(visible)]="isVisible" [content]="modalContent" [footer]="null" (onCancel)="isVisible=false"
+            size="md">
+            <ng-template #modalContent>
+              <div class="relative w-full h-full">
+                <div class=" absolute  top-1 right-1">
+                  <button
+                    class="border-0 box-border dark:hover:bg-d-neutral-3-300 dark:text-d-neutral-1-500 focus:outline-none focus:ring-0 h-7 hover:bg-neutral-3-50 hover:rounded-md inline-flex items-center justify-center leading-4 p-1.5 relative text-base text-neutral-1-500"
+                    (click)="handleCancel()" size="sm" tds-button-flat-icon>
+                    <i class="tdsi-close-fill text-neutral-1-400"></i>
+                  </button>
+                </div>
+                <img [src]="previewImage" [ngStyle]="{ width: '100%' }" class="z-0" />
+              </div>
+            </ng-template>
+          </tds-modal>
+      </div>
+    </div>
+  </div>
+</tds-spin>
+<div class="w-full gap-2 flex justify-end p-4" *tdsModalFooter>
+  <button class="min-w-[100px]" tds-button color="secondary" (click)="cancel()">Đóng</button>
+</div>

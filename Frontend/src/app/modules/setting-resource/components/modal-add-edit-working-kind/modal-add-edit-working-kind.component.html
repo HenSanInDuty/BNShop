@@ -1,0 +1,37 @@
+<tds-spin [spinning]="isSubmit">
+  <form [formGroup]="addEditWorkingKindForm" id="addEditWorkingKindForm" (ngSubmit)="onSubmit()">
+    <div class="flex flex-col gap-4">
+      <tds-form-field>
+        <tds-label>Tên</tds-label>
+        <input tdsInput autocomplete="off" placeholder="Nhập tên hình thức làm việc" [required]="true"
+          formControlName="name" />
+        <tds-error>Vui lòng nhập tên loại nghỉ phép</tds-error>
+      </tds-form-field>
+      <tds-form-field>
+        <tds-label>Ký hiệu (dùng trong bảng chấm công)</tds-label>
+        <input tdsInput autocomplete="off" placeholder="Nhập ký hiệu" [required]='true' formControlName="key" />
+        <tds-error>Vui lòng nhập ký hiệu</tds-error>
+      </tds-form-field>
+      <tds-form-field class="w-full">
+        <tds-label>Hệ số lương</tds-label>
+        <tds-input-number [min]="1" [max]="100" [step]="1" [required]='true' placeholder="0" formControlName="factor">
+        </tds-input-number>
+        <tds-error>Vui lòng hệ số lương</tds-error>
+      </tds-form-field>
+      <tds-form-field>
+        <tds-label>Mô tả</tds-label>
+        <div class="flex items-start h-16 border-neutral-2-200">
+          <input tdsInput autocomplete="off" placeholder="Nhập mô tả" formControlName="descripsion" />
+        </div>
+      </tds-form-field>
+    </div>
+    <div *tdsModalFooter class="flex justify-end gap-3 p-4">
+      <button (click)="cancel()" tds-button color="secondary" class="min-w-[100px]">
+        Hủy
+      </button>
+      <button tds-button form='addEditWorkingKindForm' type="submit" color="primary" class="min-w-[100px]">
+        Thêm
+      </button>
+    </div>
+  </form>
+</tds-spin>

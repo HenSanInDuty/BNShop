@@ -1,0 +1,79 @@
+<tds-spin [spinning]="false">
+  <form>
+    <div class="flex flex-col gap-4">
+      <div class="flex flex-col gap-4">
+        <button (click)="defaultSetting()" tds-button color="secondary">
+          <span class="flex items-center">
+            <i class="tdsi-reload-fill text-lg leading-none mr-2"></i>Khôi phục cài đặt mặc định
+          </span>
+        </button>
+        <div class="flex flex-col gap-2 bg-primary-5">
+          <div class="flex justify-between items-center p-2">
+            <div class="flex flex-col">
+              <div class="text-body-2 font-semibold text-neutral-1-900">Bật/tắt thông báo</div>
+              <div class="text-body-2 font-regular text-neutral-1-900">Chọn nội dung mà bạn muốn nhận thông báo</div>
+            </div>
+            <tds-switch class="mr-4" size="lg"></tds-switch>
+          </div>
+          <div class="p-2">
+            <tds-form-field class="w-full">
+              <input tdsInput placeholder="Tìm kiếm" autocomplete="off" />
+              <span tdsPrefix><i class="text-neutral-1-500 tdsi-search-fill "></i></span>
+            </tds-form-field>
+          </div>
+        </div>
+      </div>
+      <div class="flex flex-col gap-6">
+        <div class="text-title-1 font-semibold text-neutral-1-900">Nội dung</div>
+        <div class="flex flex-col gap-4">
+          <div class="flex justify-between items-center">
+            <div class="flex gap-4 items-center">
+              <div class="px-2 py-1 rounded-md bg-primary-4">
+                <i class="tdsi-calendar-fill text-primary-2 w-6 h-6"></i>
+              </div>
+              <div class="font-semibold text-neutral-1-900 text-body-2">Thông tin lịch họp</div>
+            </div>
+            <tds-switch class="mr-6" size="lg"></tds-switch>
+          </div>
+          <div class="flex justify-between items-center">
+            <div class="flex gap-4 items-center">
+              <div class="px-2 py-1 rounded-md bg-primary-4">
+                <i class="tdsi-addfriend-fill text-primary-2 w-6 h-6"></i>
+              </div>
+              <div class="font-semibold text-neutral-1-900 text-body-2">Thông báo biến động nhân sự</div>
+            </div>
+            <tds-switch class="mr-6" size="lg"></tds-switch>
+          </div>
+          <div class="flex justify-between items-center">
+            <div class="flex gap-4 items-center">
+              <div class="px-2 py-1 rounded-md bg-primary-4">
+                <i class="tdsi-addfriend-fill text-primary-2 w-6 h-6"></i>
+              </div>
+              <div class="font-semibold text-neutral-1-900 text-body-2">Thông báo biến động nhân sự</div>
+            </div>
+            <tds-switch class="mr-6" size="lg"></tds-switch>
+          </div>
+          <div class="flex justify-between items-center">
+            <div class="flex gap-4 items-center">
+              <div class="px-2 py-1 rounded-md bg-primary-4">
+                <i class="tdsi-calendar-fill text-primary-2 w-6 h-6"></i>
+              </div>
+              <div class="font-semibold text-neutral-1-900 text-body-2">Sinh nhật đồng nghiệp</div>
+            </div>
+            <tds-switch class="mr-6" size="lg"></tds-switch>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div *tdsModalFooter class="flex justify-end p-4 items-center">
+      <div class="flex gap-3  ">
+        <button (click)="cancel()" tds-button color="secondary" class="min-w-[100px]">
+          Hủy
+        </button>
+        <button tds-button form='addEditHolidaysForm' type="submit" color="primary" class="min-w-[100px]">
+          Lưu
+        </button>
+      </div>
+    </div>
+  </form>
+</tds-spin>

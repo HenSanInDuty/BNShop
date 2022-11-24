@@ -1,0 +1,41 @@
+<tds-spin [spinning]="loading">
+  <form id="createRequestTimeKeeping" [formGroup]="createRequestTimeKeeping" (ngSubmit)="onSubmit()">
+    <div class="flex flex-col gap-4">
+      <tds-form-field class="w-full">
+        <tds-label>Ngày làm việc</tds-label>
+        <tds-date-picker formControlName="workingDate" [required]="true">
+        </tds-date-picker>
+        <tds-error>Vui lòng chọn ngày làm việc</tds-error>
+      </tds-form-field>
+      <div class="flex flex-col gap-2">
+        <tds-form-field>
+          <tds-label>Ca phù hợp</tds-label>
+          <tds-select valueField="id" disabledField="isActive" [allowClear]="false" [ngModel]="selectedShift"
+            (selectChange)="onChangeShift($event)" textField="name" [valuePrimitive]="false" [data]="lstFurloughKind"
+            formControlName="shiftId" placeholder='Chọn ca làm việc' [allowClear]="true" [required]="true">
+          </tds-select>
+          <tds-error>Vui lòng chọn ngày làm việc</tds-error>
+        </tds-form-field>
+        <tds-tag *ngIf="shiftReturn" status='info' rounded="rounded-full" type="outline">
+          <span class="flex items-center py-0.5">
+            <i class="tdsi-time-fill text-base leading-none mr-2"></i> {{shiftReturn}}
+          </span>
+        </tds-tag>
+      </div>
+      <tds-form-field>
+        <tds-label>Mô tả</tds-label>
+        <div class="flex items-start h-16 border-neutral-2-200">
+          <input tdsInput autocomplete="off" placeholder="Nhập mô tả" formControlName="description" />
+        </div>
+      </tds-form-field>
+    </div>
+    <div *tdsModalFooter class="flex justify-end gap-3 p-4">
+      <button (click)="cancel()" tds-button color="secondary" class="min-w-[100px]">
+        Hủy
+      </button>
+      <button tds-button form='createRequestTimeKeeping' type="submit" color="primary" class="min-w-[100px]">
+        Gửi
+      </button>
+    </div>
+  </form>
+</tds-spin>

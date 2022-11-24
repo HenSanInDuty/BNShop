@@ -1,0 +1,521 @@
+<tds-spin [spinning]="loading">
+  <div *ngIf="hasRequest; else elseTemplate"
+    class="flex flex-col gap-4  h-[calc(35vh)] overflow-auto tds-custom-scroll">
+    <div *ngFor="let request of getKeepingRequestUser; let index=index"
+      class="p-4 rounded-xl border border-neutral-2-200">
+      <div class="flex flex-col gap-4">
+        <div class="flex">
+          <div class="w-1/2 grid grid-cols-2 ">
+            <div class="grid grid-rows-2 space-y-4">
+              <div class="text-body-2 font-regular text-neutral-1-700">Ca làm việc đã chọn:</div>
+              <div class="text-body-2 font-regular text-neutral-1-700">Ngày gửi yêu cầu:</div>
+            </div>
+            <div class="grid grid-rows-2 space-y-4">
+              <div class="text-body-2 font-semibold text-neutral-1-900">{{request?.shift?.name}}</div>
+              <div class="text-body-2 font-semibold text-neutral-1-900">{{request.creationTime | date: "dd/MM/yyyy"}}
+              </div>
+            </div>
+          </div>
+          <div class="w-1/2 flex gap-4">
+            <div class="text-body-2 font-regular text-neutral-1-700">Ghi chú</div>
+            <div class="flex-auto">
+              <tds-form-field>
+                <div class="flex items-start h-16 border-neutral-2-200">
+                  <input tdsInput autocomplete="off" placeholder="Chưa có ghi chú" />
+                </div>
+              </tds-form-field>
+            </div>
+          </div>
+        </div>
+        <div class="flex gap-4 items-center">
+          <div class="flex-auto text-title-1 font-semibold text-neutral-1-900">Trạng thái đơn yêu cầu </div>
+          <ng-container *ngIf="request.status == 3 || request.status == 4; else elseTemplate11">
+            <button (click)="showModalWorkingdate()" tds-button-outline color="secondary">
+              <span class="flex items-center">
+                <i class="tdsi-reload-fill text-lg leading-none mr-2"></i>Tạo lại yêu cầu
+              </span>
+            </button>
+          </ng-container>
+          <ng-template #elseTemplate11>
+            <button (click)="cancelKeepingRequestWorkingDateByUser(request.id)" tds-button-outline color="secondary">
+              <span class="flex items-center">
+                <i class="tdsi-error-fill text-lg leading-none mr-2"></i>Hủy yêu cầu
+              </span>
+            </button>
+          </ng-template>
+        </div>
+        <div class="flex flex-col gap-4">
+          <div class="w-full flex">
+            <ng-container *ngIf="request.logs ==null; else elseTemplate">
+              <tds-steps mode="bar" class="rounded-full">
+                <tds-step class="w-1/3 flex-col flex" tdsTitle="Đã gửi yêu cầu" [status]="'finish'"
+                  [description]="stepFirstDescription">
+                  <ng-template #stepFirstDescription>
+                    <div class="py-4 text-center">
+                      <div class="text-body-2 font-semibold">
+                        Đã gửi yêu cầu
+                      </div>
+                      <div class="text-caption-1 font-regular text-neutral-1-700">
+                        Lúc {{request.creationTime | date: "hh:mm, dd/MM/yyyy"}}
+                      </div>
+                      <div class="text-caption-1 font-regular text-neutral-1-700">
+                      </div>
+                    </div>
+                  </ng-template>
+                </tds-step>
+                <tds-step class="w-1/3" tdsTitle="Leader xác nhận" [description]="stepFirstDescription1">
+                  <ng-template #stepFirstDescription1>
+                    <div class="py-4 text-center">
+                      <div class="text-body-2 font-semibold">
+                        Đang chờ xác nhận
+                      </div>
+                      <div class="text-caption-1 font-regular text-neutral-1-700">
+                        --/--
+                      </div>
+                      <div class="text-caption-1 font-regular text-neutral-1-700">
+                        --/--
+                      </div>
+                    </div>
+                  </ng-template>
+                </tds-step>
+                <tds-step class="w-1/3" tdsTitle="HR Admin xác nhận" [description]='stepFirstDescription2'>
+                  <ng-template #stepFirstDescription2>
+                    <div class="py-4 text-center">
+                      <div class="text-body-2 font-semibold">
+                        Đang chờ xác nhận
+                      </div>
+                      <div class="text-caption-1 font-regular text-neutral-1-700">
+                        --/--
+                      </div>
+                      <div class="text-caption-1 font-regular text-neutral-1-700">
+                        --/--
+                      </div>
+                    </div>
+                  </ng-template>
+                </tds-step>
+              </tds-steps>
+            </ng-container>
+            <ng-template #elseTemplate [ngSwitch]="request.status">
+              <ng-container *ngSwitchCase="4">
+                <tds-steps mode="bar" class="rounded-full">
+                  <tds-step class="w-1/3 flex-col flex " [tdsTitle]=request.statusMessage [status]="'error'"
+                    [description]="stepFirstDescription3">
+                    <ng-template #stepFirstDescription3>
+                      <div class="py-4 text-center">
+                        <div class="text-body-2 font-semibold">
+                          {{request.statusMessage}}
+                        </div>
+                        <div class="text-caption-1 font-regular text-neutral-1-700">
+                          Lúc {{request.logs[request.logs.length -1].creationTime | date: "hh:mm, dd/MM/yyyy"}}
+                        </div>
+                        <div class="text-caption-1 font-regular text-neutral-1-700">
+                          Bởi {{request.logs[request.logs.length -1].userChange.fullName }}
+                        </div>
+                      </div>
+                    </ng-template>
+                  </tds-step>
+                  <tds-step class="w-1/3" tdsTitle="Leader xác nhận" [description]="stepFirstDescription4">
+                    <ng-template #stepFirstDescription4>
+                      <div class="py-4 text-center">
+                        <div class="text-body-2 font-semibold">
+                          --/--
+                        </div>
+                        <div class="text-caption-1 font-regular text-neutral-1-700">
+                          --/--
+                        </div>
+                        <div class="text-caption-1 font-regular text-neutral-1-700">
+                          --/--
+                        </div>
+                      </div>
+                    </ng-template>
+                  </tds-step>
+                  <tds-step class="w-1/3" tdsTitle="HR Admin xác nhận" [description]='stepFirstDescription5'>
+                    <ng-template #stepFirstDescription5>
+                      <div class="py-4 text-center">
+                        <div class="text-body-2 font-semibold">
+                          --/--
+                        </div>
+                        <div class="text-caption-1 font-regular text-neutral-1-700">
+                          --/--
+                        </div>
+                        <div class="text-caption-1 font-regular text-neutral-1-700">
+                          --/--
+                        </div>
+                      </div>
+                    </ng-template>
+                  </tds-step>
+                </tds-steps>
+              </ng-container>
+              <ng-container *ngSwitchCase="3" [ngSwitch]="request.logs[request.logs.length -1].oldStatus">
+                <ng-container *ngSwitchCase="1">
+                  <tds-steps mode="bar" class="rounded-full">
+                    <tds-step class="w-1/3 flex-col flex " tdsTitle="Đã gửi yêu cầu" [status]="'finish'"
+                      [description]="stepFirstDescription3">
+                      <ng-template #stepFirstDescription3>
+                        <div class="py-4 text-center">
+                          <div class="text-body-2 font-semibold">
+                            {{request.logs[request.logs.length - request.logs.length].oldStatusMessage}}
+                          </div>
+                          <div class="text-caption-1 font-regular text-neutral-1-700">
+                            Lúc {{request.creationTime | date: "hh:mm, dd/MM/yyyy"}}
+                          </div>
+                          <div class="text-caption-1 font-regular text-neutral-1-700">
+
+                          </div>
+                        </div>
+                      </ng-template>
+                    </tds-step>
+                    <tds-step class="w-1/3" tdsTitle="Leader xác nhận" [status]="'error'"
+                      [description]="stepFirstDescription4">
+                      <ng-template #stepFirstDescription4>
+                        <div class="py-4 text-center">
+                          <div class="text-body-2 font-semibold">
+                            {{request.logs[request.logs.length -1].newStatusMessage}}
+                          </div>
+                          <div class="text-caption-1 font-regular text-neutral-1-700">
+                            Lúc {{request.logs[request.logs.length -1].creationTime | date: "hh:mm, dd/MM/yyyy"}}
+                          </div>
+                          <div class="text-caption-1 font-regular text-neutral-1-700">
+                            Bởi {{request.logs[request.logs.length -1].userChange.fullName}}
+                          </div>
+                        </div>
+                      </ng-template>
+                    </tds-step>
+                    <tds-step class="w-1/3" tdsTitle="HR Admin xác nhận" [description]='stepFirstDescription5'>
+                      <ng-template #stepFirstDescription5>
+                        <div class="py-4 text-center">
+                          <div class="text-body-2 font-semibold">
+                            --/--
+                          </div>
+                          <div class="text-caption-1 font-regular text-neutral-1-700">
+                            --/--
+                          </div>
+                          <div class="text-caption-1 font-regular text-neutral-1-700">
+                            --/--
+                          </div>
+                        </div>
+                      </ng-template>
+                    </tds-step>
+                  </tds-steps>
+                </ng-container>
+                <ng-container *ngSwitchCase="0">
+                  <tds-steps mode="bar" class="rounded-full">
+                    <tds-step class="w-1/3 flex-col flex " tdsTitle="Đã gửi yêu cầu" [status]="'finish'"
+                      [description]="stepFirstDescription3">
+                      <ng-template #stepFirstDescription3>
+                        <div class="py-4 text-center">
+                          <div class="text-body-2 font-semibold">
+                            Đã gửi yêu cầu
+                          </div>
+                          <div class="text-caption-1 font-regular text-neutral-1-700">
+                            Lúc {{request.logs[request.logs.length -1].creationTime | date: "hh:mm, dd/MM/yyyy"}}
+                          </div>
+                          <div class="text-caption-1 font-regular text-neutral-1-700">
+                          </div>
+                        </div>
+                      </ng-template>
+                    </tds-step>
+                    <tds-step class="w-1/3" tdsTitle="Leader xác nhận" [status]="'error'"
+                      [description]="stepFirstDescription4">
+                      <ng-template #stepFirstDescription4>
+                        <div class="py-4 text-center">
+                          <div class="text-body-2 font-semibold">
+                            {{request.logs[request.logs.length -1].newStatusMessage}}
+                          </div>
+                          <div class="text-caption-1 font-regular text-neutral-1-700">
+                            Lúc {{request.logs[request.logs.length -1].creationTime | date: "hh:mm, dd/MM/yyyy"}}
+                          </div>
+                          <div class="text-caption-1 font-regular text-neutral-1-700">
+                            Bởi {{request.logs[request.logs.length -1].userChange.fullName }}
+                          </div>
+                        </div>
+                      </ng-template>
+                    </tds-step>
+                    <tds-step class="w-1/3" tdsTitle="HR Admin xác nhận" [description]='stepFirstDescription5'>
+                      <ng-template #stepFirstDescription5>
+                        <div class="py-4 text-center">
+                          <div class="text-body-2 font-semibold">
+                            --/--
+                          </div>
+                          <div class="text-caption-1 font-regular text-neutral-1-700">
+                            --/--
+                          </div>
+                          <div class="text-caption-1 font-regular text-neutral-1-700">
+                            --/--
+                          </div>
+                        </div>
+                      </ng-template>
+                    </tds-step>
+                  </tds-steps>
+                </ng-container>
+              </ng-container>
+              <ng-container *ngSwitchCase="2">
+                <tds-steps mode="bar" class="rounded-full">
+                  <tds-step class="w-1/3 flex-col flex " tdsTitle="Đã gửi yêu cầu" [status]="'finish'"
+                    [description]="stepFirstDescription3">
+                    <ng-template #stepFirstDescription3>
+                      <div class="py-4 text-center">
+                        <div class="text-body-2 font-semibold">
+                          Đã gửi yêu cầu
+                        </div>
+                        <div class="text-caption-1 font-regular text-neutral-1-700">
+                          Lúc {{request.creationTime | date: "hh:mm, dd/MM/yyyy"}}
+                        </div>
+                        <div class="text-caption-1 font-regular text-neutral-1-700">
+                        </div>
+                      </div>
+                    </ng-template>
+                  </tds-step>
+                  <tds-step class="w-1/3" tdsTitle="Leader xác nhận" [status]="'finish'"
+                    [description]="stepFirstDescription4">
+                    <ng-template #stepFirstDescription4>
+                      <div class="py-4 text-center">
+                        <div class="text-body-2 font-semibold">
+                          {{request.logs[request.logs.length -1].oldStatusMessage}}
+                        </div>
+                        <div class="text-caption-1 font-regular text-neutral-1-700">
+                          Lúc {{request.logs[request.logs.length -2].creationTime | date: "hh:mm, dd/MM/yyyy"}}
+                        </div>
+                        <div class="text-caption-1 font-regular text-neutral-1-700">
+                          {{request.logs[request.logs.length -2].userChange.fullName}}
+                        </div>
+                      </div>
+                    </ng-template>
+                  </tds-step>
+                  <tds-step class="w-1/3" tdsTitle="HR Admin xác nhận" [status]="'finish'"
+                    [description]='stepFirstDescription5'>
+                    <ng-template #stepFirstDescription5>
+                      <div class="py-4 text-center">
+                        <div class="text-body-2 font-semibold">
+                          {{request.logs[request.logs.length -1].newStatusMessage}}
+                        </div>
+                        <div class="text-caption-1 font-regular text-neutral-1-700">
+                          Lúc {{request.logs[request.logs.length -1].creationTime | date: "hh:mm, dd/MM/yyyy"}}
+                        </div>
+                        <div class="text-caption-1 font-regular text-neutral-1-700">
+                          {{request.logs[request.logs.length -1].userChange.fullName}}
+                        </div>
+                      </div>
+                    </ng-template>
+                  </tds-step>
+                </tds-steps>
+              </ng-container>
+              <ng-container *ngSwitchCase="1">
+                <tds-steps mode="bar" class="rounded-full">
+                  <tds-step class="w-1/3 flex-col flex " tdsTitle="Đã gửi yêu cầu" [status]="'finish'"
+                    [description]="stepFirstDescription3">
+                    <ng-template #stepFirstDescription3>
+                      <div class="py-4 text-center">
+                        <div class="text-body-2 font-semibold">
+                          Đã gửi yêu cầu
+                        </div>
+                        <div class="text-caption-1 font-regular text-neutral-1-700">
+                          Lúc {{request.creationTime | date: "hh:mm, dd/MM/yyyy"}}
+                        </div>
+                        <div class="text-caption-1 font-regular text-neutral-1-700">
+                          <!-- Bởi {{request.logs[request.logs.length -1].userChange.fullName }} -->
+                        </div>
+                      </div>
+                    </ng-template>
+                  </tds-step>
+                  <tds-step class="w-1/3" tdsTitle="Leader xác nhận" [status]="'finish'"
+                    [description]="stepFirstDescription4">
+                    <ng-template #stepFirstDescription4>
+                      <div class="py-4 text-center">
+                        <div class="text-body-2 font-semibold">
+                          {{request.statusMessage}}
+                        </div>
+                        <div class="text-caption-1 font-regular text-neutral-1-700">
+                          Lúc {{request.logs[request.logs.length -1].creationTime | date: "hh:mm, dd/MM/yyyy"}}
+                        </div>
+                        <div class="text-caption-1 font-regular text-neutral-1-700">
+                          {{request.logs[request.logs.length -1].userChange.fullName}}
+                        </div>
+                      </div>
+                    </ng-template>
+                  </tds-step>
+                  <tds-step class="w-1/3" tdsTitle="HR Admin xác nhận" [description]='stepFirstDescription5'>
+                    <ng-template #stepFirstDescription5>
+                      <div class="py-4 text-center">
+                        <div class="text-body-2 font-semibold">
+                          Đang chờ xác nhận
+                        </div>
+                        <div class="text-caption-1 font-regular text-neutral-1-700">
+                          --/--
+                        </div>
+                        <div class="text-caption-1 font-regular text-neutral-1-700">
+                          --/--
+                        </div>
+                      </div>
+                    </ng-template>
+                  </tds-step>
+                </tds-steps>
+              </ng-container>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <ng-template #elseTemplate>
+    <div class="flex flex-col items-center gap-1">
+      <div class="">
+        <svg width="180" height="180" viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <g clip-path="url(#clip0_13585_87894)">
+            <path
+              d="M92.2101 59.2496L89.1115 53.6809C88.6063 52.7625 87.8631 51.9963 86.9595 51.4624C86.056 50.9286 85.0252 50.6466 83.9749 50.646H37.5234C35.9686 50.646 34.4775 51.262 33.3781 52.3586C32.2787 53.4551 31.6611 54.9424 31.6611 56.4931V145.035C31.6611 146.652 32.3052 148.203 33.4517 149.347C34.5982 150.49 36.1533 151.132 37.7747 151.132H143.296C144.917 151.132 146.472 150.49 147.619 149.347C148.765 148.203 149.409 146.652 149.409 145.035V67.714C149.409 66.1632 148.792 64.676 147.692 63.5794C146.593 62.4829 145.102 61.8668 143.547 61.8668H96.6766C95.7651 61.8703 94.8696 61.6291 94.0837 61.1686C93.2979 60.7082 92.6508 60.0453 92.2101 59.2496Z"
+              fill="white" />
+            <path opacity="0.3"
+              d="M90.3873 59.2496L87.2887 53.6809C86.7836 52.7625 86.0404 51.9963 85.1368 51.4624C84.2332 50.9286 83.2024 50.6466 82.1522 50.646H35.7006C34.1459 50.646 32.6548 51.262 31.5554 52.3586C30.456 53.4551 29.8384 54.9424 29.8384 56.4931V145.035C29.8384 146.652 30.4825 148.203 31.629 149.347C32.7755 150.49 34.3305 151.132 35.9519 151.132H141.473C143.094 151.132 144.649 150.49 145.796 149.347C146.942 148.203 147.586 146.652 147.586 145.035V67.714C147.586 66.1632 146.969 64.676 145.869 63.5794C144.77 62.4829 143.279 61.8668 141.724 61.8668H94.8538C93.9424 61.8703 93.0468 61.6291 92.261 61.1686C91.4752 60.7082 90.828 60.0453 90.3873 59.2496Z"
+              fill="#B8C0CF" />
+            <g filter="url(#filter0_d_13585_87894)">
+              <path
+                d="M102.814 34.5224L55.4138 38.6818C54.5763 38.7533 53.7618 38.9953 53.0167 39.3939C52.2716 39.7925 51.6106 40.3399 51.0716 41.0048C50.5326 41.6697 50.1261 42.439 49.8755 43.2687C49.6248 44.0984 49.5348 44.9723 49.6108 45.8402L57.5855 136.648C57.6605 137.516 57.9001 138.362 58.2906 139.137C58.6811 139.911 59.2148 140.599 59.8611 141.161C60.5075 141.723 61.2537 142.149 62.0572 142.413C62.8606 142.676 63.7054 142.774 64.5431 142.699L125.21 137.375C126.046 137.303 126.859 137.06 127.603 136.661C128.347 136.262 129.007 135.714 129.544 135.049C130.082 134.384 130.487 133.615 130.736 132.786C130.985 131.957 131.073 131.084 130.996 130.217L124.252 53.1542L102.814 34.5224Z"
+                fill="white" />
+              <path
+                d="M102.822 34.5249L104.03 48.276C104.106 49.143 104.346 49.9872 104.736 50.7603C105.126 51.5334 105.659 52.2203 106.304 52.7817C106.949 53.3432 107.693 53.7681 108.495 54.0324C109.297 54.2967 110.14 54.395 110.977 54.3218L124.259 53.1567L102.822 34.5249Z"
+                fill="#B8C0CF" />
+              <path opacity="0.7"
+                d="M102.822 34.5249L104.03 48.276C104.106 49.143 104.346 49.9872 104.736 50.7603C105.126 51.5334 105.659 52.2203 106.304 52.7817C106.949 53.3432 107.693 53.7681 108.495 54.0324C109.297 54.2967 110.14 54.395 110.977 54.3218L124.259 53.1567L102.822 34.5249Z"
+                fill="url(#paint0_linear_13585_87894)" fill-opacity="0.9" />
+              <rect width="40.779" height="1.82465" rx="0.912323"
+                transform="matrix(0.996113 -0.0880836 0.0884344 0.996082 55.4873 48.4683)" fill="#E8EDF8" />
+              <rect width="61.2259" height="1.82465" rx="0.912323"
+                transform="matrix(0.996113 -0.0880836 0.0884344 0.996082 58.0151 74.8501)" fill="#E8EDF8" />
+              <rect width="41.3196" height="1.82465" rx="0.912323"
+                transform="matrix(0.996113 -0.0880836 0.0884344 0.996082 56.0229 57.2666)" fill="#E8EDF8" />
+              <rect width="61.2259" height="1.82465" rx="0.912323"
+                transform="matrix(0.996113 -0.0880836 0.0884344 0.996082 58.8638 83.6416)" fill="#E8EDF8" />
+              <rect width="61.2259" height="1.82465" rx="0.912323"
+                transform="matrix(0.996108 -0.0881417 0.0883824 0.996087 56.9102 66.064)" fill="#E8EDF8" />
+              <rect width="61.2259" height="1.82465" rx="0.912323"
+                transform="matrix(0.996108 -0.0881417 0.0883824 0.996087 59.2178 92.4341)" fill="#E8EDF8" />
+            </g>
+            <path
+              d="M159.39 73.4626H97.6594C96.3996 73.4019 95.141 73.6052 93.9635 74.0596C92.786 74.514 91.7152 75.2095 90.8191 76.1021L86.7987 80.9878C86.0664 81.7643 85.1757 82.3722 84.1877 82.7697C83.1997 83.1671 82.1378 83.3447 81.0751 83.2902H20.7687C16.5808 83.2902 13.7888 85.5646 14.5147 88.3725C20.4057 111.369 23.3652 122.853 29.2563 145.822C29.7858 147.372 30.7836 148.716 32.1101 149.668C33.4366 150.619 35.0256 151.13 36.6549 151.129H141.298C142.927 151.13 144.516 150.619 145.843 149.668C147.169 148.716 148.167 147.372 148.696 145.822L165.951 78.573C166.649 75.7651 163.745 73.4626 159.39 73.4626Z"
+              fill="white" />
+            <g opacity="0.6" filter="url(#filter1_d_13585_87894)">
+              <path opacity="0.1"
+                d="M159.396 74.1691H97.6631C96.4033 74.1088 95.1447 74.3109 93.9671 74.7627C92.7895 75.2145 91.7187 75.9061 90.8225 76.7937L86.8019 81.6519C86.0697 82.4241 85.1789 83.0286 84.1908 83.4238C83.2028 83.819 82.1409 83.9956 81.0781 83.9414H20.769C16.5809 83.9414 13.7888 86.203 14.5147 88.9951C20.406 111.862 23.3656 123.282 29.2569 146.121C29.7865 147.662 30.7843 148.999 32.1109 149.945C33.4375 150.892 35.0265 151.399 36.656 151.398H141.304C142.933 151.399 144.522 150.892 145.849 149.945C147.175 148.999 148.173 147.662 148.703 146.121L165.958 79.2507C166.656 76.4586 163.752 74.1691 159.396 74.1691Z"
+                fill="url(#paint1_linear_13585_87894)" />
+            </g>
+            <path d="M108.143 139.549L110.965 136.522L95.5973 122.196L92.7753 125.224L108.143 139.549Z"
+              fill="url(#paint2_linear_13585_87894)" />
+            <path
+              d="M116.705 148.992C117.195 149.449 117.964 149.423 118.422 148.932L121.037 146.13C121.495 145.639 121.468 144.87 120.977 144.412L110.412 134.561C109.921 134.104 109.153 134.13 108.695 134.621L106.08 137.423C105.622 137.914 105.648 138.684 106.139 139.141L116.705 148.992Z"
+              fill="#3B82F6" />
+            <path
+              d="M62.5625 109.221C62.814 106.832 63.536 104.516 64.6869 102.407C65.8378 100.299 67.3949 98.4388 69.2682 96.9349C69.524 96.7275 69.7834 96.5304 70.0461 96.3437C72.3329 94.6949 74.9699 93.5971 77.7512 93.1362C80.5325 92.6753 83.3827 92.8637 86.0791 93.6866C88.7755 94.5096 91.2451 95.9449 93.295 97.8804C95.3448 99.8158 96.9194 102.199 97.8957 104.844C99.5136 109.251 99.3856 114.11 97.5379 118.426C95.8063 122.448 92.689 125.715 88.7526 127.634C84.8163 129.552 80.3222 129.994 76.0876 128.879C71.8529 127.765 68.1588 125.168 65.6768 121.56C63.1948 117.953 62.0897 113.574 62.5625 109.221Z"
+              fill="white" />
+            <path
+              d="M62.5655 109.22C63.8931 96.2546 78.1239 88.8436 89.5334 95.0566C103.878 102.986 101.612 124.099 85.9031 128.813C73.4097 132.444 61.0926 122.17 62.5655 109.22ZM62.5655 109.22C61.1704 122.113 73.4564 132.324 85.872 128.658C101.337 123.99 103.583 103.059 89.5023 95.1967C78.155 88.9733 63.9657 96.3272 62.5914 109.199L62.5655 109.22Z"
+              fill="url(#paint3_linear_13585_87894)" />
+            <path
+              d="M78.7414 132.515C74.5378 132.062 70.563 130.372 67.3195 127.66C64.076 124.948 61.7095 121.335 60.5193 117.279C59.3291 113.222 59.3686 108.903 60.6329 104.868C61.8972 100.834 64.3294 97.2648 67.622 94.6126C70.9146 91.9604 74.9197 90.344 79.1309 89.968C83.3421 89.592 87.5702 90.4732 91.2806 92.5001C94.991 94.527 98.017 97.6086 99.9761 101.355C101.935 105.102 102.739 109.345 102.287 113.549C101.674 119.184 98.8512 124.346 94.4368 127.902C90.0225 131.458 84.3777 133.117 78.7414 132.515ZM79.0059 130.083C82.7285 130.487 86.4874 129.778 89.807 128.045C93.1266 126.313 95.8578 123.635 97.6552 120.35C99.4526 117.065 100.235 113.321 99.9045 109.591C99.5736 105.861 98.144 102.313 95.7964 99.3961C93.4489 96.4789 90.2889 94.3235 86.7161 93.2024C83.1434 92.0814 79.3185 92.0452 75.7251 93.0984C72.1318 94.1515 68.9315 96.2467 66.5292 99.1189C64.1268 101.991 62.6302 105.511 62.2287 109.234C61.6964 114.222 63.1635 119.218 66.3084 123.126C69.4533 127.034 74.0195 129.536 79.0059 130.083Z"
+              fill="url(#paint4_linear_13585_87894)" />
+            <path
+              d="M99.5643 104.949C98.821 102.788 97.7066 100.774 96.2711 98.9957C93.211 95.2205 88.8478 92.7286 84.0415 92.011C79.2352 91.2934 74.3344 92.4022 70.3051 95.1188C66.2757 97.8355 63.4101 101.963 62.2731 106.688C61.136 111.412 61.81 116.392 64.1621 120.644C66.5143 124.896 70.374 128.113 74.9806 129.661C79.5871 131.209 84.6063 130.975 89.0489 129.005C93.4915 127.036 97.0353 123.474 98.9817 119.021C100.928 114.568 101.136 109.548 99.5643 104.949ZM99.2272 113.247C98.7784 117.462 96.8815 121.391 93.8599 124.364C90.8383 127.337 86.8791 129.171 82.6572 129.551C78.4353 129.932 74.2122 128.836 70.7076 126.451C67.2031 124.067 64.6341 120.54 63.4387 116.473C62.2433 112.406 62.4954 108.051 64.1521 104.149C65.8087 100.247 68.7674 97.0404 72.5237 95.0759C76.28 93.1114 80.6014 92.5105 84.7512 93.3757C88.9009 94.2408 92.6222 96.5184 95.2806 99.8203C98.3097 103.593 99.723 108.41 99.2117 113.221L99.2272 113.247ZM99.5643 104.949C98.821 102.788 97.7066 100.774 96.2711 98.9957C93.211 95.2205 88.8478 92.7286 84.0415 92.011C79.2352 91.2934 74.3344 92.4022 70.3051 95.1188C66.2757 97.8355 63.4101 101.963 62.2731 106.688C61.136 111.412 61.81 116.392 64.1621 120.644C66.5143 124.896 70.374 128.113 74.9806 129.661C79.5871 131.209 84.6063 130.975 89.0489 129.005C93.4915 127.036 97.0353 123.474 98.9817 119.021C100.928 114.568 101.136 109.548 99.5643 104.949ZM99.2272 113.247C98.7784 117.462 96.8815 121.391 93.8599 124.364C90.8383 127.337 86.8791 129.171 82.6572 129.551C78.4353 129.932 74.2122 128.836 70.7076 126.451C67.2031 124.067 64.6341 120.54 63.4387 116.473C62.2433 112.406 62.4954 108.051 64.1521 104.149C65.8087 100.247 68.7674 97.0404 72.5237 95.0759C76.28 93.1114 80.6014 92.5105 84.7512 93.3757C88.9009 94.2408 92.6222 96.5184 95.2806 99.8203C98.3097 103.593 99.723 108.41 99.2117 113.221L99.2272 113.247ZM101.883 104.187C100.609 100.453 98.3561 97.1298 95.3584 94.5652C92.3606 92.0005 88.7287 90.2888 84.8426 89.609C80.9565 88.9292 76.9592 89.3064 73.2689 90.7011C69.5785 92.0958 66.3309 94.4568 63.8658 97.5369C61.4008 100.617 59.8088 104.303 59.2567 108.209C58.7045 112.116 59.2124 116.098 60.7272 119.741C62.242 123.384 64.7081 126.552 67.8673 128.915C71.0264 131.278 74.7626 132.748 78.6849 133.172C82.3638 133.569 86.0833 133.031 89.4995 131.61C92.9158 130.188 95.9188 127.929 98.2308 125.04C100.543 122.151 102.09 118.726 102.728 115.081C103.366 111.436 103.075 107.69 101.883 104.187ZM101.665 113.522C101.119 118.605 98.7168 123.307 94.9177 126.727C91.1187 130.147 86.1907 132.044 81.079 132.054C75.9673 132.064 71.0319 130.186 67.2195 126.781C63.4071 123.376 60.9862 118.683 60.421 113.603C59.8559 108.522 61.1864 103.412 64.1573 99.2525C67.1282 95.0928 71.5302 92.1764 76.5191 91.0628C81.508 89.9492 86.7325 90.7167 91.1902 93.2182C95.648 95.7197 99.0253 99.779 100.674 104.617C101.639 107.466 101.968 110.491 101.639 113.481L101.665 113.522ZM96.2711 99.0371C93.2024 95.267 88.8324 92.7835 84.0229 92.0765C79.2134 91.3696 74.3135 92.4904 70.2897 95.2179C66.2658 97.9455 63.41 102.082 62.2855 106.811C61.161 111.54 61.8493 116.52 64.2149 120.766C66.5804 125.013 70.4514 128.219 75.0644 129.753C79.6774 131.286 84.6975 131.036 89.1348 129.05C93.572 127.065 97.1043 123.489 99.0349 119.027C100.966 114.566 101.154 109.543 99.5643 104.949C98.8163 102.787 97.6965 100.773 96.2556 98.9957L96.2711 99.0371ZM99.2272 113.263C98.7784 117.478 96.8815 121.407 93.8599 124.38C90.8383 127.353 86.8791 129.186 82.6572 129.567C78.4353 129.947 74.2122 128.852 70.7076 126.467C67.2031 124.082 64.6341 120.556 63.4387 116.489C62.2433 112.422 62.4954 108.066 64.1521 104.164C65.8087 100.262 68.7674 97.056 72.5237 95.0915C76.28 93.127 80.6014 92.5261 84.7512 93.3912C88.9009 94.2564 92.6222 96.534 95.2806 99.8358C98.3057 103.604 99.7188 108.416 99.2117 113.221L99.2272 113.263Z"
+              fill="url(#paint5_linear_13585_87894)" />
+            <path
+              d="M68.4805 120.017C67.3037 118.451 66.4665 116.656 66.0223 114.748C65.7831 113.781 65.6424 112.792 65.6022 111.797C65.5661 110.789 65.6286 109.78 65.7889 108.784C66.1293 106.778 66.8873 104.866 68.0137 103.172C69.119 101.504 70.5261 100.056 72.1627 98.9043C70.9016 100.375 69.7914 101.968 68.8487 103.66C68.4029 104.493 68.0248 105.36 67.7181 106.253C67.4017 107.132 67.1691 108.038 67.0232 108.96C66.7203 110.803 66.7046 112.682 66.9765 114.53C67.2565 116.413 67.7615 118.255 68.4805 120.017Z"
+              fill="url(#paint6_linear_13585_87894)" />
+            <path
+              d="M94.6225 106.854C95.327 108.682 95.6432 110.637 95.5508 112.595C95.5137 113.6 95.3765 114.599 95.1411 115.577C94.8986 116.555 94.5634 117.509 94.1402 118.424C93.2625 120.257 92.0119 121.888 90.4684 123.211C88.9378 124.513 87.1795 125.52 85.2822 126.182C86.8972 125.112 88.4001 123.882 89.7682 122.511C90.4245 121.833 91.0263 121.105 91.5678 120.332C92.1114 119.573 92.582 118.764 92.9733 117.916C93.7679 116.224 94.2929 114.418 94.5291 112.563C94.7907 110.671 94.822 108.754 94.6225 106.854Z"
+              fill="url(#paint7_linear_13585_87894)" />
+            <path
+              d="M75.1499 108.906C75.1906 108.208 75.4536 107.514 75.9391 106.825C76.4246 106.136 77.11 105.58 77.9955 105.157C78.8789 104.736 79.8928 104.556 81.0374 104.619C82.1018 104.678 83.0297 104.926 83.8212 105.364C84.5661 105.756 85.1883 106.346 85.6196 107.069C86.016 107.742 86.2026 108.519 86.1555 109.299C86.1371 109.869 85.9754 110.425 85.6853 110.917C85.4233 111.352 85.0964 111.746 84.7157 112.083C84.3489 112.405 83.6922 112.944 82.7455 113.7C82.5246 113.877 82.3132 114.067 82.1123 114.267C81.9741 114.403 81.8529 114.555 81.7514 114.721C81.6725 114.854 81.6072 114.994 81.5566 115.14C81.5084 115.282 81.434 115.529 81.3334 115.884C81.1514 116.64 80.6939 116.997 79.9609 116.956C79.7834 116.951 79.6088 116.91 79.4471 116.837C79.2855 116.763 79.1399 116.659 79.019 116.529C78.7731 116.265 78.6636 115.887 78.6905 115.396C78.7125 114.363 79.1438 113.38 79.8897 112.664C80.3195 112.262 80.7694 111.882 81.2377 111.525C81.7292 111.14 82.0862 110.849 82.3062 110.652C82.5255 110.456 82.7163 110.231 82.873 109.982C83.0303 109.735 83.1204 109.451 83.1342 109.159C83.1539 108.879 83.113 108.598 83.0143 108.335C82.9155 108.072 82.7612 107.834 82.5619 107.637C82.1461 107.208 81.5954 106.974 80.91 106.934C80.1026 106.89 79.4973 107.061 79.0942 107.447C78.691 107.834 78.3345 108.417 78.0248 109.198C77.7303 110.012 77.2356 110.401 76.5407 110.365C76.3465 110.358 76.1559 110.311 75.981 110.226C75.8061 110.142 75.6509 110.022 75.5251 109.873C75.4016 109.745 75.3048 109.594 75.2404 109.428C75.176 109.261 75.1452 109.084 75.1499 108.906ZM79.8477 121.257C79.4162 121.239 79.0068 121.06 78.7 120.756C78.3828 120.449 78.2382 120.034 78.2662 119.514C78.2747 119.296 78.3282 119.083 78.4233 118.887C78.5184 118.692 78.653 118.518 78.8187 118.377C78.9834 118.231 79.1758 118.12 79.3844 118.05C79.593 117.98 79.8136 117.953 80.0329 117.97C80.2493 117.979 80.4618 118.031 80.6577 118.123C80.8537 118.215 81.029 118.346 81.1735 118.507C81.3179 118.669 81.4284 118.858 81.4984 119.063C81.5685 119.268 81.5966 119.484 81.5812 119.7C81.5527 120.213 81.3659 120.607 81.0208 120.881C80.6914 121.151 80.2721 121.285 79.8477 121.257Z"
+              fill="url(#paint8_linear_13585_87894)" />
+          </g>
+          <defs>
+            <filter id="filter0_d_13585_87894" x="39.5845" y="28.5225" width="101.438" height="128.201"
+              filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+              <feFlood flood-opacity="0" result="BackgroundImageFix" />
+              <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+                result="hardAlpha" />
+              <feOffset dy="4" />
+              <feGaussianBlur stdDeviation="5" />
+              <feComposite in2="hardAlpha" operator="out" />
+              <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.2 0" />
+              <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_13585_87894" />
+              <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_13585_87894" result="shape" />
+            </filter>
+            <filter id="filter1_d_13585_87894" x="-0.600098" y="63.1587" width="181.661" height="107.24"
+              filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+              <feFlood flood-opacity="0" result="BackgroundImageFix" />
+              <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+                result="hardAlpha" />
+              <feOffset dy="4" />
+              <feGaussianBlur stdDeviation="7.5" />
+              <feComposite in2="hardAlpha" operator="out" />
+              <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.2 0" />
+              <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_13585_87894" />
+              <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_13585_87894" result="shape" />
+            </filter>
+            <linearGradient id="paint0_linear_13585_87894" x1="107.364" y1="40.2142" x2="138.618" y2="47.9977"
+              gradientUnits="userSpaceOnUse">
+              <stop stop-color="white" />
+              <stop offset="1" stop-color="white" stop-opacity="0" />
+            </linearGradient>
+            <linearGradient id="paint1_linear_13585_87894" x1="33.0439" y1="147.1" x2="85.8129" y2="54.4341"
+              gradientUnits="userSpaceOnUse">
+              <stop offset="0.0977" stop-color="#C1C7D0" />
+              <stop offset="1" stop-color="#EBECF0" stop-opacity="0.5" />
+            </linearGradient>
+            <linearGradient id="paint2_linear_13585_87894" x1="108.143" y1="139.549" x2="111.511" y2="133.719"
+              gradientUnits="userSpaceOnUse">
+              <stop stop-color="#BEC7CF" />
+              <stop offset="1" stop-color="#8D9293" />
+            </linearGradient>
+            <linearGradient id="paint3_linear_13585_87894" x1="73.0178" y1="100.859" x2="101.152" y2="110.514"
+              gradientUnits="userSpaceOnUse">
+              <stop stop-color="#4088F4" />
+              <stop offset="1" stop-color="#7FC0FB" />
+            </linearGradient>
+            <linearGradient id="paint4_linear_13585_87894" x1="71.9879" y1="99.2354" x2="104.793" y2="110.517"
+              gradientUnits="userSpaceOnUse">
+              <stop stop-color="#4088F4" />
+              <stop offset="1" stop-color="#7FC0FB" />
+            </linearGradient>
+            <linearGradient id="paint5_linear_13585_87894" x1="71.7375" y1="98.909" x2="105.512" y2="110.523"
+              gradientUnits="userSpaceOnUse">
+              <stop stop-color="#4088F4" />
+              <stop offset="1" stop-color="#7FC0FB" />
+            </linearGradient>
+            <linearGradient id="paint6_linear_13585_87894" x1="66.4" y1="118.842" x2="75.0647" y2="116.431"
+              gradientUnits="userSpaceOnUse">
+              <stop offset="0.0977" stop-color="#C1C7D0" />
+              <stop offset="1" stop-color="#EBECF0" stop-opacity="0.5" />
+            </linearGradient>
+            <linearGradient id="paint7_linear_13585_87894" x1="86.5465" y1="125.107" x2="98.4615" y2="119.437"
+              gradientUnits="userSpaceOnUse">
+              <stop offset="0.0977" stop-color="#C1C7D0" />
+              <stop offset="1" stop-color="#EBECF0" stop-opacity="0.5" />
+            </linearGradient>
+            <linearGradient id="paint8_linear_13585_87894" x1="75.4127" y1="111.468" x2="86.1695" y2="106.542"
+              gradientUnits="userSpaceOnUse">
+              <stop stop-color="#4088F4" />
+              <stop offset="1" stop-color="#7FC0FB" />
+            </linearGradient>
+            <clipPath id="clip0_13585_87894">
+              <rect width="180" height="180" fill="white" />
+            </clipPath>
+          </defs>
+        </svg>
+      </div>
+      <div class="text-body-2 text-neutral-1-900 font-regular">
+        Chưa gửi khiếu nại ngày công này. Nếu có sai sót về chấm công
+        <br>
+        của ngày này vui lòng gửi đơn khiếu nại cho leader của bạn
+      </div>
+    </div>
+    <div class="flex justify-center gap-3 p-4">
+      <button (click)="cancel()" tds-button color="secondary" class="min-w-[100px]">
+        Hủy
+      </button>
+      <button (click)="showModalWorkingdate()" tds-button form='addEditShiftForm' type="submit" color="primary"
+      class="min-w-[100px]">
+        Gửi khiếu nại
+      </button>
+    </div>
+  </ng-template>
+</tds-spin>

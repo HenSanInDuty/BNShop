@@ -1,0 +1,50 @@
+<hrm-account-layout>
+  <img width="400" height="381" src="assets/images/login/png-transparent-delivery-shipping-service-elements-navigation-mark-shippers-removebg.png" alt="THRM">
+  <div class="w-full h-full flex items-center justify-center">
+    <div class="w-full px-2 md:px-0 md:w-[368px] flex  flex-col">
+      <div class=" py-4 text-header-1 text-neutral-1-900 font-semibold">
+        Đăng nhập
+      </div>
+      <tds-spin [spinning]="isSubmit">
+        <form class="w-full" [formGroup]="loginForm" autocomplete="off" (ngSubmit)="onSubmit()">
+          <div class="w-full mt-4">
+            <tds-form-field class="min-w-fit">
+              <tds-label>Số điện thoại</tds-label>
+              <input tdsInput type="text" formControlName="phone" [autofocus]="true" placeholder="Nhập số điện thoại" />
+              <tds-error
+                *ngIf="loginForm.get('phone')?.touched && !!loginForm.get('phone')?.hasError('required')">
+                Vui lòng nhập số điện thoại
+              </tds-error>
+              <tds-error
+                *ngIf="loginForm.get('phone')?.touched && !loginForm.get('phone')?.hasError('required') && !!loginForm.get('phone')?.hasError('isMobile') ">
+                Số điện thoại không đúng định dạng
+              </tds-error>
+            </tds-form-field>
+          </div>
+          <div class="w-full mt-4">
+            <tds-form-field>
+              <tds-label>Mật khẩu</tds-label>
+              <input type="password" tdsInput formControlName="password" placeholder="Nhập mật khẩu"  [type]=" isShowPassWord ? 'text' : 'password' " />
+              <tds-error>
+                Vui lòng nhập mật khẩu
+              </tds-error>
+              <span tdsSuffix><i (click)="showPassword()"
+                [ngClass]="isShowPassWord ? 'tdsi-eye-open-fill' : 'tdsi-eye-close-fill'"
+                class="text-neutral-1-400"></i></span>
+            </tds-form-field>
+          </div>
+          <div class="w-full mt-4 flex justify-between items-center py-2">
+            <tds-checkbox [checked]="true">Nhớ mật khẩu</tds-checkbox>
+            <a tds-link routerLink="/account/forgot-password">Quên mật khẩu</a>
+          </div>
+          <div class="w-full flex items-center justify-end mt-4 py-4">
+            <a tds-link type="link" routerLink="/account/login-sms" class="mt-1 mr-6">Đăng nhập với SMS</a>
+            <button tds-button type="submit" color="primary">Đăng
+              nhập
+            </button>
+          </div>
+        </form>
+      </tds-spin>
+    </div>
+  </div>
+</hrm-account-layout>

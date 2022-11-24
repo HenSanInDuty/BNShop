@@ -1,0 +1,21 @@
+/* tslint:disable */
+/* eslint-disable */
+import { MemberDto } from './member-dto';
+import { ResourceTicketStatus } from './resource-ticket-status';
+export interface ResourceOverviewScheduleTicketValueDto {
+  branchName?: null | string;
+  checkIn?: null | string;
+  checkOut?: null | string;
+  currentResourceTicketStatus?: ResourceTicketStatus;
+  description?: null | string;
+  endTime?: string;
+  id?: null | string;
+  members?: null | Array<MemberDto>;
+  ownerName?: null | string;
+  resourceId?: null | string;
+  resourceName?: null | string;
+  resourceTicketStatusName?: null | string;
+  startTime?: string;
+  title?: null | string;
+  userId?: null | string;
+}

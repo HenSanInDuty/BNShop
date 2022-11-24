@@ -1,0 +1,33 @@
+<tds-spin [spinning]="false">
+  <form [formGroup]="addEditBranchCompanyForm" id="addEditBranchCompanyForm" (ngSubmit)="onSubmit()">
+    <div class="flex flex-col gap-4">
+      <tds-form-field>
+        <tds-label>Tên chi nhánh</tds-label>
+        <input tdsInput autocomplete="off" placeholder="Nhập tên chi nhánh" [required]="true" formControlName="name" />
+        <tds-error>Vui lòng nhập tên chi nhánh</tds-error>
+      </tds-form-field>
+      <tds-form-field>
+        <tds-label>Tên viết tắt</tds-label>
+        <input tdsInput autocomplete="off" placeholder="Tên viết tắt"  formControlName="shortName" />
+      </tds-form-field>
+      <tds-form-field>
+        <tds-label>Địa chỉ chi nhánh</tds-label>
+        <input tdsInput autocomplete="off" placeholder="Nhập địa chỉ chi nhánh" [required]="true" formControlName="address" />
+        <tds-error>Vui lòng nhập địa chỉ chi nhánh</tds-error>
+      </tds-form-field>
+      <div class="flex gap-2 items-center text-body-2 font-regular text-neutral-1-900">
+        <tds-checkbox [checked]="false"  formControlName="isMainOffice"></tds-checkbox>
+        Trụ sở chính
+      </div>
+    </div>
+    <div *tdsModalFooter class="flex justify-end gap-3 p-4">
+      <button (click)="cancel()" tds-button color="secondary" class="!px-9">
+        Hủy
+      </button>
+      <button tds-button form='addEditBranchCompanyForm' type="submit" color="primary" class="!px-8">
+        Thêm
+      </button>
+    </div>
+  </form>
+</tds-spin>
+

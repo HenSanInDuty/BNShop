@@ -1,0 +1,31 @@
+<div class="w-full h-full flex flex-col overflow-hidden ">
+  <div class="flex w-full pt-4 bg-white">
+    <tds-page-header title="Tài khoản">
+      <tds-page-header-content>
+        <div class="w-full">
+          <a routerLink="/dashboard/user/profile" routerLinkActive #rls="routerLinkActive">
+            <tds-tag mode="checkable" [disabled]="true" [checked]="rls.isActive"
+              [rounded]='rls.isActive ? "rounded-full":"rounded-full rounded-full !border-0"' class="mr-2">
+              <div class="flex gap-2">
+                <i class="tdsi-user-fill text-sm t"></i>
+                Tài khoản
+              </div>
+            </tds-tag>
+          </a>
+          <a  routerLinkActive #rlp="routerLinkActive">
+            <tds-tag mode="checkable" [disabled]="true" [checked]="rlp.isActive"
+              [rounded]='rlp.isActive ? "rounded-full":"rounded-full rounded-full !border-0"' class="mr-2">
+              <div class="flex gap-2">
+                <i class="tdsi-notification-fill text-sm t"></i>
+                Thông báo
+              </div>
+            </tds-tag>
+          </a>
+        </div>
+      </tds-page-header-content>
+    </tds-page-header>
+  </div>
+  <div class="flex  overflow-hidden justify-center p-4">
+    <router-outlet></router-outlet>
+  </div>
+</div>

@@ -1,0 +1,30 @@
+<div class="w-full h-full flex flex-col ">
+  <div class="flex items-end w-full pt-4 pr-4 bg-white">
+    <tds-page-header title="Công cá nhân">
+      <tds-page-header-content>
+        <div class="w-full">
+          <a routerLink="/personal/timekeeping/summary" routerLinkActive #rls="routerLinkActive">
+            <tds-tag mode="checkable" [disabled]="true" [checked]="rls.isActive"
+              [rounded]='rls.isActive ? "rounded-full":"rounded-full rounded-full !border-0"' class="mr-2">
+              Tổng kết chấm công
+            </tds-tag>
+          </a>
+          <a routerLink="/personal/timekeeping/table" routerLinkActive #rlp="routerLinkActive">
+            <tds-tag mode="checkable" [disabled]="true" [checked]="rlp.isActive"
+              [rounded]='rlp.isActive ? "rounded-full":"rounded-full rounded-full !border-0"' class="mr-2">
+              Bảng chấm công
+            </tds-tag>
+          </a>
+        </div>
+      </tds-page-header-content>
+    </tds-page-header>
+    <button (click)="postImdTimeKeeping()" class="mb-4"  tds-button color="primary">
+      <span class="flex items-center">
+        <i class="tdsi-upload-fill text-lg leading-none mr-2"></i>Tải lên hình ảnh chấm công
+      </span>
+    </button>
+  </div>
+  <div class="flex-auto p-4 h-full w-full">
+    <router-outlet></router-outlet>
+  </div>
+</div>

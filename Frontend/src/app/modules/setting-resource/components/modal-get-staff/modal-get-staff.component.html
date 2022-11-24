@@ -1,0 +1,47 @@
+<div class=" flex flex-col h-[calc(65vh)]  w-full">
+  <div class="flex gap-2 py-4">
+    <tds-form-field>
+      <input class="w-96" tdsInput autocomplete="off" placeholder="Tìm kiếm" [tdsInputDebounce]="500"
+        (inputKeyup)="search($event)" [required]="true" />
+      <span tdsPrefix><i class="tdsi-search-fill"></i></span>
+    </tds-form-field>
+    <tds-select (selectChange)="onChange($event)" placeholder='Chọn chi nhánh' [required]='true' [allowClear]="true"
+      valueField="id" textField="name" [allowClear]="true" [data]="lstBranch">
+    </tds-select>
+  </div>
+  <div class="flex flex-auto flex-col w-full h-full">
+    <tds-table #rowSelectionTable showSizeChanger [frontPagination]="false" [loading]="loading" [listData]="lstStaff"
+      [scroll]="{y:'auto',x:'auto'}" (currentPageDataChange)="onCurrentPageDataChange($event)" [total]="total"
+      (queryParams)="onQueryParamsChange($event)">
+      <thead>
+        <tr>
+          <th width="42px" [(checked)]="checked" [indeterminate]="indeterminate" (checkedChange)="onAllChecked($event)">
+          </th>
+          <th width="150px">Họ tên</th>
+          <th width="242px">Email</th>
+          <th width="242px">Phòng ban</th>
+
+        </tr>
+      </thead>
+      <tbody>
+        <ng-template ngFor let-data [ngForOf]="rowSelectionTable.data" let-index='index' let-odd='odd'>
+          <tr>
+            <td width="42px" [checked]="setOfCheckedId.has(data.id!)"
+              (checkedChange)="onItemChecked(data,data.id!, $event)"></td>
+            <td width="100px">{{ data.fullName}}</td>
+            <td width="242px">{{ data.email}}</td>
+            <td width="242px">{{ data.departmentName}}</td>
+          </tr>
+        </ng-template>
+      </tbody>
+    </tds-table>
+  </div>
+  <div *tdsModalFooter class="flex justify-end gap-3 p-4">
+    <button (click)="cancel()" tds-button color="secondary" class="min-w-[100px]">
+      Hủy
+    </button>
+    <button (click)="onSubmit()" tds-button form='addEditTimeKeeperForm' type="submit" color="primary" class="min-w-[100px]">
+      Thêm
+    </button>
+  </div>
+</div>
