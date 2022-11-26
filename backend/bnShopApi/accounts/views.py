@@ -202,7 +202,7 @@ class ProfileView(generics.GenericAPIView):
         if 'email' in data:
             email = data['email']
             user_with_this_email = self.model.objects.filter(email=email)
-            if user_with_this_email.count > 0:
+            if user_with_this_email.count() > 0:
                 return Response({"email":"That email has used"})
         
         general_profile = UserSerializer(user,data= data)
