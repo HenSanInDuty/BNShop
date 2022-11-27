@@ -2,6 +2,7 @@ from collections import OrderedDict
 from datetime import datetime
 from django.core.paginator import Paginator
 from django.db.models import Q
+from django.utils import timezone
 from django.forms.models import model_to_dict
 from rest_framework import generics,status
 from rest_framework.decorators import api_view,permission_classes
@@ -118,7 +119,7 @@ class DetailViewAll(generics.GenericAPIView):
     serializer_class = DetailSerializer    
 
 def get_info_product(p):
-    now = datetime.now()
+    now = timezone.now()
     list_price = list(p.price.all())
     list_price.reverse()
     agency = p.agency.first().user
@@ -132,8 +133,12 @@ def get_info_product(p):
             #if pre_price and last_price is present, we won't need to find anymore
             break
         
-        if not last_price and (not price.end_datetime):
-                last_price = price 
+        if not last_price:
+            if price.end_datetime != None:
+                if price.end_datetime > now:
+                    last_price = price 
+            else:
+                last_price = price
         
     #Result of product
     instance = {
@@ -156,6 +161,7 @@ def get_info_product(p):
                     **model_to_dict(p.brand)
                 },
                 'detail':[{**model_to_dict(d)} for d in p.detail.all()],
+                'describe':p.describe and p.describe.content or "",
                 'quantity':p.quantity.last().quantity,
                 'describe':p.describe and p.describe.content,
                 'last_price':{

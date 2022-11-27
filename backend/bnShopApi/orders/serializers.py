@@ -1,5 +1,6 @@
 from datetime import datetime
-from rest_framework import serializers,status
+from rest_framework import serializers
+from django.utils import timezone
 from products.models import Quantity
 from address.models import Address
 from .models import Order, OrderDetail, Payment, STATUS
@@ -69,7 +70,7 @@ class CreateOrdersDetailSerializer(serializers.Serializer):
             agency = product.agency.first()
             for p in price_of_product:
                 if p.end_datetime:
-                    if p.end_datetime>=datetime.now():
+                    if p.end_datetime>=timezone.now():
                         price_once = p.price
                 else:
                     price_once = p.price
