@@ -3,6 +3,7 @@ from rest_framework import serializers
 from django.utils import timezone
 from products.models import Quantity
 from address.models import Address
+from otherplatform.utilities import send_email
 from .models import Order, OrderDetail, Payment, STATUS
 
 class ViewOrdersSerializer(serializers.ModelSerializer):
@@ -107,6 +108,7 @@ class UpdateOrderDetailSerializer(serializers.Serializer):
         ud_instance = instance[0]
         ud_instance.status = validated_data['status']
         if validated_data['status'] == '5':
+            send_email(ud_instance.customer.user.email,"Notify from BNSHOP",f"Invoice no {ud_instance.id} has been delivery successful. Thank you very much.")
             ud_instance.date_receive=datetime.now()
         ud_instance.save()
         return ud_instance
