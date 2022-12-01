@@ -245,3 +245,19 @@ class ReportProductSerializer(serializers.Serializer):
 
     type = serializers.ChoiceField(choices=TYPE_REPORT)
     detail = serializers.IntegerField(required=False)
+
+class QuantityCreateSerializer(serializers.Serializer):
+    TYPES_QUANTITY = (
+        (1,"Add goods"),
+        (2,"Drop goods"),
+    )
+
+    change_num = serializers.IntegerField()
+    note = serializers.CharField(max_length=100)
+    types = serializers.ChoiceField(choices=TYPES_QUANTITY)
+    price_once = serializers.FloatField()
+
+    def create(self,validated_data):
+        print(validated_data)
+        return {}
+

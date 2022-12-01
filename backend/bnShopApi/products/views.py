@@ -11,7 +11,7 @@ from rest_framework.permissions import IsAdminUser,IsAuthenticated
 from rest_framework.pagination import PageNumberPagination
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
-from products.serializers import AttachmentSerializer, CategorySerializer, DetailSerializer, ProductRegisterSerializer, ProductSerializer, CategorySwagger, ProductUpdateSerializer, QuantitySerializer, ReportProductSerializer, TypeSerializer
+from products.serializers import AttachmentSerializer, CategorySerializer, DetailSerializer, ProductRegisterSerializer, ProductSerializer, CategorySwagger, ProductUpdateSerializer, QuantityCreateSerializer, QuantitySerializer, ReportProductSerializer, TypeSerializer
 from .models import Brand, Category, Detail, Product, Quantity, Type
 from permissions.permissions import AgencyPermission
 
@@ -528,3 +528,16 @@ class QuantityViewDetail(generics.GenericAPIView):
                                             product__id=productId).order_by("-from_date")
         serializers = self.serializer_class(all_quantity,many=True)
         return Response(serializers.data)
+    
+    def post(self,request,productId,**kwargs):
+        product = Product.objects.filter(agency=request.user.user.agency,
+                                        id=productId).first()
+        if product:
+            serializers = QuantityCreateSerializer(data=request.data,
+                                                context={
+                                                    'product':product
+                                                })
+            if serializers.is_valid:
+                serializers.save()
+                return Response(serializers.data)
+        return Response()
