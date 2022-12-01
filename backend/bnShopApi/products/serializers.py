@@ -253,11 +253,32 @@ class QuantityCreateSerializer(serializers.Serializer):
     )
 
     change_num = serializers.IntegerField()
-    note = serializers.CharField(max_length=100)
+    note = serializers.CharField(max_length=100,required=False)
     types = serializers.ChoiceField(choices=TYPES_QUANTITY)
     price_once = serializers.FloatField()
 
     def create(self,validated_data):
-        print(validated_data)
-        return {}
+        product = self.context.get('product')
+        quantity_last = Quantity.objects.filter(product = product).last().quantity
+        if validated_data['types'] == 1:
+            quantity_change = quantity_last + validated_data['change_num']
+        else:
+            quantity_change = quantity_last - validated_data['change_num']
+            if quantity_change < 0:
+                raise serializers.ValidationError({"detail":"Quantity of product don't have anymore like that"})
+
+        if validated_data['note'] == None:
+            note = self.TYPES_QUANTITY[validated_data['type']-1][1]
+        else:
+            note = validated_data['note'] 
+
+        quantity = Quantity.objects.create(
+            quantity = quantity_change,
+            change_num = validated_data['change_num'],
+            note = note,
+            price_once = validated_data['price_once'],
+            types = validated_data['types'],
+            product = product
+        )
+        return quantity
 

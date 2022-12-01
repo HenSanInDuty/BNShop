@@ -537,7 +537,7 @@ class QuantityViewDetail(generics.GenericAPIView):
                                                 context={
                                                     'product':product
                                                 })
-            if serializers.is_valid:
+            if serializers.is_valid():
                 serializers.save()
                 return Response(serializers.data)
-        return Response()
+        return Response({'detail':"Not found product"},status=status.HTTP_400_BAD_REQUEST)
