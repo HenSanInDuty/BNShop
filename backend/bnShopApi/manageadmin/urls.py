@@ -12,4 +12,6 @@ urlpatterns = [
     path('rating/',views.RatingViewAll.as_view(),name="manage-rating"),
     path('rating/active/<int:rateId>/',views.activeRate,name="active-rate"),
     path('rating/delete/<int:rateId>/',views.deleteRate,name="delete-rate"),
+    path('address/',views.AddressViewAll.as_view(),name="manage-address"),
+    path('address/<int:id>/',views.AddressViewDetail.as_view(),name="manage-address-active"),
 ]

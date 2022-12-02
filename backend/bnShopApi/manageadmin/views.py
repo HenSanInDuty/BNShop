@@ -3,6 +3,9 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes,api_view
 from accounts.models import Users
+from address.models import Address
+from address.serializers import AddressSerializer
+from otherplatform.utilities import send_email
 from permissions.permissions import AdminPermission
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
@@ -67,6 +70,8 @@ def activeUsers(request,idUser):
   if user:
     user.account.is_active = True
     user.account.save()
+    email_user = user.email
+    send_email(email_user,"Thông báo tài khoản","Shop bán hàng của bạn đã được chấp thuận, chào mừng bạn đến với BNShop!")
     return Response({"detail":"Active user success"})
   return Response()
 
@@ -78,6 +83,8 @@ def deactiveUsers(request,idUser):
   if user:
     user.account.is_active = False
     user.account.save()
+    email_user = user.email
+    send_email(email_user,"Thông báo tài khoản","Shop bán hàng của bạn đã bị hủy, vui lòng liên hệ với admin để biết thêm chi tiết. Chúng tối xin lỗi vì sự bất tiện này!")
     return Response({"detail":"Deactive user success"})
   return Response()
 
@@ -152,6 +159,8 @@ def activeProduct(request,productId):
   if product:
     product.is_approved = True
     product.save()
+    email_user = product.agency.user.email
+    send_email(email_user,"Xác nhận sản phẩm","Sản phẩm của bạn đã được chấp thuận")
     return Response({"detail":"Active product success"})
   else:
     return Response({"detail":"Active product unsuccess"},status=status.HTTP_400_BAD_REQUEST)
@@ -164,6 +173,8 @@ def deleteProduct(request,productId):
   if product:
     product.is_delete = True
     product.save()
+    email_user = product.agency.user.email
+    send_email(email_user,"Xác nhận sản phẩm","Sản phẩm của bạn đã bị hủy, vui lòng liên hệ với admin để biết thêm chi tiết")
     return Response({"detail":"Delete product success"})
   else:
     return Response({"detail":"Delete product unsuccess"},status=status.HTTP_400_BAD_REQUEST)
@@ -208,3 +219,37 @@ def deleteRate(request,ratetId):
     return Response({"detail":"Delete rate success"})
   else:
     return Response({"detail":"Delete rate unsuccess"},status=status.HTTP_400_BAD_REQUEST)
+
+class AddressViewAll(generics.GenericAPIView):
+  permission_classes = [IsAuthenticated,AdminPermission]
+  type_param = openapi.Parameter('type', openapi.IN_QUERY, description="Neu type = 1 la address chua approved", type=openapi.TYPE_STRING)
+  
+  @swagger_auto_schema(mehotd='get',manual_parameters=[type_param])
+  def get(self,request):
+    type = request.GET.get('type')
+    all_address = Address.objects.all()
+    if not type == None:
+      if type == 1:
+        all_address = all_address.filter(is_approved=False)
+
+    serializer = AddressSerializer(all_address,many=True)
+    return Response(serializer.data)
+
+class AddressViewDetail(generics.GenericAPIView):
+  permission_classes = [IsAuthenticated,AdminPermission]
+  
+  def patch(self,request,id):
+    address = Address.objects.get(id=id)
+    address.is_approved = True
+    address.save()
+    email_user = address.user.email
+    send_email(email_user,"Xác nhận địa chỉ","Địa chỉ của bạn đã được chấp thuận")
+    return Response({"detail":"Active address success"})
+
+  def delete(self,request,id):    
+    address = Address.objects.get(id=id)
+    address.is_approved = False
+    address.save()
+    email_user = address.user.email
+    send_email(email_user,"Xác nhận địa chỉ","Địa chỉ của bạn đã bị từ chối, vui lòng liên hệ admin để biết thêm chi tiết.")
+    return Response({"detail":"Disactive address success"})

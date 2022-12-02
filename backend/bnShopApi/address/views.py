@@ -11,22 +11,20 @@ class AddressViewAll(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
     
     def get(self,request,*arg,**kwargs):
-        address = self.model.objects.filter(user_id=request.user.user.id,is_delete=False, is_approved=True)
+        address = self.model.objects.filter(user_id=request.user.user.id,is_delete=False)
         serializer = self.serializer_class(address,many=True)
         return Response(serializer.data)
     
     def post(self,request,*arg,**kwargs):
         data = request.data
         data['user'] = request.user.user.id
-
         #Check user have any address ?
         if len(self.model.objects.filter(user_id=request.user.user.id,
-                                        is_delete=False, 
-                                        is_approved=True)) == 0:
+                                        is_delete=False)) == 0:
             data['is_default'] = "true"
         else:
         #If user change address default
-            if 'is_default' in data:
+            if 'is_default' in data.keys():
                 if data['is_default'] == "true":
                     address_was_default = self.model.objects.get(is_default=True)
                     address_was_default.is_default = False
