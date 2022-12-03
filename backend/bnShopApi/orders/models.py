@@ -12,9 +12,9 @@ STATUS = [
 ]
 
 SUB_STATUS_CHOICES = (
-    ('0','Delivery success'),
-    ('1','Delivery unsuccess'),
-    ('2','Customer cancel')
+    (0,'Delivery success'),
+    (1,'Delivery unsuccess'),
+    (2,'Customer cancel')
 )
 
 class Payment(models.Model):

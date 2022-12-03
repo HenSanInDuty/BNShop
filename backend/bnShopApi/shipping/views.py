@@ -22,11 +22,11 @@ class ShippingStatus(generics.GenericAPIView):
         serializer = self.serializer_class(data=data)
         if serializer.is_valid():
             instance = serializer.save()
-            if (instance.substatus == "0"):
+            if (instance.substatus == 0):
                 instance.order_detail.status = "5"
                 instance.order_detail.save()
 
-            if (instance.substatus == "2"):
+            if (instance.substatus == 2):
                 instance.order_detail.status = "4"
                 instance.order_detail.save()
 
