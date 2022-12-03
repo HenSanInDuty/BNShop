@@ -22,9 +22,25 @@ class UpdateOrdersSerializer(serializers.ModelSerializer):
         fields = ['qty']
 
 class ViewOrderDetailSerializer(serializers.ModelSerializer):
+    agency_info = serializers.SerializerMethodField()
+    customer_info = serializers.SerializerMethodField()
+    shipper_info = serializers.SerializerMethodField()
+
     class Meta():
         model = OrderDetail
         fields = "__all__"
+
+    def get_agency_info(self,obj):
+        return obj.agency.user.name
+    
+    def get_customer_info(self,obj):
+        return {
+            'name':obj.customer.user.name,
+            'phone': obj.customer.user.account.phone
+        }
+
+    def get_shipper_info(self,obj):
+        return obj.shipper.user and obj.shipper.user.name
  
 class PaymentSerializer(serializers.ModelSerializer):
     class Meta():
