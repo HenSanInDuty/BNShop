@@ -36,6 +36,7 @@ class StatusShippingNote(models.Model):
     shipper = models.ForeignKey(Shipper,on_delete=models.CASCADE,related_name='status_shipping')
     substatus = models.IntegerField(choices=SUB_STATUS_CHOICES)
     note = models.TextField()
+    image = models.CharField(null=True)
     date_note = models.DateTimeField(auto_now_add=True)
 
 class Order(models.Model):
