@@ -5,6 +5,9 @@ from rest_framework.decorators import permission_classes,api_view
 from accounts.models import Users
 from address.models import Address
 from address.serializers import AddressSerializer
+from manageadmin.serializers import OrderdetailToShipperSerializer
+from orders.models import OrderDetail
+from orders.serializers import ViewOrderDetailSerializer
 from otherplatform.utilities import send_email
 from permissions.permissions import AdminPermission
 from drf_yasg.utils import swagger_auto_schema
@@ -224,7 +227,7 @@ class AddressViewAll(generics.GenericAPIView):
   permission_classes = [IsAuthenticated,AdminPermission]
   type_param = openapi.Parameter('type', openapi.IN_QUERY, description="Neu type = 1 la address chua approved", type=openapi.TYPE_STRING)
   
-  @swagger_auto_schema(mehotd='get',manual_parameters=[type_param])
+  @swagger_auto_schema(manual_parameters=[type_param])
   def get(self,request):
     type = request.GET.get('type')
     all_address = Address.objects.all()
@@ -253,3 +256,36 @@ class AddressViewDetail(generics.GenericAPIView):
     email_user = address.user.email
     send_email(email_user,"Xác nhận địa chỉ","Địa chỉ của bạn đã bị từ chối, vui lòng liên hệ admin để biết thêm chi tiết.")
     return Response({"detail":"Disactive address success"})
+
+class OrderDetailViewAll(generics.GenericAPIView):
+  permission_classes = [IsAuthenticated, AdminPermission]
+  status_param = openapi.Parameter('status', openapi.IN_QUERY, description="Neu type = 1 la rating chua approved, type = 2 la rating da approved ", type=openapi.TYPE_STRING)
+  
+  @swagger_auto_schema(manual_parameters=[status_param])
+  def get(self,request):
+    all_orderdetail = OrderDetail.objects.all()
+    status = request.GET.get('status')
+    if status:
+      all_orderdetail = OrderDetail.objects.filter(status=status)
+    
+    serializers = ViewOrderDetailSerializer(all_orderdetail,many=True)
+    return Response(serializers.data)
+
+class OrderDetailToShipper(generics.GenericAPIView):
+  permission_classes = [IsAuthenticated, AdminPermission]
+  
+  @swagger_auto_schema(request_body=OrderdetailToShipperSerializer)
+  def patch(self,request,id):
+    shipper = Users.objects.filter(id = id).first()
+    if not shipper:
+      return Response({"detail":"Can't find this user"},status = status.HTTP_404_NOT_FOUND)
+    if not shipper.account.is_shipper:
+      return Response({"detail":"This guy isn't a shipper"},status=status.HTTP_400_BAD_REQUEST)
+    #Get order detail which has status shipping
+    order_detail_result = OrderDetail.objects.filter(id__in = request.data['order_detail'],
+                                                    status="3")
+    if order_detail_result.count() != len(request.data['order_detail']):
+      return Response({"detail":"Please enter right order detail id with status shipping and don't have any shipper in this"},status=status.HTTP_404_NOT_FOUND)
+    order_detail_result.update(shipper=shipper.shipper)
+    serializers = ViewOrderDetailSerializer(order_detail_result,many=True)
+    return Response(serializers.data)

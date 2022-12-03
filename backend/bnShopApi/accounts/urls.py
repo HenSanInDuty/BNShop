@@ -7,6 +7,7 @@ from . import views
 urlpatterns = [
     path('sign-up/customer/', views.register_customer, name='user-customer-sign-up'),
     path('sign-up/agency/',views.register_agency,name="user-agency-sign-up"),
+    path('sign-up/shipper/',views.register_shipper,name="user-shipper-sign-up"),
     path('sign-in/',MyTokenObtainPairView.as_view(),name='user-sign-in'),
     path('sign-out/',views.LogoutAPIView.as_view(),name='sign-out'),
     path('sign-in/refresh/',TokenRefreshView.as_view(),name='user-sign-in-refresh'),

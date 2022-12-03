@@ -14,4 +14,6 @@ urlpatterns = [
     path('rating/delete/<int:rateId>/',views.deleteRate,name="delete-rate"),
     path('address/',views.AddressViewAll.as_view(),name="manage-address"),
     path('address/<int:id>/',views.AddressViewDetail.as_view(),name="manage-address-active"),
+    path('order_detail/',views.OrderDetailViewAll.as_view(),name="view-all-order-detail"),
+    path('order_detail/<int:id>/',views.OrderDetailToShipper.as_view(),name="view-all-order-detail"),
 ]

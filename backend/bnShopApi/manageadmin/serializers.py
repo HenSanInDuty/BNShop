@@ -16,3 +16,6 @@ class AccountViewSeralizer(serializers.Serializer):
   nickname = serializers.CharField(max_length=100,required = False)
   birthday = serializers.DateField(required = False)
   companyName = serializers.CharField(max_length=3000,required = False)
+
+class OrderdetailToShipperSerializer(serializers.Serializer):
+  order_detail = serializers.ListField()

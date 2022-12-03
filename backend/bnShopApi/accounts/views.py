@@ -9,7 +9,7 @@ from drf_yasg.utils import swagger_auto_schema
 from permissions.permissions import AgencyPermission
 
 from .models import Account, Agency, Customer, Users
-from .serializers import AgencyRegister, ProfileCustomerUpdateSerializer, AgencySerializer, CustomerRegister, CustomerSerializer, LogoutSerializer, AccountSerializer, UserSerializer, ChangePasswordSerializer
+from .serializers import AgencyRegister, ProfileCustomerUpdateSerializer, AgencySerializer, CustomerRegister, CustomerSerializer, LogoutSerializer, AccountSerializer, ShipperRegister, ShipperSerializer, UserSerializer, ChangePasswordSerializer
 from django.db.utils import IntegrityError
 
 from .utilities import get_tokens_for_user
@@ -39,7 +39,10 @@ def register(request,role):
             if role == 'Customer':
                 new_account = model.objects.create_customeruser(phone = serializer.data.get('phone'), 
                                            password =serializer.data.get('password1'))
-            else:
+            if role == 'Shipper':
+                new_account = model.objects.create_shipperuser(phone = serializer.data.get('phone'), 
+                                           password =serializer.data.get('password1'))                                           
+            elif role == "Agency":
                 new_account = model.objects.create_agencyuser(phone = serializer.data.get('phone'), 
                                            password =serializer.data.get('password1'))
         except IntegrityError:
@@ -64,7 +67,7 @@ def register(request,role):
                 return Response(user_serializer.errors)
             
             data['user'] = new_user.id
-            #Create Customer or Agency
+            #Create Customer or Agency or Shipper
             if role == "Customer":
                 customer_serializer = CustomerSerializer(data=data)
                 if customer_serializer.is_valid():
@@ -72,14 +75,22 @@ def register(request,role):
                 else:
                     new_account.delete()
                     return Response(customer_serializer.errors,status=status.HTTP_400_BAD_REQUEST)
-            else:
+            elif role == "Agency":
                 agency_serializer = AgencySerializer(data=data)
                 if agency_serializer.is_valid():
                     agency_serializer.save()
                 else:
                     new_account.delete()
                     return Response(agency_serializer.errors,status=status.HTTP_400_BAD_REQUEST)
-                
+            elif role == "Shipper":
+                shipper_serializer = ShipperSerializer(data=data)
+                if shipper_serializer.is_valid():
+                    shipper_serializer.save()
+                else:
+                    new_account.delete()
+                    return Response(shipper_serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response({"role":"Don't have this role now"},status=status.HTTP_400_BAD_REQUEST)
         except Exception:
             return Response({
                     'message':"Something wrong"
@@ -103,6 +114,11 @@ def register_agency(request):
 @api_view(['POST'])
 def register_customer(request):
     return register(request,'Customer')
+
+@swagger_auto_schema(method='post',request_body=ShipperRegister)
+@api_view(['POST'])
+def register_shipper(request):
+    return register(request,'Shipper')
     
 class LogoutAPIView(generics.GenericAPIView):
     serializer_class = LogoutSerializer

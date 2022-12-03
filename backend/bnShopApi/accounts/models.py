@@ -38,6 +38,17 @@ class AccountManager(BaseUserManager):
         user.save(using=self._db)
         return user
     
+    def create_shipperuser(self,phone,password):
+        
+        user = self.create_user(
+            phone,
+            password=password
+        )
+        
+        user.is_shipper = True
+        user.save(using=self._db)
+        return user
+    
     def create_superuser(self,phone,password):
         
         user = self.create_user(

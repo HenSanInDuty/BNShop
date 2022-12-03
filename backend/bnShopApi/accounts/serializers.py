@@ -7,7 +7,7 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 from django.contrib.auth import authenticate
 
-from .models import Account, Agency, Customer, Users
+from .models import Account, Agency, Customer, Users, Shipper
 
 
 class MyTokenObtainPairViewSerializer(TokenObtainPairSerializer):
@@ -88,7 +88,7 @@ class ChangePasswordSerializer(serializers.Serializer):
 
 
 class AccountSerializer(serializers.Serializer):
-    role_choices = ['Agency','Customer']
+    role_choices = ['Agency','Customer','Shipper']
     model = Account
     
     phone = serializers.CharField(max_length=10,required=True)
@@ -112,6 +112,12 @@ class AgencySerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Agency
+        fields = "__all__"
+
+class ShipperSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Shipper
         fields = "__all__"
         
 class CustomerRegister(serializers.Serializer):
@@ -139,6 +145,18 @@ class AgencyRegister(serializers.Serializer):
     time_visited = serializers.FloatField(default=0,required = False)
     main_industry = serializers.CharField(max_length=100,required=True)
     identify = serializers.CharField(max_length=12,required=True)   
+
+class ShipperRegister(serializers.Serializer):
+    phone = serializers.CharField(max_length=10,required=True)
+    password1 = serializers.CharField(max_length=32,required=True)
+    password2 = serializers.CharField(max_length=32,required=True)
+    name = serializers.CharField(max_length=100)
+    email = serializers.EmailField(required = False)
+    avatar = serializers.CharField(max_length=100,required = False,default="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRK_moVUzQH4Cwo38P39N0isb0ohtz6uB7lwDWDVhE&s")
+    nationality = serializers.CharField(max_length=100,required = False)
+    gender = serializers.CharField(max_length=1,required = False,default='M')
+    time_visited = serializers.FloatField(default=0,required = False)
+    companyName = serializers.CharField(max_length=3000,required = False)
 
 class ProfileCustomerUpdateSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=100, required=False)
