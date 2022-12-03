@@ -213,27 +213,31 @@ class ProductViewAll(generics.GenericAPIView):
 
         if request.GET.get('category'):
             category_filter = request.GET.get('category').split()
-
-        query = Q(is_approved=True,is_delete=False)
+        query = Q()
+        query = query.add(Q(is_approved=True,is_delete=False),Q.AND)
         if type_filter:
+            sub_query = Q()
             for type in type_filter:
-                query.add(Q(type__id=int(type)),Q.OR)
+                sub_query.add(Q(type__id=int(type)),Q.OR)
+            query.add(sub_query,Q.AND)
 
         if brand_filter:
-            query.add(Q(brand__name__icontains=brand_filter),Q.OR)
+            sub_query = Q()
+            sub_query.add(Q(brand__name__icontains=brand_filter),Q.OR)
+            query.add(sub_query,Q.AND)
 
         if agency_filter:
+            sub_query = Q(agency__user__id=agency_filter)
             if category_filter:
                 query_spec = Q()
                 for cate in category_filter:
                     query_spec.add(Q(category__id=int(cate)),Q.OR)
                 query_spec.add(Q(agency__user__id=agency_filter),Q.AND)
-                query.add(query_spec,Q.AND)
-            else:
-                query.add(Q(agency__user__id=agency_filter),Q.AND)
+                sub_query.add(query_spec,Q.AND)
+            query.add(sub_query,Q.AND)
 
         product = Product.objects.filter(query)
-
+        print(query)
         result = []
         for p in product:
             instance = get_info_product(p)

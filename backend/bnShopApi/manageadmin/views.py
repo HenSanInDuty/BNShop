@@ -261,7 +261,7 @@ class AddressViewDetail(generics.GenericAPIView):
 
 class OrderDetailViewAll(generics.GenericAPIView):
   permission_classes = [IsAuthenticated, AdminPermission]
-  status_param = openapi.Parameter('status', openapi.IN_QUERY, description="Neu type = 1 la rating chua approved, type = 2 la rating da approved ", type=openapi.TYPE_STRING)
+  status_param = openapi.Parameter('status', openapi.IN_QUERY, description="Xem status trong BD", type=openapi.TYPE_STRING)
   
   @swagger_auto_schema(manual_parameters=[status_param])
   def get(self,request):
