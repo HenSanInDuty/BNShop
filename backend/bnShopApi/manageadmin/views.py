@@ -166,7 +166,7 @@ def activeProduct(request,productId):
   if product:
     product.is_approved = True
     product.save()
-    email_user = product.agency.user.email
+    email_user = product.agency.first().user.email
     send_email(email_user,"Xác nhận sản phẩm","Sản phẩm của bạn đã được chấp thuận")
     return Response({"detail":"Active product success"})
   else:
@@ -180,7 +180,7 @@ def deleteProduct(request,productId):
   if product:
     product.is_delete = True
     product.save()
-    email_user = product.agency.user.email
+    email_user = product.agency.first().user.email
     send_email(email_user,"Xác nhận sản phẩm","Sản phẩm của bạn đã bị hủy, vui lòng liên hệ với admin để biết thêm chi tiết")
     return Response({"detail":"Delete product success"})
   else:
