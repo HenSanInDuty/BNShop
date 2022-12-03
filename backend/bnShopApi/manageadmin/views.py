@@ -154,8 +154,9 @@ class ProductManageViewAll(generics.GenericAPIView):
         products = products.filter(is_approved = True,is_delete=False)
       elif type == "3":
         products = products.filter(is_delete=True)
-      for p in products:
-        result.append(get_info_product(p))
+        
+    for p in products:
+      result.append(get_info_product(p))
     return Response(result)
 
 @api_view(http_method_names=['patch'])
