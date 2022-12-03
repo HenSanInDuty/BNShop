@@ -40,7 +40,7 @@ class ViewOrderDetailSerializer(serializers.ModelSerializer):
         }
 
     def get_shipper_info(self,obj):
-        return obj.shipper.user and obj.shipper.user.name
+        return obj.shipper and obj.shipper.user.name
  
 class PaymentSerializer(serializers.ModelSerializer):
     class Meta():
