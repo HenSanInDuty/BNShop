@@ -31,7 +31,7 @@ class ViewOrderDetailSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
     def get_agency_info(self,obj):
-        return obj.agency.user.name
+        return obj.agency and obj.agency.user.name
     
     def get_customer_info(self,obj):
         return {
