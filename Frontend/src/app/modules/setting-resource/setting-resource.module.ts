@@ -56,7 +56,10 @@ import { TDSImageModule } from 'tds-ui/image';
 import { TDSEmptyModule } from 'tds-ui/empty';
 import { HttpClientModule } from '@angular/common/http';
 import { CategoryManagementComponent } from './pages/category-management/category-management.component';
-
+import { ModalAddPriceProductComponent } from './components/modal-add-price-product/modal-add-price-product.component';
+import { ModalEditProductComponent } from './components/modal-edit-product/modal-edit-product.component';
+import { TDSEditorModule } from 'tds-editor';
+import { ModalAddPromotionsComponent } from './components/modal-add-promotions/modal-add-promotions.component';
 
 @NgModule({
   declarations: [
@@ -83,6 +86,9 @@ import { CategoryManagementComponent } from './pages/category-management/categor
     ProductManagementComponent,
     CategoryManagementComponent,
     ModalAddEditProductComponent,
+    ModalAddPriceProductComponent,
+    ModalEditProductComponent,
+    ModalAddPromotionsComponent,
   ],
   imports: [
     CommonModule,
@@ -119,7 +125,8 @@ import { CategoryManagementComponent } from './pages/category-management/categor
     TDSImageModule,
     TDSEmptyModule,
     TDSInputNumberModule,
-    HttpClientModule
+    HttpClientModule,
+    TDSEditorModule,
   ],
 })
 export class SettingResourceModule { }

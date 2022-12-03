@@ -8,18 +8,18 @@ export interface paramGetProductDTO {
 }
 
 export interface ProductDTO {
- id: number
+ id?: number
  name: string
  display_image: string
- category: string[]
+ category?: string[]
  type: string[]
  brand_origin: string
  brand_origin_brand: string
  brand_name: string
- detail: Detail
+ detail?: Detail
  quantity: number
  price: number
- attachment: AttachmentDTO
+ attachment?: AttachmentDTO
 }
 export interface getProductDTO {
  id: number
@@ -65,4 +65,15 @@ export interface AttachmentDTO {
  type: string
  product: number
 }
+export interface editProductDTO {
+ display_image?: string
+ price?: number
+ price_end_datetime?: string
+ quantity?: number
+ quantity_note?: string
+ category?: string[]
+ attachment?: AttachmentDTO
+ describe?: string
+}
+
 export interface Detail { }

@@ -29,6 +29,9 @@ export class AdminGuardService implements CanActivate, CanActivateChild {
                     if (data.data.role === 'Agency') {
                         return of(true);
                     }
+                    else if (data.data.role === 'Admin') {
+                        return of(this.router.parseUrl('/admin/'));
+                    }
                     else {
                         // this.message.error("Khách hàng không thể vào hệ thống này")
                         return of(this.router.parseUrl('/customer/home'));

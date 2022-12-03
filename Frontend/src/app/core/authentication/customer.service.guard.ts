@@ -7,6 +7,7 @@ import { TDSHelperObject, TDSHelperString, TDSSafeAny } from 'tds-ui/shared/util
 import { CoreAuthService } from './auth.service';
 
 
+
 @Injectable({
     providedIn: 'root'
 })
@@ -31,6 +32,9 @@ export class CustomerGuardService implements CanActivate, CanActivateChild {
                 } else {
                     if (TDSHelperObject.hasValue(data) && TDSHelperString.hasValueString(data?.access) && data.data.role === 'Agency') {
                         return of(this.router.parseUrl('/dasboard'))
+                    }
+                    else if (TDSHelperObject.hasValue(data) && TDSHelperString.hasValueString(data?.access) && data.data.role === 'Admin') {
+                        return of(this.router.parseUrl('/admin/account'))
                     }
                     else {
                         this.message.error("Người dùng không được phép đăng nhập vào hệ thống này")

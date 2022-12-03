@@ -35,6 +35,7 @@ import { OrderDetailComponent } from './pages/order-detail/order-detail.componen
 import { PipeDatePipe } from 'src/app/pipes/pipe-date.pipe';
 import { ProfileComponent } from './pages/profile/profile.component';
 import { TDSTimelineModule } from 'tds-ui/timeline';
+import { TDSRateModule } from 'tds-ui/rate';
 
 
 @NgModule({
@@ -76,7 +77,8 @@ import { TDSTimelineModule } from 'tds-ui/timeline';
     TDSInputNumberModule,
     TDSImageModule,
     TDSAutocompleteModule,
-    TDSTimelineModule
+    TDSTimelineModule,
+    TDSRateModule
     
   ]
 })

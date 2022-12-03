@@ -4,7 +4,7 @@
       <!-- header -->
       <div class="flex flex-col fixed z-50 bg-white w-full ">
         <div class="w-full py-1">
-          <tds-header >
+          <tds-header urlLogoText="assets/images/LogoBNZONBlue.svg" urlLogo="assets/images/LogoCustomer.svg">>
             <tds-form-field class="w-full" [tdsClass]="'bg-neutral-3-100'">
               <input tdsInput placeholder="Tìm kiếm" autocomplete="off" />
               <span class="bg-neutral-3-100" tdsPrefix><i class="text-neutral-1-500 tdsi-search-fill "></i></span>
@@ -124,7 +124,7 @@
                           <div class="font-semibold text-header-1 text-neutral-1-900">Giỏ hàng</div>
                           <div class="flex gap-7 items-center">
                             <i (click)="closeDropdown()"
-                              class="tdsi-close-fill border-0 box-border dark:hover:bg-d-neutral-3-300 dark:text-d-neutral-1-500 focus:outline-none h-7 hover:bg-neutral-3-50 hover:rounded-md inline-flex items-center justify-center leading-4 p-1.5 relative text-base text-neutral-1-500 cursor-pointer"></i>
+                              class="tdsi-close-fill border-0 box-border dark:hover:bg-d-neutral-3-300 dark:text-d-neutral-1-500 focus:outline-none h-7 hover:bg-neutral-3-100 hover:rounded-md inline-flex items-center justify-center leading-4 p-1.5 relative text-base text-neutral-1-500 cursor-pointer"></i>
                           </div>
                         </div>
                         <ng-container *ngIf="userProfile$; then thenTemplate; else elseTemplate"></ng-container>
@@ -169,7 +169,8 @@
                               </div>
                             </ng-template>
                             <ng-template #elseTemplate2>
-                              <tds-empty class="py-8" notFoundImage="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
+                              <tds-empty class="py-8"
+                                notFoundImage="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
                                 [notFoundContent]="contentTpl">
                                 <ng-template #contentTpl>
                                   Không có sản phẩm nào
@@ -265,10 +266,12 @@
             <div class="flex flex-col gap-4">
               <div class="text-title-1 font-semibold font-sans text-white">BNZON - NỀN TẢNG THƯƠNG MẠI TRỰC TUYẾN
               </div>
-              <div class="text-body-2 font-sans font-normal text-neutral-1-300">Tại TP. Hồ Chí Minh: Số 515 Hương lộ 2 Quận
+              <div class="text-body-2 font-sans font-normal text-neutral-1-300">Tại TP. Hồ Chí Minh: Số 515 Hương lộ 2
+                Quận
                 Bình Tân</div>
               <div class="text-body-2 font-sans font-normal text-neutral-1-300">Hotline: 0706694448</div>
-              <div class="text-body-2 font-sans font-normal text-neutral-1-300">Tại Cần Thơ: 91/4C, Nguyễn Văn Linh, P. Long
+              <div class="text-body-2 font-sans font-normal text-neutral-1-300">Tại Cần Thơ: 91/4C, Nguyễn Văn Linh, P.
+                Long
                 Hòa <br> Q. Bình Thủy, Cần Thơ</div>
               <div class="text-body-2 font-sans font-normal text-neutral-1-300">Hotline: 0367720983</div>
             </div>
@@ -279,7 +282,8 @@
                 <input
                   class="bg-transparent truncate border rounded-xl pl-4 pr-12 py-4  border-white text-caption-1 font-normal text-neutral-1-200 w-full md:w-full"
                   placeholder="Địa chỉ email của bạn" type="text">
-                <i class="twi-22-send-line text-[28px] text-white absolute top-1/2 right-4 transform -translate-y-1/2"></i>
+                <i
+                  class="twi-22-send-line text-[28px] text-white absolute top-1/2 right-4 transform -translate-y-1/2"></i>
               </div>
               <div class="text-caption-1 font-normal text-neutral-1-300 mb-[30px]">Nhập email để có cơ hội giảm 50% cho
                 <br>
@@ -290,7 +294,8 @@
             <div class="flex flex-col gap-6 ">
               <div class="flex flex-col gap-4">
                 <div class="font-sans text-title-1 font-semibold text-white">GÓC KHÁCH KHÀNG</div>
-                <div class="font-sans text-body-2 font-normal text-neutral-1-300"><a href="#">Hình thức đăng ký, sử dụng</a>
+                <div class="font-sans text-body-2 font-normal text-neutral-1-300"><a href="#">Hình thức đăng ký, sử
+                    dụng</a>
                 </div>
                 <div class="font-sans text-body-2 font-normal text-neutral-1-300"><a href="#">Hướng dẫn đặt hàng</a>
                 </div>

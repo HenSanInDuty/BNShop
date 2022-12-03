@@ -20,3 +20,17 @@ export interface getOrderDetailDTO {
  order: any
 }
 
+export interface getOrderDetailAdminDTO {
+ id: number
+ total: number
+ date_order: string
+ date_receive: any
+ status: string
+ address: number
+ payment: number
+ shipper: any
+ customer: number
+ agency: number
+}
+
+

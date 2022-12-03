@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AdminGuardService, CustomerGuardService } from '@core/authentication';
+import { AdminGuard } from '@core/authentication/admin.guard';
 import { LayoutComponent } from '@shared/layout/layout/layout.component';
 
 const routes: Routes = [
@@ -48,6 +49,11 @@ const routes: Routes = [
     path: 'customer',
     canActivate: [CustomerGuardService],
     loadChildren: () => import('./modules/customer/customer.module').then(m => m.CustomerModule)
+  },
+  {
+    path: 'admin',
+    canActivate: [AdminGuard],
+    loadChildren: () => import('./modules/admin/admin.module').then(m => m.AdminModule)
   },
 ];
 

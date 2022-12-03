@@ -13,11 +13,18 @@ export interface ProductDTO {
 }
 
 export interface editProductDTO {
- display_image: string,
- category?: string[],
- quantity: number,
- price: number,
+ display_image?: string
+ price?: number
+ price_end_datetime?: string
+ quantity?: number
+ quantity_note?: string
+ category?: string[]
+ attachment?: Attachment
+ describe?: string
 }
+
+export interface Attachment { }
+
 export interface getProductDTO {
  id: number,
  name: string,
@@ -41,6 +48,11 @@ export interface getProductDTO {
   end_datetime: Date,
   product: number
  },
- pre_price: number,
+ pre_price?: {
+  id: number,
+  price: number,
+  end_datetime: Date,
+  product: number | null
+ },
  attachment: { id: string, product: number, type: string, url: string }[]
 }

@@ -8,7 +8,7 @@ export const environment = {
   showLogComponent:true,
   apiTDesk:"http://172.29.4.193:2609/api/v1/",
   apiTHRM:"https://bn-shop.herokuapp",
-  apiBNShop:"https://bn-shop.herokuapp.com/api/",
+  apiBNShop:"http://103.178.233.178:8000/api/",
   urlLogin:"/account/login",
   accountServer: "https://account-dev.tpos.dev/api/v1/",
   notifyServer: "https://test.notification.tmtco.dev/api/v1/",
