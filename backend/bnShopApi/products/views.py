@@ -139,7 +139,6 @@ def get_info_product(p):
                     last_price = price 
             else:
                 last_price = price
-        
     #Result of product
     instance = {
                 'id':p.id,
@@ -163,7 +162,6 @@ def get_info_product(p):
                 'detail':[{**model_to_dict(d)} for d in p.detail.all()],
                 'describe':p.describe and p.describe.content or "",
                 'quantity':p.quantity.last().quantity,
-                'describe':p.describe and p.describe.content,
                 'last_price':{
                     **model_to_dict(last_price)
                 },
@@ -237,7 +235,6 @@ class ProductViewAll(generics.GenericAPIView):
             query.add(sub_query,Q.AND)
 
         product = Product.objects.filter(query)
-        print(query)
         result = []
         for p in product:
             instance = get_info_product(p)
