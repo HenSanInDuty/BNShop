@@ -74,7 +74,8 @@ class ProductRegisterSerializer(serializers.Serializer):
         TYPES_ATTACHMENT = ('2D','3D','Video')
         agency = self.context.get('request').user.user.agency
         if Brand.objects.filter(name=validated_data['brand_name'],
-                                origin=validated_data['brand_origin']):
+                                origin=validated_data['brand_origin'],
+                                origin_brand=validated_data['brand_origin_brand']):
             
             brand = Brand.objects.filter(origin=validated_data['brand_origin'],
                                      origin_brand=validated_data['brand_origin_brand'],
