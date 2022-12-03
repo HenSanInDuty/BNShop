@@ -19,7 +19,7 @@ class OrderViewAll(generics.GenericAPIView):
     def get(self,request):
         customer = request.user.user.customer
         if customer:
-            orders = Order.objects.filter(customer = customer,order_detail__isnull=True)
+            orders = Order.objects.filter(customer = customer,order_detail__isnull=True).order_by("product__agency")
             serializer = ViewOrdersSerializer(orders,many=True)
             return Response(serializer.data)    
         return Response()
