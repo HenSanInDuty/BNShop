@@ -93,10 +93,10 @@ WSGI_APPLICATION = 'bnShopApi.wsgi.application'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
+    # }
     # 'default': {
     #     'ENGINE': 'django.db.backends.postgresql',
     #     'NAME': 'd6gtpuluvtikat', 
@@ -106,14 +106,14 @@ DATABASES = {
     #     'PORT': '5432',
     # }
     #Docker
-    # "default": {
-    #     "ENGINE": "django.db.backends.postgresql",
-    #     "NAME": "bnshop",
-    #     "USER": "postgres",
-    #     "PASSWORD": "12345678",
-    #     "HOST": "db",
-    #     "PORT": "5432",
-    # }
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "bnshop",
+        "USER": "postgres",
+        "PASSWORD": "12345678",
+        "HOST": "db",
+        "PORT": "5432",
+    }
 }
 
 
