@@ -45,7 +45,7 @@ def get_profile_user(user):
 class AccountManageViewAll(generics.GenericAPIView):
   permission_classes = [IsAuthenticated,AdminPermission]
 
-  type_param = openapi.Parameter('type', openapi.IN_QUERY, description="Neu type = 1 la agency, type = 2 la customer, type = 3 la tai khoan agency chua active", type=openapi.TYPE_STRING)
+  type_param = openapi.Parameter('type', openapi.IN_QUERY, description="Neu type = 1 la agency, type = 2 la customer, type = 3 la tai khoan agency chua active, type = 4 la tai khoan agency da active", type=openapi.TYPE_STRING)
   @swagger_auto_schema(mehotd='get',manual_parameters=[type_param])
   def get(self,request):
     type = request.GET.get('type')
@@ -60,6 +60,8 @@ class AccountManageViewAll(generics.GenericAPIView):
         account = user.filter(account__is_customer =True)
       elif type == "3":
         account = user.filter(account__is_agency =True,account__is_active=False)
+      elif type == "4":
+        account = user.filter(account__is_agency =True,account__is_active=True)
     result = []
     for a in account:
       result.append(get_profile_user(a))
