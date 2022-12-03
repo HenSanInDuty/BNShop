@@ -229,10 +229,11 @@ class ProductUpdateSerializer(serializers.Serializer):
         if validated_data.get('describe'):
             if instance.describe:
                 instance.describe.delete()
-            Describe.objects.create(
+            des = Describe.objects.create(
                 content = validated_data.get('describe'),
-                product = instance
-            )
+            ) 
+            instance.describe = des
+            instance.save()
 
         return instance
 
