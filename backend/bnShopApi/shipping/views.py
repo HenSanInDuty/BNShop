@@ -17,7 +17,6 @@ class ShippingStatus(generics.GenericAPIView):
 
     def post(self,request):
         data = request.data
-        print(request.data)
         data['shipper'] = request.user.user.shipper.id
         serializer = self.serializer_class(data=data)
         if serializer.is_valid():
