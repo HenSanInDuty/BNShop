@@ -34,10 +34,11 @@ class CreateRateSerializer(serializers.Serializer):
                                 product=product,
                                 customer=customer)
         images = []
-        for i in validated_data['image']:
-            instance = Image.objects.create(image_url=i,
-                                rate=rate)
-            images.append(instance)
+        if validated_data.get('image'):
+            for i in validated_data['image']:
+                instance = Image.objects.create(image_url=i,
+                                    rate=rate)
+                images.append(instance)
         return {
             'product':product.id,
             'title':rate.title,
