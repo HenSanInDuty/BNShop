@@ -26,11 +26,15 @@ class ViewOrderDetailSerializer(serializers.ModelSerializer):
     customer_info = serializers.SerializerMethodField()
     shipper_info = serializers.SerializerMethodField()
     address_info = serializers.SerializerMethodField()
+    order_detail_no = serializers.SerializerMethodField()
 
 
     class Meta():
         model = OrderDetail
         fields = "__all__"
+
+    def get_order_detail_no(self,obj):
+        return f"HD{obj.id}DL{obj.agency.user.id}KH{obj.customer.user.id}"
 
     def get_address_info(self,obj):
         return {

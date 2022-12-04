@@ -112,6 +112,7 @@ def get_order_detail(od):
     address_serializer = AddressSerializer(od.address)
     result = {
         "id":od.id,
+        "order_detail_no":f"HD{od.id}DL{od.agency.user.id}KH{od.customer.user.id}",
         "date_order":od.date_order,
         "date_receive":od.date_receive,
         "status":od.status,
