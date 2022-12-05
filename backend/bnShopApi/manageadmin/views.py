@@ -31,14 +31,17 @@ def get_profile_user(user):
         if user.account.is_customer:
             return_result['nickname']=user.customer.nickname
             return_result['birthday']=user.customer.birthday
+            return_result['userNo'] = f'cus{user.id}'
             return_result['role']='Customer'
 
         if user.account.is_agency:
             return_result['main_industry'] = user.agency.main_industry
             return_result['identify'] = user.agency.identify
+            return_result['userNo'] = f'agen{user.id}'
             return_result['role'] = 'Agency'
         if user.account.is_shipper:
             return_result['company_name'] = user.shipper.companyName 
+            return_result['userNo'] = f'shp{user.id}'
             return_result['role'] = 'Shipper'
         return return_result
 
