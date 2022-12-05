@@ -142,6 +142,7 @@ def get_info_product(p):
     #Result of product
     instance = {
                 'id':p.id,
+                'productNo':f'SP{p.id}DL{agency.id}',
                 'name':p.name,
                 'agency':{
                     'id':agency.id,
