@@ -161,8 +161,6 @@ class ProductUpdateSerializer(serializers.Serializer):
     display_image = serializers.CharField(max_length=30000,required=False)
     price = serializers.FloatField(required=False)
     price_end_datetime = serializers.DateTimeField(required=False)
-    quantity = serializers.IntegerField(required=False)
-    quantity_note = serializers.CharField(max_length=300,required=False)
     category = serializers.ListField(write_only=True,required=False)
     attachment = serializers.JSONField(required=False)
     describe = serializers.CharField(max_length=1000000,required=False)
@@ -184,23 +182,6 @@ class ProductUpdateSerializer(serializers.Serializer):
                     raise serializers.ValidationError({"category":"category id must be a number"})
                 except Exception:
                     raise serializers.ValidationError({"category":"can't find this category"})
-        #Add quantity
-        old_quantity = Quantity.objects.filter(product = instance).last().quantity
-        if validated_data.get('quantity') and validated_data.get('quantity')!=old_quantity:
-            note = validated_data.get('quantity_note')  
-            change_num = abs(validated_data.get('quantity')-old_quantity)
-            if not note:
-                if old_quantity < validated_data.get('quantity'):
-                    note = "Add "+str(change_num)+" items"
-                if old_quantity > validated_data.get('quantity'):
-                    note = "Sub "+str(change_num)+" items"      
-            new_quantity = Quantity.objects.create(
-                                                product=instance,
-                                                quantity=validated_data.get('quantity'),
-                                                change_num = change_num,
-                                                note=note,)
-            instance.quantity.add(new_quantity)
-            instance.save()
         #Add price
         if validated_data.get('price'):
             price_end_datetime=None
@@ -212,7 +193,6 @@ class ProductUpdateSerializer(serializers.Serializer):
                 new_price.end_datetime = price_end_datetime
                 new_price.save()
             instance.price.add(new_price)
-            instance.save()
         #Update attachment
         if validated_data.get('attachment'):
             if instance.attachment:
@@ -234,7 +214,7 @@ class ProductUpdateSerializer(serializers.Serializer):
                 content = validated_data.get('describe'),
             ) 
             instance.describe = des
-            instance.save()
+        instance.save()
 
         return instance
 
