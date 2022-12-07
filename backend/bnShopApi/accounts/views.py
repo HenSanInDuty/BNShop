@@ -98,7 +98,7 @@ def register(request,role):
         #Create token
         token = get_tokens_for_user(new_account)
         return Response({
-            'id':new_account.id,
+            'id':new_account.user.id,
             'phone':new_account.phone,
             **token
         })
