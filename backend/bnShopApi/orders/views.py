@@ -149,13 +149,13 @@ class OrderDetailViewAll(generics.GenericAPIView):
     def get(self,request):
         user = request.user
         if user.is_customer:
-            order_detail = OrderDetail.objects.filter(customer=user.user.customer)
+            order_detail = OrderDetail.objects.filter(customer=user.user.customer).order_by('-date_order')
             result = []
             for od in order_detail:
                 result.append(get_order_detail(od))
             return Response(result)
         elif user.is_agency:
-            order_detail = OrderDetail.objects.filter(agency=user.user.agency)
+            order_detail = OrderDetail.objects.filter(agency=user.user.agency).order_by('-date_order')
             result = []
             for od in order_detail:
                 result.append(get_order_detail(od))
