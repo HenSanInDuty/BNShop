@@ -168,10 +168,10 @@ class ProductUpdateSerializer(serializers.Serializer):
     def update(self,instance,validated_data):
         TYPES_ATTACHMENT = ('2D','3D','Video')
         agency = self.context.get('request').user.user.agency
-        if validated_data.get('display_image'):
+        if validated_data.get('display_image') and validated_data.get('display_image').strip() != '':
             instance.display_image = validated_data.get('display_image')
         #Update category
-        if validated_data.get('category'):
+        if validated_data.get('category') and validated_data.get('category').strip() != '':
             instance.category.clear()
             for cate in validated_data['category']:
                 try:
@@ -183,7 +183,7 @@ class ProductUpdateSerializer(serializers.Serializer):
                 except Exception:
                     raise serializers.ValidationError({"category":"can't find this category"})
         #Add price
-        if validated_data.get('price'):
+        if validated_data.get('price') and validated_data.get('price')!=None:
             price_end_datetime=None
             if validated_data.get('price_end_datetime'):
                 price_end_datetime = validated_data.get('price_end_datetime')
@@ -194,7 +194,7 @@ class ProductUpdateSerializer(serializers.Serializer):
                 new_price.save()
             instance.price.add(new_price)
         #Update attachment
-        if validated_data.get('attachment'):
+        if validated_data.get('attachment') and validated_data.get('attachment').strip()!='':
             if instance.attachment:
                 instance.attachment.all().delete()
             try:
@@ -207,7 +207,7 @@ class ProductUpdateSerializer(serializers.Serializer):
                 raise serializers.ValidationError({"attachment":"please enter the list"})
         
         #Update describe sss
-        if validated_data.get('describe'):
+        if validated_data.get('describe') and validated_data.get('describe').strip() != '':
             if instance.describe:
                 instance.describe.delete()
             des = Describe.objects.create(
