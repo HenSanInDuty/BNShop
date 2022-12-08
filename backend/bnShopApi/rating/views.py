@@ -55,6 +55,7 @@ class RatingViewReplyDetail(generics.GenericAPIView):
     serializer_class = RateSerializer
 
     def get_permissions(self):
+        print("alo")
         if self.request.method != "GET":
             return [IsAuthenticated()]
     
