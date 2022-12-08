@@ -166,6 +166,7 @@ class ProductUpdateSerializer(serializers.Serializer):
     describe = serializers.CharField(max_length=1000000,required=False)
 
     def update(self,instance,validated_data):
+        print(validated_data.get('price'))
         TYPES_ATTACHMENT = ('2D','3D','Video')
         agency = self.context.get('request').user.user.agency
         if validated_data.get('display_image') and validated_data.get('display_image').strip() != '':
