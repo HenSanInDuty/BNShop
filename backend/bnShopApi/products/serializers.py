@@ -159,7 +159,7 @@ class ProductRegisterSerializer(serializers.Serializer):
 
 class ProductUpdateSerializer(serializers.Serializer):
     display_image = serializers.CharField(max_length=30000,required=False)
-    price = serializers.FloatField(required=False,null=True)
+    price = serializers.FloatField(required=False,default=0)
     price_end_datetime = serializers.DateTimeField(required=False)
     category = serializers.ListField(write_only=True,required=False)
     attachment = serializers.JSONField(required=False)
