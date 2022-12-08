@@ -183,7 +183,7 @@ class ProductUpdateSerializer(serializers.Serializer):
                 except Exception:
                     raise serializers.ValidationError({"category":"can't find this category"})
         #Add price
-        if validated_data.get('price') and validated_data.get('price')!=None:
+        if validated_data.get('price') and validated_data.get('price')!=None and validated_data.get('price')!=0:
             price_end_datetime=None
             if validated_data.get('price_end_datetime'):
                 price_end_datetime = validated_data.get('price_end_datetime')
