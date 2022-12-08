@@ -3,11 +3,18 @@ from .models import Rate, Reply, Image
 from products.models import Product
 class RateSerializer(serializers.ModelSerializer):
     image = serializers.SerializerMethodField()
+    customer_info = serializers.SerializerMethodField()
 
     class Meta:
         model = Rate
         fields = "__all__"
     
+    def get_customer_info(self,obj):
+        return {
+            'name':obj.customer.user.name,
+            'avatar':obj.customer.user.avatar
+        }
+
     def get_image(self,obj):
         result = []
         for img in obj.image.all():
