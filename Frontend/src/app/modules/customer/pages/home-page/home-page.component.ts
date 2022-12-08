@@ -236,6 +236,11 @@ export class HomePageComponent implements OnInit {
     localStorage.setItem("idProduct", data.id);
     this.router.navigateByUrl('/customer/product-detail');
   }
+  movetoProduct(data: TDSSafeAny) {
+    // this.productService.idProduct.next(data.id)
+    localStorage.setItem("idType", data.id);
+    this.router.navigateByUrl('/customer/product');
+  }
 
   changeListType(param: number) {
     if (param == 16) {

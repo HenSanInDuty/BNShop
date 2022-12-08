@@ -1,0 +1,73 @@
+<tds-spin [spinning]="isSubmit">
+ <div class="flex flex-col  gap-2 h-[calc(55vh)] overflow-auto tds-custom-scroll">
+  <div class="flex justify-center mt-4">
+  <div class="flex flex-col gap-2">
+   <div class="text-body-2 font-semibold text-neutral-1-900">Mức độ hài lòng của bạn:</div>
+    <tds-rate size="lg" [(ngModel)]="value" [tooltips]="tooltips" (ngModelChange)="onChange($event)">
+    </tds-rate>
+  </div>
+  </div>
+  <form [formGroup]="addFeedback" id="addFeedback" (ngSubmit)="onSubmit()" autocomplete="off">
+   <div class="flex flex-col gap-4">
+    <tds-form-field>
+     <tds-label>Tiêu để</tds-label>
+     <input tdsInput autocomplete="off" [required]="true" formControlName="title" />
+     <tds-error>Vui lòng nhập tiêu đề</tds-error>
+    </tds-form-field>
+    <tds-form-field>
+     <tds-label>Nội dung</tds-label>
+     <div class="flex items-start h-16 border-neutral-2-200">
+      <input tdsInput autocomplete="off" placeholder="Nhập mô tả" formControlName="content" />
+     </div>
+     <tds-error>Vui lòng nhập nội dung</tds-error>
+    </tds-form-field>
+    <tds-image-group class="grid grid-cols-4 gap-x-2 gap-y-3 items-start w-full">
+     <tds-upload [multiple]="true" [(fileList)]="fileListAvatar" 
+      (change)="handleChangeFile($event)" [showButton]="true" [showUploadList]="false" [beforeUpload]="beforeUploadAvatar">
+      <div class="flex items-center justify-center w-[104px] h-[104px] rounded-2xl">
+       <div class="border border-primary-1 rounded border-dashed flex items-start w-[104px] h-[104px]">
+        <div class="flex flex-col">
+         <div class="flex items-start justify-center mt-0 rounded">
+          <div class="w-[104px] h-[104px]  rounded flex flex-col justify-center items-center">
+           <i class="tdsi-images-fill text-heading-2 text-primary-1"></i>
+           <span class="text-body-2 font-regular text-primary-1">Thêm ảnh</span>
+          </div>
+         </div>
+        </div>
+       </div>
+      </div>
+     </tds-upload>
+     <div *ngFor="let item of previewAvatar" class="relative group w-[104px] h-[104px] rounded-md">
+      <div
+       class=" justify-center absolute w-[104px] h-[104px] rounded-md text-white hidden  group-hover:flex pointer-events-none group-hover:bg-black group-hover:bg-opacity-40">
+       <div class="flex items-center">
+        <button tds-flat-button-icon class="bg-transparent p-2">
+         <span class="flex items-center">
+          <i class="pointer-events-auto tdsi-eye-open-fill  text-lg leading-5"></i>
+         </span>
+        </button>
+       </div>
+       <div class="flex items-center">
+        <button tds-flat-button-icon class="bg-transparent p-2 pointer-events-auto">
+         <span class="flex items-center">
+          <i class="tdsi-trash-fill text-lg leading-5"></i>
+         </span>
+        </button>
+       </div>
+      </div>
+      <img class="w-[104px] h-[104px] rounded-md  object-cover cursor-pointer" tds-image disablePreview="true" width="280px"
+       height="280px" [tdsSrc]="item" />
+     </div>
+    </tds-image-group>
+   </div>
+   <div *tdsModalFooter class="flex justify-center gap-3 p-4">
+    <button (click)="cancel()" tds-button color="secondary" class="min-w-[100px]">
+     Để sau
+    </button>
+    <button tds-button form='addFeedback' type="submit" color="primary" class="min-w-[100px]">
+     Đánh giá sản phẩm
+    </button>
+   </div>
+  </form>
+ </div>
+</tds-spin>

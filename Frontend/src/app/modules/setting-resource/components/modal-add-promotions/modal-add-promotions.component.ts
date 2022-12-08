@@ -112,7 +112,6 @@ export class ModalAddPromotionsComponent implements OnInit {
   }
 
   onSubmit(): void {
-    console.log(this.addaccsetForm.value)
     if (this.addaccsetForm.valid && this.addaccsetForm.dirty) {
       this.isSubmit = true;
       let param: editProductDTO = {

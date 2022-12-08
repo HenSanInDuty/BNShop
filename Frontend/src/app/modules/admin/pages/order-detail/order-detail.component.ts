@@ -19,6 +19,7 @@ import { ShippersComponent } from '../../components/shippers/shippers.component'
 })
 export class OrderDetailComponent implements OnInit {
 
+  expandSet = new Set<number>();
   selected = 0;
   checked = false;
   indeterminate = false;
@@ -77,12 +78,18 @@ export class OrderDetailComponent implements OnInit {
     this.getListAccsetType()
   }
 
-  
-  updateCheckedSet(item: string, checked: boolean): void {
+  onExpandChange(id: number, checked: boolean): void {
+
+    // let param: getProductDTOAdmin = {
+    //   type: this.selectedStatus.toString(),
+    //   agency: id,
+    // }
     if (checked) {
-      this.setOfCheckedId.add(item);
+      // this.getProduct(param)
+      // this.expandSet = new Set<number>();
+      this.expandSet.add(id);
     } else {
-      this.setOfCheckedId.delete(item);
+      this.expandSet.delete(id);
     }
   }
 
@@ -118,18 +125,6 @@ export class OrderDetailComponent implements OnInit {
   onModelChange(value: TDSSafeAny) {
 
 
-  }
-  onItemChecked(item: TDSSafeAny, checked: boolean): void {
-    this.updateCheckedSet(item, checked);
-    this.refreshCheckedStatus();
-  }
-
-
-  onAllChecked(value: boolean): void {
-    this.listOfCurrentPageData.forEach(item => {
-      this.updateCheckedSet(item, value)
-    });
-    this.refreshCheckedStatus();
   }
 
   onCurrentPageDataChange($event: TDSSafeAny): void {
@@ -226,14 +221,14 @@ export class OrderDetailComponent implements OnInit {
   }
 
   onship(data: TDSSafeAny): void {
-     let modal= this.modalService.create({
+    let modal = this.modalService.create({
       title: "Tiến hành giao hàng",
       content: ShippersComponent,
       size: "md",
       viewContainerRef: this.viewContainerRef,
       footer: null,
       componentParams: {
-       
+        order: data
       },
     })
     modal.afterClose.subscribe(

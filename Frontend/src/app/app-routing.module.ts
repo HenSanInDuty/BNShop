@@ -36,8 +36,8 @@ const routes: Routes = [
         loadChildren: () => import('./modules/property-management/property-management.module').then(m => m.PropertyManagementModule)
       },
       {
-        path: 'setting-resource',
-        loadChildren: () => import('./modules/setting-resource/setting-resource.module').then(m => m.SettingResourceModule)
+        path: 'store',
+        loadChildren: () => import('./modules/setting-resource/store.module').then(m => m.SettingResourceModule)
       },
       // {
       //   path: 'time-keepper',

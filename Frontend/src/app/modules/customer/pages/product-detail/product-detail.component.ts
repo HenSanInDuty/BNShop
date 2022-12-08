@@ -5,13 +5,16 @@ import { takeUntil } from 'rxjs';
 import { GetAddressDTO } from 'src/app/dto/address.dto';
 import { OrderDTO } from 'src/app/dto/order.dto';
 import { getProductDTO } from 'src/app/dto/product.dto';
+import { RatingDTO } from 'src/app/dto/rating.dto';
+import { FilterStatusItemDTO } from 'src/app/modules/setting-resource/models/accset.dto';
 import { ProductService } from 'src/app/modules/setting-resource/services/product.service';
 import { AddressService } from 'src/app/services/address.service';
 import { OrdersService } from 'src/app/services/orders.service';
+import { RatingService } from 'src/app/services/rating.service';
 import { TDSDestroyService } from 'tds-ui/core/services';
 import { TDSMessageService } from 'tds-ui/message';
 import { TDSModalService } from 'tds-ui/modal';
-import { TDSHelperObject, TDSSafeAny } from 'tds-ui/shared/utility';
+import { TDSHelperArray, TDSHelperObject, TDSSafeAny } from 'tds-ui/shared/utility';
 import { ModalChosenAddressComponent } from '../../modal-chosen-address/modal-chosen-address.component';
 
 @Component({
@@ -36,11 +39,19 @@ export class ProductDetailComponent implements OnInit {
     product: 0,
     customer: 0,
   }
+  star = 0;
+  SumRating: {
+    rating?: number,
+    length?: number,
+  }[] = []
   userProfile$: any;
   address?: string = '';
   lstAddress?: GetAddressDTO;
-  lstImg?:  any;
+  lstImg?: any;
   idOrder$: any;
+  rating?: RatingDTO[] = []
+  ratingBackup?: RatingDTO[] = []
+  isDisabled: boolean = true;
   constructor(
     private productSevice: ProductService,
     private destroy$: TDSDestroyService,
@@ -51,10 +62,50 @@ export class ProductDetailComponent implements OnInit {
     private authService: CoreAuthService,
     private addressService: AddressService,
     private modalService: TDSModalService,
-    private viewContainerRef: ViewContainerRef
+    private viewContainerRef: ViewContainerRef,
+    private ratingService: RatingService
   ) { }
 
   listImage: string[] = []
+  lstStar: Array<FilterStatusItemDTO> = [
+    {
+      name: 'Tất cả',
+      value: 0,
+      count: 0,
+      disabled: false
+    },
+    {
+      name: '1',
+      value: 1,
+      count: 0,
+      disabled: false
+    },
+    {
+      name: '2',
+      value: 2,
+      count: 0,
+      disabled: false
+    },
+    {
+      name: '3',
+      value: 3,
+      count: 0,
+      disabled: false
+    },
+    {
+      name: '4',
+      value: 4,
+      count: 0,
+      disabled: false
+    },
+
+    {
+      name: '5',
+      value: 5,
+      count: 0,
+      disabled: false
+    },
+  ]
   ngOnInit(): void {
     this.loading = true;
     this.authService.getObsUserProfile().pipe(takeUntil(this.destroy$)).subscribe({
@@ -73,7 +124,6 @@ export class ProductDetailComponent implements OnInit {
     this.productSevice.idProduct.subscribe({
       next: (value) => {
         if (value != 1) {
-          console.log(value)
           this.getProductDetail(value)
         }
         else {
@@ -88,13 +138,71 @@ export class ProductDetailComponent implements OnInit {
       },
     })
     this.getAddress()
+    this.cd.detectChanges()
   }
 
-  getList() {
-    this.lstImg
-    for (let index = 0; index < this.lstImg.length; index++) {
-      this.listImage.push(this.lstImg[index].url);
+  onSelectChangeRating(value: number) {
+    this.star = value
+    switch (this.star) {
+      case 0:
+      this.rating = this.ratingBackup;
+        break;
+      case 1:
+        this.rating = this.ratingBackup;
+        this.rating = this.rating?.filter(item => item.star == 1)
+        break;
+      case 2:
+        this.rating = this.ratingBackup;
+        this.rating = this.rating?.filter(item => item.star == 2)
+        break;
+      case 3:
+        this.rating = this.ratingBackup;
+        this.rating = this.rating?.filter(item => item.star == 3)
+        break;
+      case 4:
+        this.rating = this.ratingBackup;
+        this.rating = this.rating?.filter(item => item.star == 4)
+        break;
+      case 5:
+        this.rating = this.ratingBackup;
+        this.rating = this.rating?.filter(item => item.star == 5)
+        break;
     }
+  }
+
+  getListRating() {
+    this.ratingService.getRatingId(this.product?.id!)
+      .pipe(takeUntil(this.destroy$)).subscribe(
+        {
+          next: (item: any) => {
+            let SumRating: {
+              rating: number,
+              length: number,
+            }[] = []
+            if (TDSHelperArray.hasListValue(item)) {
+              this.rating = item
+              this.ratingBackup = this.rating
+              let rating: number[] = []
+              for (let index = 0; index < this.rating?.length!; index++) {
+                rating.push(this.rating![index].star);
+              }
+              SumRating.push({
+                rating: rating.reduce((c, d) => c + d, 0),
+                length: this.rating?.length!
+              })
+              this.cd.detectChanges()
+            }
+            this.SumRating = SumRating;
+            this.loading = false;
+            this.cd.detectChanges()
+
+          },
+          error: (err) => {
+            this.loading = false;
+            this.cd.detectChanges()
+          }
+        }
+      )
   }
   getProductDetail(id: number) {
     this.loading = true;
@@ -104,7 +212,7 @@ export class ProductDetailComponent implements OnInit {
           next: (item: any) => {
             this.product = item
             this.lstImg = item.attachment
-            this.getList()
+            this.getListRating()
             this.loading = false;
             this.cd.detectChanges()
           },
@@ -153,9 +261,18 @@ export class ProductDetailComponent implements OnInit {
     }
   }
 
-  moveToOrder(){
-    if(TDSHelperObject.hasValue(this.userProfile$)){
-      this.router.navigate(["customer/order-detail"])
+  moveToOrder(data: TDSSafeAny) {
+    if (TDSHelperObject.hasValue(this.userProfile$)) {
+        if (!this.idOrder$.includes(data.id)) {
+          this.addAmountOrder(data);
+          setTimeout(() => {
+            this.router.navigate(["customer/order-detail"])
+          }, 2000);
+          this.cd.detectChanges()
+        }
+        else {
+          this.message.error("Sản phẩm đã có trong giỏ hàng")
+        }
     }
     else {
       this.message.warning("Bạn phải đăng nhập trước khi thực hiện thao tác")
@@ -219,7 +336,7 @@ export class ProductDetailComponent implements OnInit {
       modalEdit.afterClose.subscribe(
         {
           next: (res) => {
-            if (TDSHelperObject.hasValue(res)){
+            if (TDSHelperObject.hasValue(res)) {
               this.address = res;
             }
           },

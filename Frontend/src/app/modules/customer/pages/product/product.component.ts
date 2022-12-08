@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { takeUntil } from 'rxjs';
-import { getProductDTO } from 'src/app/dto/product.dto';
+import { getProductDTO, paramGetProductDTO } from 'src/app/dto/product.dto';
 import { TypeProductDTO } from 'src/app/dto/typeProduct.dto';
 import { ProductService } from 'src/app/modules/setting-resource/services/product.service';
 import { TDSDestroyService } from 'tds-ui/core/services';
@@ -20,6 +20,8 @@ import { TDSSafeAny } from 'tds-ui/shared/utility';
 })
 export class ProductComponent implements OnInit {
   loading = false;
+  item = null;
+  isTrue = true;
   public lstProduct: getProductDTO[] = [];
   lstType: TypeProductDTO[] = []
   listOfData: Array<TDSSafeAny> = [
@@ -33,7 +35,9 @@ export class ProductComponent implements OnInit {
       image: "assets/images/causual1.jpg",
     },
   ];
-
+  params: paramGetProductDTO = {
+    type: "",
+  }
   effect = "scrollx";
   constructor(
     private productService: ProductService,
@@ -44,8 +48,21 @@ export class ProductComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.getType(),
-    this.getListProduct()
+    this.getType();
+    this.getListProduct(this.params);
+  }
+  ngAfterViewInit(): void {
+    //Called after ngAfterContentInit when the component's view has been initialized. Applies to components only.
+    //Add 'implements AfterViewInit' to the class.
+    if(this.isTrue){
+      this.params.type = localStorage.getItem('idType')!
+      this.getListProduct(this.params);
+    }
+  }
+  
+  onChangeProduct(data: any) {
+    this.params.type = data;
+    this.getListProduct(this.params)
   }
   productDetail(data: TDSSafeAny) {
     this.productService.idProduct.next(data.id)
@@ -53,9 +70,9 @@ export class ProductComponent implements OnInit {
     this.router.navigateByUrl('/customer/product-detail');
   }
   // Lấy danh sách product từ api
-  getListProduct() {
-    this.loading = true
-    this.productService.getProduct()
+  getListProduct(params: paramGetProductDTO) {
+    this.loading = true;
+    this.productService.getProduct(params)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res: TDSSafeAny) => {

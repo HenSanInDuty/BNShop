@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewContainerRef } from '@angular/core';
-import { AccountService } from '@commom/hrm/services';
 import { CoreAuthService } from '@core/authentication';
 import { CoreUserInitDTO } from '@core/dto';
 import { takeUntil } from 'rxjs';
-import { getAgencyDTO, getCustomerDTO, getProductDTOAdmin } from 'src/app/dto/account.dto';
-import { getProductDTO, ProductDTO } from 'src/app/dto/product.dto';
+import { getAgencyDTO, getProductDTOAdmin } from 'src/app/dto/account.dto';
+import { getProductDTO } from 'src/app/dto/product.dto';
 import { FilterStatusItemDTO } from 'src/app/modules/setting-resource/models/accset.dto';
+import { AccountService } from 'src/app/services/account.service';
 import { AdminService } from 'src/app/services/admin.service';
 import { TDSDestroyService } from 'tds-ui/core/services';
 import { TDSMessageService } from 'tds-ui/message';
@@ -14,14 +14,14 @@ import { TDSSafeAny } from 'tds-ui/shared/utility';
 import { TDSTableQueryParams } from 'tds-ui/table';
 
 @Component({
-  selector: 'hrm-account-agency',
-  templateUrl: './account-agency.component.html',
-  styleUrls: ['./account-agency.component.scss'],
+  selector: 'hrm-review',
+  templateUrl: './review.component.html',
+  styleUrls: ['./review.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'bg-white flex flex-col rounded-xl w-full h-full' },
   providers: [TDSModalService, TDSDestroyService]
 })
-export class AccountAgencyComponent implements OnInit {
+export class ReviewComponent implements OnInit {
 
   expandSet = new Set<number>();
   lstAccount: getAgencyDTO[] = []
@@ -29,13 +29,13 @@ export class AccountAgencyComponent implements OnInit {
   lstData: Array<FilterStatusItemDTO> = [
     {
       name: 'Kích hoạt',
-      value: 4,
+      value: 1,
       count: 0,
       disabled: false
     },
     {
       name: "Chưa kích hoạt",
-      value: 3,
+      value: 2,
       count: 0,
       disabled: false
     },
@@ -57,7 +57,7 @@ export class AccountAgencyComponent implements OnInit {
   ]
   listOfCurrentPageData: Array<string> = [];
   setOfCheckedId = new Set<TDSSafeAny>();
-  selected = 4;
+  selected = null;
   pageIndex = 1;
   pageSize = 20;
   isSubmit: boolean = false;
@@ -99,7 +99,7 @@ export class AccountAgencyComponent implements OnInit {
 
   //Hàm thay đổi status của tab
   onSelectStatus(value: TDSSafeAny) {
-    this.selectedStatus =value;
+    this.selectedStatus = value;
     let param: getProductDTOAdmin = {
       type: value.toString(),
       agency: Array.from(this.expandSet)[0],
@@ -109,7 +109,7 @@ export class AccountAgencyComponent implements OnInit {
   }
   // checked selected
   onExpandChange(id: number, checked: boolean): void {
-   
+
     let param: getProductDTOAdmin = {
       type: this.selectedStatus.toString(),
       agency: id,
@@ -124,7 +124,7 @@ export class AccountAgencyComponent implements OnInit {
   }
   getAccount(value: number) {
     this.loading = true;
-    this.adminService.getAccount(value)
+    this.adminService.getRating(value)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res: TDSSafeAny) => {
@@ -191,141 +191,9 @@ export class AccountAgencyComponent implements OnInit {
   }
 
   onQueryParamsChange(params: TDSTableQueryParams): void {
-    this.getAccount(this.selected)
+    this.getAccount(this.selected!)
     this.cd.detectChanges()
   }
-
-  // // Lấy danh sách product từ api
-  // getListProduct(params: paramGetProductDTO) {
-  //   this.loading = true
-  //   this.productService.getProduct(params)
-  //     .pipe(finalize(() => {
-  //     }), takeUntil(this.destroy$))
-  //     .subscribe({
-  //       next: (res: TDSSafeAny) => {
-  //         if (res) {
-  //           // this.getStatus()
-  //           this.lstResource = res;
-  //           this.lstBackup = res;
-  //           this.lstData[0].count = this.lstResource.length
-  //           this.lstData[1].count = this.lstResource.filter(item => (item.is_approved === true && item.is_delete === false)).length
-  //           this.lstData[2].count = this.lstResource.filter(item => item.is_approved === false).length
-  //           this.lstData[3].count = this.lstResource.filter(item => item.is_delete === true).length
-  //           // this.lstResource.totalCount = res.totalCount;
-  //           this.loading = false
-  //         }
-  //         else {
-  //           this.getStatus()
-  //           // this.lstResource.items = []
-  //           // this.lstResource.totalCount = 0;
-  //           this.loading = false
-  //         }
-  //         this.cd.detectChanges()
-  //       },
-  //       error: (err) => {
-  //         this.lstResource = []
-  //         this.loading = false
-  //         // this.lstResource.totalCount = 0;
-  //         this.message.error(err.error.message)
-  //         this.cd.detectChanges()
-  //       }
-  //     })
-  // }
-
-  // // modal thêm mới sản phẩm
-  // showModalAdd(): void {
-  //   const modalAdd = this.modalService.create({
-  //     title: 'Thêm sản phẩm mới',
-  //     content: ModalAddEditProductComponent,
-  //     size: "lg",
-  //     viewContainerRef: this.viewContainerRef,
-  //     componentParams: {
-  //       // isActiveAdd: this.active,
-  //     },
-  //   });
-  //   modalAdd.afterClose.subscribe(
-  //     {
-  //       next: (res) => {
-  //         if (TDSHelperObject.hasValue(res))
-  //           this.getListProduct(this.params!);
-  //         this.selected = 1;
-  //       },
-  //       error: (err) => {
-  //       }
-  //     }
-  //   )
-  // }
-  // // modal thêm mới sản phẩm
-  // showModalAddPromotion(): void {
-  //   const modalAdd = this.modalService.create({
-  //     title: 'Thêm khuyễn mãi',
-  //     content: ModalAddPromotionsComponent,
-  //     size: "md",
-  //     viewContainerRef: this.viewContainerRef,
-  //     componentParams: {
-  //       // isActiveAdd: this.active,
-  //     },
-  //   });
-  //   modalAdd.afterClose.subscribe(
-  //     {
-  //       next: (res) => {
-  //         if (TDSHelperObject.hasValue(res))
-  //           this.getListProduct(this.params!);
-  //         this.selected = 1;
-  //       },
-  //       error: (err) => {
-  //       }
-  //     }
-  //   )
-  // }
-  // // modal nhập hàng sản phẩm
-  // showModaladdPrice(): void {
-  //   const modalAdd = this.modalService.create({
-  //     title: 'Phiếu nhập hàng',
-  //     content: ModalAddPriceProductComponent,
-  //     size: "lg",
-  //     viewContainerRef: this.viewContainerRef,
-  //     componentParams: {
-  //       // isActiveAdd: this.active,
-  //     },
-  //   });
-  //   modalAdd.afterClose.subscribe(
-  //     {
-  //       next: (res) => {
-  //         if (TDSHelperObject.hasValue(res))
-  //           this.getListProduct(this.params!);
-  //         this.selected = 1;
-  //       },
-  //       error: (err) => {
-  //       }
-  //     }
-  //   )
-  // }
-
-  // // modal chỉnh sửa
-  // showModalEdit(data: TDSSafeAny): void {
-  //   const modalEdit = this.modalService.create({
-  //     title: 'Chỉnh sửa sản phẩm',
-  //     content: ModalEditProductComponent,
-  //     size: "xl",
-  //     viewContainerRef: this.viewContainerRef,
-  //     componentParams: {
-  //       lstResource: data,
-  //     },
-  //   });
-  //   modalEdit.afterClose.subscribe(
-  //     {
-  //       next: (res) => {
-  //         if (TDSHelperObject.hasValue(res))
-  //           this.getListProduct(this.params!);
-  //         this.selected = 2;
-  //       },
-  //       error: (err) => {
-  //       }
-  //     }
-  //   )
-  // }
-
   // Modal kích hoạt tài khoản
   onActive(data: TDSSafeAny): void {
     const modal = this.modalService.warning({
@@ -341,7 +209,7 @@ export class AccountAgencyComponent implements OnInit {
               next: (res) => {
                 modal.destroy(data.id);
                 this.message.success("Kích hoạt người dùng thành công")
-                this.getAccount(this.selected)
+                this.getAccount(this.selected!)
               },
               error: (err) => {
                 this.message.error(err.message)
@@ -399,7 +267,7 @@ export class AccountAgencyComponent implements OnInit {
           .subscribe(
             {
               next: (res) => {
-                this.getAccount(this.selected)
+                this.getAccount(this.selected!)
                 this.message.success("Dừng kích hoạt người dùng thành công")
                 modal.destroy(data.id);
               },
@@ -418,7 +286,7 @@ export class AccountAgencyComponent implements OnInit {
   onDisableProduct(data: TDSSafeAny): void {
     const modal = this.modalService.error({
       title: 'Bạn muốn xóa sản phẩm của đại lý này',
-        content: `<span  class="text-error-500">
+      content: `<span  class="text-error-500">
         Lưu ý: Không thể khôi phục thông tin sản phẩm này sau khi xóa
       </span>`,
       onOk: () => {

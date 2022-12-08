@@ -1,10 +1,8 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { SettingResourceRoutingModule } from './setting-resource-routing.module';
+import { SettingResourceRoutingModule } from './store-routing.module';
 import { ProductManagementComponent } from './pages/product-management/product-management.component';
-import { TimeAttendanceManagementComponent } from './pages/time-attendance-management/time-attendance-management.component';
-import { SettingResourceComponent } from './setting-resource.component';
 import { TDSTagModule } from 'tds-ui/tag';
 import { TDSPageHeaderModule } from 'tds-ui/page-header';
 import { TDSTableModule } from 'tds-ui/table';
@@ -21,7 +19,7 @@ import { TDSSpinnerModule } from 'tds-ui/progress-spinner';
 import { ModalDeleteAllComponent } from './components/modal-delete-all/modal-delete-all.component';
 import { TDSDropDownModule } from 'tds-ui/dropdown';
 import { HolidaysManagementComponent } from './pages/holidays-management/holidays-management.component';
-import { ShiftComponent } from './pages/shift/shift.component';
+import { ReviewComponent } from './pages/review/review.component';
 import { ModalAddEditShiftComponent } from './components/modal-add-edit-shift/modal-add-edit-shift.component';
 import { TDSTimePickerModule } from 'tds-ui/time-picker';
 import { TDSInputNumberModule } from 'tds-ui/input-number';
@@ -38,12 +36,10 @@ import { ModalAddEditTimeKeepperComponent } from './components/modal-add-edit-ca
 import { ModalAdminDeviceComponent } from './components/modal-admin-device/modal-admin-device.component';
 import { ModalGetStaffComponent } from './components/modal-get-staff/modal-get-staff.component';
 import { TDSAvatarModule } from 'tds-ui/avatar';
-import { CompanyComponent } from './pages/company/company.component';
 import { TDSDividerModule } from 'tds-ui/divider';
 import { TDSUploadModule } from 'tds-ui/upload';
 import { ModalAddEditCompanyComponent } from './components/modal-add-edit-company/modal-add-edit-company.component';
 import { ModalAddEditBranchCompanyComponent } from './components/modal-add-edit-branch-company/modal-add-edit-branch-company.component';
-import { ResourceTypeManagementComponent } from './pages/resource-type-management/resource-type-management.component';
 import { ProductComponent } from './pages/product/product.component';
 import { ModalAddEditProductComponent } from './components/modal-add-edit-product/modal-add-edit-product.component';
 import { TDSTabsModule } from 'tds-ui/tabs';
@@ -60,14 +56,17 @@ import { ModalAddPriceProductComponent } from './components/modal-add-price-prod
 import { ModalEditProductComponent } from './components/modal-edit-product/modal-edit-product.component';
 import { TDSEditorModule } from 'tds-editor';
 import { ModalAddPromotionsComponent } from './components/modal-add-promotions/modal-add-promotions.component';
+import { ShipManagementComponent } from './pages/ship-management/ship-management.component';
+import { OrderComponent } from './pages/order/order.component';
+import { StoreComponent } from './store.component';
+import { TDSBadgeModule } from 'tds-ui/badges';
 
 @NgModule({
   declarations: [
-    TimeAttendanceManagementComponent,
-    SettingResourceComponent,
+    StoreComponent,
     ModalActiveResourceComponent,
     ModalDeleteAllComponent,
-    ShiftComponent,
+    ReviewComponent,
     HolidaysManagementComponent,
     ModalAddEditShiftComponent,
     ModalAddEditHolidaysComponent,
@@ -78,10 +77,9 @@ import { ModalAddPromotionsComponent } from './components/modal-add-promotions/m
     ModalAddEditTimeKeepperComponent,
     ModalAdminDeviceComponent,
     ModalGetStaffComponent,
-    CompanyComponent,
     ModalAddEditCompanyComponent,
     ModalAddEditBranchCompanyComponent,
-    ResourceTypeManagementComponent,
+    OrderComponent,
     ProductComponent,
     ProductManagementComponent,
     CategoryManagementComponent,
@@ -89,6 +87,7 @@ import { ModalAddPromotionsComponent } from './components/modal-add-promotions/m
     ModalAddPriceProductComponent,
     ModalEditProductComponent,
     ModalAddPromotionsComponent,
+    ShipManagementComponent
   ],
   imports: [
     CommonModule,
@@ -127,6 +126,7 @@ import { ModalAddPromotionsComponent } from './components/modal-add-promotions/m
     TDSInputNumberModule,
     HttpClientModule,
     TDSEditorModule,
+    TDSBadgeModule
   ],
 })
 export class SettingResourceModule { }

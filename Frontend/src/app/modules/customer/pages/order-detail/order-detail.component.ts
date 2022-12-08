@@ -37,8 +37,10 @@ export class OrderDetailComponent implements OnInit {
   lstIdOrder: any
   lstOrder: getOrderDTO = [];
   lstOrderBackup: getListOrderDTO[] = [];
-  total:number =0 ;
+  lstOrderBackup2: getListOrderDTO[] = [];
+  total: number = 0;
   loading = false;
+  isTrue = true;
   constructor(
     private productSevice: ProductService,
     private destroy$: TDSDestroyService,
@@ -55,7 +57,7 @@ export class OrderDetailComponent implements OnInit {
   ngOnInit(): void {
     this.authService.getObsUserProfile().pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: TDSSafeAny) => {
-        this.loading= true;
+        this.loading = true;
         this.userProfile$ = res;
         this.getListOrder()
         // this.nameProfile = this.userProfile$?.name.split(" ")[this.userProfile$?.name.split(" ").length - 1].charAt(0);
@@ -85,6 +87,52 @@ export class OrderDetailComponent implements OnInit {
         this.idOrder$ = value;
       },
     })
+  }
+
+  onChange(e: TDSSafeAny, index: number) {
+    if (e == 0) {
+      this.isTrue = true;
+      this.orderService.deleteOrder(this.lstOrder[index].id).pipe(takeUntil(this.destroy$)).subscribe(
+        {
+          next: (item: any) => {
+            // const a = {
+            //   id: this.lstOrder[i].id,
+            //   qty: this.lstOrder[i].qty,
+            //   amount: this.lstOrder[i].amount,
+            //   product: item,
+            //   order_detail: this.lstOrder[i].order_detail,
+            //   customer: this.lstOrder[i].customer,
+            // }
+            this.lstIdOrder.splice(this.lstIdOrder.indexOf(this.lstOrder[index].id), 1)
+            this.orderService.listIdOrderObsevable.next(this.lstIdOrder)
+            this.getListOrder();
+            this.message.success("Đã xóa sản phẩm ra khỏi đơn hàng")
+            this.cd.detectChanges()
+          },
+          error: (err) => {
+            this.message.error("Xóa sản phẩm không thành công")
+            this.cd.detectChanges()
+          }
+        }
+      )
+    }
+    else {
+      this.total = 0;
+      this.orderService.editOrder(this.lstOrder[index].id, e).subscribe({
+        next: (value) => {
+          if (TDSHelperObject.hasValue(value)) {
+            this.getListOrder();
+          }
+          this.cd.detectChanges()
+        },
+        error: (err) => {
+          this.cd.detectChanges()
+
+        },
+      })
+    }
+    // this.total += (this.lstOrder[index].amount / this.lstOrder[index].qty)*e;
+    this.cd.detectChanges()
   }
 
   getList() {
@@ -221,14 +269,14 @@ export class OrderDetailComponent implements OnInit {
   getListOrder() {
     if (TDSHelperObject.hasValue(this.userProfile$)) {
       this.loading = true;
-      this.lstOrderBackup = [];
       this.orderService.getOrder()
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (res: TDSSafeAny) => {
             if (TDSHelperArray.hasListValue(res)) {
-              this.lstOrder = res;
+              this.lstOrder = res
               this.lstIdOrder = []
+              this.lstOrderBackup2 = []
               // this.getStatus()
               for (let i = 0; i < this.lstOrder.length; i++) {
                 this.productSevice.getProductId(this.lstOrder[i].product)
@@ -253,7 +301,7 @@ export class OrderDetailComponent implements OnInit {
                             this.orderService.listIdOrderObsevable.next(this.lstIdOrder)
                           }
                         }
-                        this.lstOrderBackup.push({
+                        this.lstOrderBackup2.push({
                           id: this.lstOrder[i].id,
                           qty: this.lstOrder[i].qty,
                           amount: this.lstOrder[i].amount,
@@ -262,14 +310,19 @@ export class OrderDetailComponent implements OnInit {
                           customer: this.lstOrder[i].customer,
 
                         })
-                        this.total += this.lstOrder[i].qty * this.lstOrder[i].amount;
-                        this.cd.detectChanges()
+                        this.total += this.lstOrder[i].amount;
+                        this.cd.detectChanges();
                       },
                       error: (err) => {
                         this.cd.detectChanges()
                       }
                     }
                   )
+              }
+              // console.log(this.lstIdOrder)
+              if (this.isTrue) {
+                this.lstOrderBackup = this.lstOrderBackup2
+                this.isTrue = false;
               }
               this.loading = false
               this.cd.detectChanges()

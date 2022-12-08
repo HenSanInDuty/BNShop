@@ -12,7 +12,6 @@ import { TDSSafeAny, TDSHelperObject, TDSHelperString } from 'tds-ui/shared/util
 export class CoreAuthInterceptorService implements HttpInterceptor {
 
     constructor(public auth: CoreAuthService,
-        public libcommon: CoreCommonService
     ) {
     }
 
@@ -20,20 +19,14 @@ export class CoreAuthInterceptorService implements HttpInterceptor {
         let that = this;
         let lstUrlLogin = [
             environment.apiServer.signInPassword,
-            environment.apiServer.signInFacebook,
-            environment.apiServer.signInGoogle,
-            environment.apiServer.signInVerifyOtpsms,
         ];
         //add header token
         req = this.addAuthenticationToken(req);
         return next.handle(req).pipe(catchError(err => {
-
-
             //Lỗi do đăng nhập chưa xóa dữ liệu trên cache
             if (lstUrlLogin.indexOf(req.url) > -1) {
                 that.auth.clearToken("checkLinkIDServer");
                 let error = "";
-
                 if (TDSHelperObject.hasValue(err)) {
                     if (TDSHelperObject.hasValue(err.error) &&
                         TDSHelperObject.hasValue(err.error.Message)) {
@@ -86,12 +79,20 @@ export class CoreAuthInterceptorService implements HttpInterceptor {
             && TDSHelperObject.hasValue(accessToken)
             && TDSHelperString.hasValueString(accessToken?.access)
         ) {
+            // headers: new HttpHeaders({
+            //     'Content-Type': 'application/json',
+            //     'Access-Control-Allow-Origin': '*',
+            //     'Access-Control-Allow-Credentials': 'true',
+            //     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+            //     'Access-Control-Allow-Headers': 'Origin, Content-Type, Accept, X-Custom-Header, Upgrade-Insecure-Requests',
+            // })
             req = req.clone({
                 setHeaders:
                 {
                     Authorization: "Bearer " + accessToken.access,
                 }
             });
+
         }
         return req;
     }

@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { AdminRoutingModule } from './admin-routing.module';
 import { LayoutComponent } from './components/layout/layout.component';
 import { AccountComponent } from './pages/account/account.component';
-import { ProductComponent } from './pages/product/product.component';
+import { ReviewComponent } from './pages/review/review.component';
 import { TypeComponent } from './pages/type/type.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -29,13 +29,15 @@ import { AccountCustomerComponent } from './pages/account-customer/account-custo
 import { TDSPageHeaderModule } from 'tds-ui/page-header';
 import { OrderDetailComponent } from './pages/order-detail/order-detail.component';
 import { ShippersComponent } from './components/shippers/shippers.component';
+import { TDSToolTipModule } from 'tds-ui/tooltip';
+import { TDSBreadCrumbModule } from 'tds-ui/breadcrumb';
 
 
 @NgModule({
   declarations: [
     LayoutComponent,
     AccountComponent,
-    ProductComponent,
+    ReviewComponent,
     TypeComponent,
     AccountAgencyComponent,
     AccountCustomerComponent,
@@ -65,7 +67,10 @@ import { ShippersComponent } from './components/shippers/shippers.component';
     TDSTabsModule,
     TDSFilterStatusModule,
     TDSTableModule,
-    TDSPageHeaderModule
+    TDSPageHeaderModule,
+    TDSToolTipModule,
+    TDSBadgeModule,
+    TDSBreadCrumbModule
   ]
 })
 export class AdminModule { }

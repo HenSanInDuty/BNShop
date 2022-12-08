@@ -143,13 +143,6 @@ export class ModalEditProductComponent implements OnInit {
   createForm() {
     this.addaccsetForm = this.fb.group({
       price: new FormControl(''),
-      name: [
-        '',
-        Validators.compose([
-          Validators.minLength(8),
-          Validators.maxLength(100),
-        ])
-      ],
       describe: [
         '',
         Validators.compose([
@@ -171,7 +164,6 @@ export class ModalEditProductComponent implements OnInit {
       this.modal.destroy(null);
   }
   onSubmit(): void {
-    console.log(this.addaccsetForm.value)
     if (this.addaccsetForm.valid && this.addaccsetForm.dirty) {
       this.isSubmit = true;
       this.body = this.addaccsetForm.value

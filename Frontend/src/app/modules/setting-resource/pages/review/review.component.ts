@@ -14,15 +14,15 @@ import { ParamGetShiftDTO } from '../../models/time-attendace.dto';
 
 
 @Component({
-  selector: 'hrm-shift',
-  templateUrl: './shift.component.html',
-  styleUrls: ['./shift.component.scss'],
+  selector: 'hrm-review',
+  templateUrl: './review.component.html',
+  styleUrls: ['./review.component.scss'],
   host: { class: 'h-full w-full flex' },
   providers: [
     TDSDestroyService
   ]
 })
-export class ShiftComponent implements OnInit {
+export class ReviewComponent implements OnInit {
 
   loading = false
   listOfData: Array<string> = [];

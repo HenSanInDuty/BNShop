@@ -1,15 +1,6 @@
 <tds-spin [spinning]="isSubmit">
  <form [formGroup]="addaccsetForm" id="formAddEditAccset" (ngSubmit)="onSubmit()">
   <div class="flex flex-col gap-4 h-[calc(60vh)] overflow-auto tds-custom-scroll pb-4">
-   <tds-form-field>
-    <tds-label>Tên sản phẩm</tds-label>
-    <input tdsInput autocomplete="off" placeholder="Tên sản phẩm" formControlName="name" />
-    <tds-error>
-     <span
-      *ngIf="addaccsetForm.controls['name'].hasError('minlength') || addaccsetForm.controls['name'].hasError('maxlength')">
-      Tên sản phẩm phải trên 8 và chỉ dưới 100 kí tự</span>
-    </tds-error>
-   </tds-form-field>
    <div class="flex gap-4">
     <tds-form-field class="w-full col-span-2">
      <tds-label>Thay đổi loại danh mục</tds-label>

@@ -5,7 +5,7 @@ import { AccountAgencyComponent } from './pages/account-agency/account-agency.co
 import { AccountCustomerComponent } from './pages/account-customer/account-customer.component';
 import { AccountComponent } from './pages/account/account.component';
 import { OrderDetailComponent } from './pages/order-detail/order-detail.component';
-import { ProductComponent } from './pages/product/product.component';
+import { ReviewComponent } from './pages/review/review.component';
 
 const routes: Routes = [
   {
@@ -18,8 +18,8 @@ const routes: Routes = [
         pathMatch: 'prefix'
       },
       {
-        path: 'product',
-        component: ProductComponent,
+        path: 'review',
+        component: ReviewComponent,
 
       },
       {

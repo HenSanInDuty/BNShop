@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewContainerRef } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
+import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { MenuModel } from '@commom/hrm/models';
 import { MenuService } from '@commom/hrm/services';
 import { CoreAuthService } from '@core/authentication';
@@ -8,17 +8,19 @@ import { DATA_MENU } from '@shared/layout/data/menu.data';
 import { Observable, takeUntil, switchMap } from 'rxjs';
 import { getListOrderDTO, getOrderDTO } from 'src/app/dto/order.dto';
 import { getOrderDetailDTO } from 'src/app/dto/orderDetail.dto';
+import { getProductDTO } from 'src/app/dto/product.dto';
 import { ModalRegisterPasswordComponent } from 'src/app/modules/dashboard/components/modal-register-password/modal-register-password.component';
 import { ModalSettingNotificationComponent } from 'src/app/modules/dashboard/components/v1.2/modal-setting-notification/modal-setting-notification.component';
 import { ProductDTO } from 'src/app/modules/setting-resource/models/product.dto';
 import { ProductService } from 'src/app/modules/setting-resource/services/product.service';
 import { OrderDetailService } from 'src/app/services/order-detail.service';
 import { OrdersService } from 'src/app/services/orders.service';
+import { TDSAutocompleteComponent, TDSAutocompleteTriggerDirective } from 'tds-ui/auto-complete';
 import { TDSDestroyService } from 'tds-ui/core/services';
 import { TDSContextMenuService, TDSDropdownMenuComponent } from 'tds-ui/dropdown';
 import { TDSMessageService } from 'tds-ui/message';
 import { TDSModalService } from 'tds-ui/modal';
-import { TDSSafeAny, TDSHelperObject, TDSHelperArray } from 'tds-ui/shared/utility';
+import { TDSSafeAny, TDSHelperObject, TDSHelperArray, TDSHelperString } from 'tds-ui/shared/utility';
 
 @Component({
   selector: 'hrm-layout',
@@ -45,10 +47,17 @@ export class LayoutComponent implements OnInit {
   lstOrderDetail: getOrderDetailDTO [] = [];
   lstOrderDetailBackup: getOrderDetailDTO [] = [];
   lstOrderBackup: getListOrderDTO[] = [];
-  lstProduct: TDSSafeAny[] = []
+  lstProduct: getProductDTO[] = []
+  lstProduct2: getProductDTO[] = []
   userProfile$!: CoreUserInitDTO | undefined;
   // Danh sách trạng thái của tab
   selectedStatus = 0
+  options2: any[] = [];
+  inputValue2: any = null;
+  @ViewChild(TDSAutocompleteTriggerDirective)
+  autoComplete?: TDSAutocompleteTriggerDirective;
+  @ViewChild(TDSAutocompleteComponent)
+  cmpAutoComplete?: TDSAutocompleteComponent;
   lstStatus: Array<TDSSafeAny> = [
     {
       name: 'Tất cả',
@@ -75,6 +84,7 @@ export class LayoutComponent implements OnInit {
       value: 5,
     },
   ]
+  
   constructor(
     public authService: CoreAuthService,
     public destroy$: TDSDestroyService,
@@ -86,12 +96,20 @@ export class LayoutComponent implements OnInit {
     private orderService: OrdersService,
     private OrderDetailService: OrderDetailService,
     private productSevice: ProductService,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef,
+    private router: Router
   ) {
 
   }
 
   ngOnInit(): void {
+    this.getListProduct()
+    this.router.events.subscribe((event) => {
+      if (!(event instanceof NavigationEnd)) {
+        return;
+      }
+      window.scrollTo(0, 0)
+    });
     this.initUser();
     this.authService.getObsUserProfile().pipe(takeUntil(this.destroy$)).subscribe({
       next: (res) => {
@@ -124,6 +142,64 @@ export class LayoutComponent implements OnInit {
     this.cd.detectChanges()
   }
 
+  onChange(data: { value: TDSSafeAny, keyupEvent: TDSSafeAny }): void {
+    this.lstProduct = [];
+    if(TDSHelperString.hasValueString(data.value)){
+      this.lstProduct = this.lstProduct2
+      this.lstProduct = this.lstProduct.filter(item => item.name.toLowerCase().includes(data.value.toLowerCase()) == true);
+    }
+  }
+  onClick(e:any, str:any) {
+    this.autoComplete?.closePanel();
+    if (e) {
+      this.productSevice.idProduct.next(str.id)
+      localStorage.setItem("idProduct", str?.id.toString());   
+      this.router.navigateByUrl('/customer/product-detail');
+      this.inputValue2 = "";  
+    }
+
+  }
+  compareFun = (o1: any | string, o2: any) => {
+    if (o1) {
+      // if (TDSHelperString.isString(o1)){
+      //   // this.productService.idProduct.next(data.id)
+        // localStorage.setItem("idProduct", this.lstProduct[0!]?.id.toString());
+        // this.router.navigateByUrl('/customer/product-detail');   
+      // }
+      return typeof o1 === 'string' ? o1 === o2.name : o1.id === o2.id;
+    } else {
+      return false;
+    }
+  };
+  search(event: TDSSafeAny): void {
+    // this.key = event.value;
+    // if (event.value != null) {
+    //   this.lstResource = this.lstBackup;
+    //   this.lstResource = this.lstResource.filter(item => item.name.toLowerCase().includes(event.value.toLowerCase()) == true);
+    //   this.lstData[0].count = this.lstResource.length
+    //   this.lstData[1].count = this.lstResource.filter(item => (item.is_approved === true && item.is_delete === false)).length
+    //   this.lstData[2].count = this.lstResource.filter(item => item.is_approved === false).length
+    //   this.lstData[3].count = this.lstResource.filter(item => item.is_delete === true).length
+    // }
+    // if (!TDSHelperString.hasValueString(event.value)) {
+    //   this.lstResource = this.lstBackup;
+    //   this.lstData[0].count = this.lstResource.length
+    //   this.lstData[1].count = this.lstResource.filter(item => (item.is_approved === true && item.is_delete === false)).length
+    //   this.lstData[2].count = this.lstResource.filter(item => item.is_approved === false).length
+    //   this.lstData[3].count = this.lstResource.filter(item => item.is_delete === true).length
+    // }
+  }
+  onSearch() {
+    let a: number[] = []
+    // if (TDSHelperString.hasValueString(this.key)) {
+    //   this.lstOrderDetail = this.lstOrderDetail.filter(item => item.agency.name.toLowerCase().includes(this.key.toLowerCase()) == true || item.order_detail_no.toLowerCase().includes(this.key.toLowerCase()) == true);
+    //   this.detail = this.detailBackup;
+    //   for (let index = 0; index < this.lstOrderDetail.length; index++) {
+    //     a.push(this.lstOrderDetail[index].id)
+    //   }
+    //   this.detail = this.detail.filter(item => a.includes(item.id) == true);
+    }
+  
   //Hàm thay đổi status của tab
   onSelectStatus(value: TDSSafeAny) {
     switch (value) {
@@ -154,6 +230,26 @@ export class LayoutComponent implements OnInit {
   }
   ngAfterViewInit(): void {
 
+  }
+
+  onActivate(event:any) {
+    // window.scroll(0,0);
+
+    window.scroll({
+      top: 0,
+      left: 0,
+      behavior: 'smooth'
+    });
+
+    //or document.body.scrollTop = 0;
+    //or document.querySelector('body').scrollTo(0,0)
+  }
+
+  orderDetail(data: TDSSafeAny) {
+    // this.productService.idProduct.next(data.id)
+    localStorage.setItem("Order", data.id);
+
+    this.router.navigateByUrl('/customer/order-refund');
   }
 
   contextMenu($event: MouseEvent, menu: TDSDropdownMenuComponent): void {
@@ -235,6 +331,30 @@ export class LayoutComponent implements OnInit {
         error: (err) => {
           this.lstOrder = [];
           this.loadingOrder = false
+          this.message.error("Đã có lỗi sảy ra trong quá trình thực hiện")
+          this.cd.detectChanges()
+        }
+      })
+      
+  }
+  getListProduct() {
+    this.productSevice.getProduct()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: TDSSafeAny) => {
+          if (TDSHelperArray.hasListValue(res)) {
+            this.lstProduct = res;
+            this.lstProduct2 = res;
+            this.cd.detectChanges()
+          }
+          else {
+            this.lstProduct = [];
+            this.cd.detectChanges()
+          }
+          this.cd.detectChanges()
+        },
+        error: (err) => {
+          this.lstProduct = [];
           this.message.error("Đã có lỗi sảy ra trong quá trình thực hiện")
           this.cd.detectChanges()
         }
@@ -339,7 +459,7 @@ export class LayoutComponent implements OnInit {
     e.stopImmediatePropagation();
     e.preventDefault();
     this.authService.clearToken();
-    this.authService.redirectLogin();
+    this.authService.redirectLogin("/customer/home");
   }
   getOutletState(o: RouterOutlet) {
     return o.isActivated ? o.activatedRoute : '';

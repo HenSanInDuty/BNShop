@@ -4,67 +4,62 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { FurloughKindManagementComponent } from './pages/furlough-kind-management/furlough-kind-management.component';
 import { HolidaysManagementComponent } from './pages/holidays-management/holidays-management.component';
-import { TimeAttendanceManagementComponent } from './pages/time-attendance-management/time-attendance-management.component';
-import { SettingResourceComponent } from './setting-resource.component';
-import { ShiftComponent } from './pages/shift/shift.component';
+import { ShipManagementComponent } from './pages/ship-management/ship-management.component';
+import { StoreComponent } from './store.component';
+import { ReviewComponent } from './pages/review/review.component';
 import { WorkingKindManagementComponent } from './pages/working-kind-management/working-kind-management.component';
-import { CompanyComponent } from './pages/company/company.component';
 import { ProductManagementComponent } from './pages/product-management/product-management.component';
-import { ResourceTypeManagementComponent } from './pages/resource-type-management/resource-type-management.component';
 import { ProductComponent } from './pages/product/product.component';
 import { CategoryManagementComponent } from './pages/category-management/category-management.component';
+import { OrderComponent } from './pages/order/order.component';
 
 const routes: Routes = [
   {
     path: '',
-    component: SettingResourceComponent,
+    component: StoreComponent,
     children: [
       {
         path: '',
-        redirectTo: 'accset/accset-manage',
+        redirectTo: 'product/product-manage',
         pathMatch: 'prefix'
       },
       {
-        path: 'accset',
+        path: 'product',
         component: ProductComponent,
         children: [
           {
             path: '',
-            redirectTo: 'accset-manage',
+            redirectTo: 'product-manage',
             pathMatch: 'prefix'
           },
           {
-            path: 'accset-manage',
+            path: 'product-manage',
             component: ProductManagementComponent,
             pathMatch: "full"
           },
-          {
-            path: 'accset-type',
-            component: ResourceTypeManagementComponent,
-          },
         ]
-      },
-      {
-        path: 'about-company',
-        component: CompanyComponent,
       },
       {
         path: 'category',
         component: CategoryManagementComponent,
       },
       {
-        path: 'time-attendance',
-        component: TimeAttendanceManagementComponent,
+        path: 'review',
+        component: ReviewComponent,
+        pathMatch: "full"
+      },
+      {
+        path: 'ship',
+        component: ShipManagementComponent,
         children: [
           {
             path: '',
-            redirectTo: 'shift',
+            redirectTo: 'order',
             pathMatch: 'prefix'
           },
           {
-            path: 'shift',
-            component: ShiftComponent,
-            pathMatch: "full"
+            path: 'order',
+            component: OrderComponent,
           },
           {
             path: 'holidays-manage',

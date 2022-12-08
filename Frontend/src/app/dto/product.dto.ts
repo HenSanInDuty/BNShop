@@ -8,21 +8,8 @@ export interface paramGetProductDTO {
 }
 
 export interface ProductDTO {
- id?: number
- name: string
- display_image: string
- category?: string[]
- type: string[]
- brand_origin: string
- brand_origin_brand: string
- brand_name: string
- detail?: Detail
- quantity: number
- price: number
- attachment?: AttachmentDTO
-}
-export interface getProductDTO {
  id: number
+ productNo: string
  name: string
  agency: Agency
  display_image: string
@@ -32,10 +19,10 @@ export interface getProductDTO {
  type: string[]
  brand: Brand
  detail: any[]
+ describe: string
  quantity: number
- describe: any
  last_price: LastPrice
- pre_price: any
+ pre_price: PrePrice
  attachment: AttachmentDTO[]
 }
 
@@ -43,6 +30,9 @@ export interface Agency {
  id: number
  name: string
  avatar: string
+ email: string
+ phone: string
+ main_industry: string
 }
 
 export interface Brand {
@@ -58,6 +48,44 @@ export interface LastPrice {
  end_datetime: any
  product: number
 }
+
+export interface PrePrice {
+ id: number
+ price: number
+ end_datetime: any
+ product: number
+}
+
+export interface AttachmentDTO {
+ id: number
+ url: string
+ type: string
+ product: number
+}
+
+export interface  getProductDTO {
+ id: number
+ name: string
+ agency: Agency
+ productNo:string
+ display_image: string
+ is_delete: boolean
+ is_approved: boolean
+ category: string[]
+ type: string[]
+ brand: Brand
+ detail: any[]
+ quantity: number
+ describe: any
+ last_price: LastPrice
+ pre_price: any
+ attachment: AttachmentDTO[]
+}
+
+
+
+
+
 
 export interface AttachmentDTO {
  id: number

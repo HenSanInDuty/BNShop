@@ -2,14 +2,47 @@
   <div class="w-screen h-screen">
     <div class="w-full flex flex-col h-full  overflow-y-auto overflow-x-visible tds-custom-scroll">
       <!-- header -->
-      <div class="flex flex-col fixed z-50 bg-white w-full ">
+      <div class="flex flex-col fixed z-50 bg-white w-full shadow-2xl">
         <div class="w-full py-1">
-          <tds-header urlLogoText="assets/images/LogoBNZONBlue.svg" urlLogo="assets/images/LogoCustomer.svg">>
-            <tds-form-field class="w-full" [tdsClass]="'bg-neutral-3-100'">
-              <input tdsInput placeholder="Tìm kiếm" autocomplete="off" />
-              <span class="bg-neutral-3-100" tdsPrefix><i class="text-neutral-1-500 tdsi-search-fill "></i></span>
-            </tds-form-field>
-            <div class="inline-flex tds-header-toolbar-right items-end">
+          <tds-header urlLogoText="assets/images/LogoBNZONoutline.svg" urlLogo="assets/images/LogoCustomer.svg">
+            <div class="inline-flex tds-header-toolbar-left items-center ml-12">
+              <div class="flex items-center text-body-2 font-semibold text-neutral-1-400">
+                <a routerLink="/customer" class="px-4 py-2  hover:text-neutral-1-900 cursor-pointer"> Trang chủ </a>
+                <a routerLink="/customer/product" routerLinkActive="text-neutral-1-900"
+                  class="px-4 py-2  hover:text-neutral-1-900 cursor-pointer">
+                  Sản phẩm
+                </a>
+                <a routerLink="/customer/order-refund" routerLinkActive="text-neutral-1-900"
+                  class="px-4 py-2  hover:text-neutral-1-900 cursor-pointer">
+                  Chi tiết
+                </a>
+              </div>
+            </div>
+            <div class="inline-flex w-full  tds-header-toolbar-right items-end">
+              <tds-form-field class="w-96 mr-8">
+                <div (click)="onSearch()"
+                  class="ml-2 border rounded bg-primary-1  cursor-pointer hover:bg-primary-2 active:bg-primary-3"
+                  tdsAddOnRight><i class="tdsi-search-fill text-xl text-white leading-none"></i></div>
+                <input [tdsInputDebounce]="500"  class="placeholder-neutral-1-400" placeholder="Tìm kiếm theo tên sản phẩm" tdsInput [(ngModel)]="inputValue2"
+                   (inputKeyup)="onChange($event)" [tdsAutocomplete]="auto2" />
+              </tds-form-field>
+              <tds-autocomplete #auto2 [compareWith]="compareFun">
+                <tds-auto-option (click)="onClick($event, option)" *ngFor="let option of lstProduct" [value]="option" [label]="option.name">
+                  <div class="w-full flex flex-col text-neutral-1-900 text-body-2 font-regular">
+                    <div class="pb-1 flex gap-2 items-center">
+                      <tds-avatar class="bg-base-orange-500 dark:bg-d-base-orange-500 text-white" [tdsSrc]="option.display_image">
+                      </tds-avatar>
+                      <tds-label>Sản phẩm</tds-label> : {{ option.name }}
+                    </div>
+                    <!-- <div class="pb-1 flex">
+                      <tds-label>Tuổi</tds-label> : {{ option.age }}
+                    </div>
+                    <div class="pb-1 flex">
+                      <tds-label>Công Ty</tds-label> : {{ option.company }}
+                    </div> -->
+                  </div>
+                </tds-auto-option>
+              </tds-autocomplete>
               <div class="flex mr-8 gap-4 items-end">
                 <tds-badge class="cursor-pointer" [count]="lstOrderDetail.length" showZero>
                   <i class="text-2xl text-neutral-1-500 tdsi-treatment-slip-fill " trigger="click" [visible]=isClick2
@@ -25,64 +58,69 @@
                               class="tdsi-close-fill border-0 box-border dark:hover:bg-d-neutral-3-300 dark:text-d-neutral-1-500 focus:outline-none h-7 hover:bg-neutral-3-50 hover:rounded-md inline-flex items-center justify-center leading-4 p-1.5 relative text-base text-neutral-1-500 cursor-pointer"></i>
                           </div>
                         </div>
+                        <div class="flex flex-col px-4 py-8 items-center">
+                          <tds-filter-status class="w-full" [(ngModel)]='selectedStatus'
+                            (selectChange)="onSelectStatus($event)">
+                            <ng-template ngFor let-item [ngForOf]="lstStatus" let-i="index">
+                              <tds-filter-status-item [name]='item.name' [count]='item.count!' [value]="item.value">
+                                <ng-template tds-filter-status-template let-active='active' let-disabled="disabled"
+                                  let-count='count' let-name='name' let-value>
+                                  <div class="py-1.5 px-4.5 flex items-center rounded-2xl mr-2"
+                                    [ngClass]="{'text-white bg-primary-1':active,'                                                                                                        hover:bg-primary-1 group':!disabled}">
+                                    <div class="text-body-2 font-semibold"
+                                      [ngClass]="{'text-white':active,'text-neutral-1-400                                                                                             group-hover:text-white':!active}">
+                                      {{name}}
+                                    </div>
+                                  </div>
+                                </ng-template>
+                              </tds-filter-status-item>
+                            </ng-template>
+                          </tds-filter-status>
+                        </div>
                         <ng-container *ngIf="userProfile$; then thenTemplate3; else elseTemplate3"></ng-container>
                         <ng-template #thenTemplate3>
                           <div class="flex flex-col justify-between ">
-                            <div class="flex flex-col px-4 py-8 items-center">
-                              <tds-filter-status class="w-full" [(ngModel)]='selectedStatus'
-                                (selectChange)="onSelectStatus($event)">
-                                <ng-template ngFor let-item [ngForOf]="lstStatus" let-i="index">
-                                  <tds-filter-status-item [name]='item.name' [count]='item.count!' [value]="item.value">
-                                    <ng-template tds-filter-status-template let-active='active' let-disabled="disabled"
-                                      let-count='count' let-name='name' let-value>
-                                      <div class="py-1.5 px-4.5 flex items-center rounded-2xl" [ngClass]="{'text-white bg-primary-1':active,'
-                                                                hover:bg-primary-1 group':!disabled}">
-                                        <div class="text-body-2 font-semibold" [ngClass]="{'text-white':active,'text-neutral-1-400
-                                                          group-hover:text-white':!active}">
-                                          {{name}}
-                                        </div>
-                                      </div>
-                                    </ng-template>
-                                  </tds-filter-status-item>
-                                </ng-template>
-                              </tds-filter-status>
-                              <div class="flex items-center justify-between w-full px-4 pt-8">
-                                <div class="text-neutral-1-900 font-semibold text-header-1">Đơn hàng</div>
-                                <div class="flex gap-10 items-center">
-                                  <div class="text-neutral-1-900 font-semibold text-header-1">Trạng thái đơn hàng</div>
-                                  <div class="text-neutral-1-900 font-semibold text-header-1">Hình thức thanh toán</div>
-                                  <div class="text-neutral-1-900 font-semibold text-header-1">Thao tác</div>
-                                </div>
-                              </div>
-                            </div>
                             <ng-container *ngIf="lstOrderDetail.length>0; then thenTemplate2; else elseTemplate2">
                             </ng-container>
                             <ng-template #thenTemplate2>
-                              <div *ngFor="let order of lstOrderDetail; let i=index;"
-                                class="flex flex-col p-4 border-b border-neutral-2-200">
-                                <div class="flex items-center justify-between">
-                                  <div class="">Lúc: {{order.date_order | pipeDate | date: "medium"}}</div>
-                                  <div class="flex gap-10">
-                                    <div [ngSwitch]="order.status" class="">
-                                      <tds-tag *ngSwitchCase="'Waiting for confirm'" status='success' type="outline"
-                                        class="text-body-2 font-regular text-neutral-1-900">Đang chờ phê duyệt</tds-tag>
-                                      <tds-tag *ngSwitchCase="2" status='error' type="outline"
-                                        class="text-body-2 font-regular text-neutral-1-900">
-                                        Đã phê duyệt</tds-tag>
-                                      <tds-tag *ngSwitchCase="3" status='warning' type="outline"
-                                        class="text-body-2 font-regular text-neutral-1-900">Đang
-                                        giao hàng</tds-tag>
-                                      <tds-tag *ngSwitchCase="4" status='secondary' type="outline"
-                                        class="text-body-2 font-regular text-neutral-1-900">{{
-                                        order.status }}</tds-tag>
-                                      <tds-tag *ngSwitchCase="5" status='info' type="outline"
-                                        class="text-body-2 font-regular text-neutral-1-900">{{
-                                        order.status }}</tds-tag>
+                              <div class="flex flex-col gap-2">
+                                <div class="flex items-center justify-between w-full px-4">
+                                  <div class="text-neutral-1-900 font-semibold text-header-1">Đơn hàng</div>
+                                  <div class="flex gap-10 items-center">
+                                    <div class="text-neutral-1-900 font-semibold text-header-1">Trạng thái đơn hàng
                                     </div>
-                                    <div *ngIf="order.payment" class="">Thanh toán khi nhận hàng</div>
-                                    <div
-                                      class="flex gap-3 items-center text-primary-1 font-semibold text-body-2 cursor-pointer">
-                                      Xem thêm
+                                    <div class="text-neutral-1-900 font-semibold text-header-1">Hình thức thanh toán
+                                    </div>
+                                    <div class="text-neutral-1-900 font-semibold text-header-1">Thao tác</div>
+                                  </div>
+                                </div>
+                                <div *ngFor="let order of lstOrderDetail; let i=index;"
+                                  class="flex flex-col p-4 border-b border-neutral-2-200">
+                                  <div class="flex items-center justify-between">
+                                    <div class="">Lúc: {{order.date_order | pipeDate | date: "medium"}}</div>
+                                    <div class="flex gap-10">
+                                      <div [ngSwitch]="order.status" class="">
+                                        <tds-tag *ngSwitchCase="'Waiting for confirm'" status='warning' type="outline"
+                                          class="text-body-2 font-regular text-neutral-1-900">Đang chờ phê duyệt
+                                        </tds-tag>
+                                        <tds-tag *ngSwitchCase="2" status='secondary' type="outline"
+                                          class="text-body-2 font-regular text-neutral-1-900">
+                                          Đã phê duyệt</tds-tag>
+                                        <tds-tag *ngSwitchCase="3" status='secondary' type="outline"
+                                          class="text-body-2 font-regular text-neutral-1-900">Đang
+                                          giao hàng</tds-tag>
+                                        <tds-tag *ngSwitchCase="4" status='error' type="outline"
+                                          class="text-body-2 font-regular text-neutral-1-900">Đã
+                                          hủy</tds-tag>
+                                        <tds-tag *ngSwitchCase="5" status='success' type="outline"
+                                          class="text-body-2 font-regular text-neutral-1-900">
+                                          Đã nhận hàng</tds-tag>
+                                      </div>
+                                      <div *ngIf="order.payment" class="">Thanh toán khi nhận hàng</div>
+                                      <div (click)="orderDetail(order)"
+                                        class="flex gap-3 items-center text-primary-1 font-semibold text-body-2 cursor-pointer">
+                                        Xem thêm
+                                      </div>
                                     </div>
                                   </div>
                                 </div>
@@ -105,7 +143,7 @@
                               Bạn phải đăng nhập trước chọn hàng
                             </ng-template>
                             <ng-template #footerTpl>
-                              <button tds-button>Đăng nhập ngay</button>
+                              <button [routerLink]="['/account/login']" tds-button>Đăng nhập ngay</button>
                             </ng-template>
                           </tds-empty>
                         </ng-template>
@@ -119,7 +157,7 @@
                     [placement]="'bottomRight'" overlayClassName='indexClass' [autoClose]=false></i>
                   <tds-dropdown-menu #menu1="tdsDropdownMenu" class="w-full" selected="true">
                     <tds-spin [spinning]="loadingOrder">
-                      <div class="min-w-[700px] max-h-[400px] overflow-auto tds-custom-scroll">
+                      <div class="min-w-[500px] max-h-[400px] overflow-auto tds-custom-scroll">
                         <div class="flex justify-between items-center border-b border-neutral-2-200 px-4 py-3 ">
                           <div class="font-semibold text-header-1 text-neutral-1-900">Giỏ hàng</div>
                           <div class="flex gap-7 items-center">
@@ -136,7 +174,7 @@
                               <div *ngFor="let order of lstOrderBackup; let i=index;"
                                 class="flex flex-col p-4 border-b border-neutral-2-200">
                                 <div class="flex justify-between">
-                                  <div class="flex gap-4 items-start">
+                                  <div class="flex gap-4 items-center">
                                     <div class="flex">
                                       <tds-avatar [shape]="'square'" [size]="100"
                                         [tdsSrc]="order.product.display_image">
@@ -153,8 +191,9 @@
                                   <div class="flex flex-col gap-5">
                                     <div class="text-primary-1 text-body-1 font-semibold">
                                       {{order.product.last_price.price
-                                      |currency:'đ':'code'}}</div>
-                                    <div (click)="deleteOrder(order)" class="text-error-500 text-body-1 font-semibold">
+                                      |currency:'VND':true}}</div>
+                                    <div (click)="deleteOrder(order)"
+                                      class="text-error-500 text-body-1 font-semibold cursor-pointer">
                                       Xóa</div>
                                   </div>
                                 </div>
@@ -186,7 +225,9 @@
                               Bạn phải đăng nhập trước chọn hàng
                             </ng-template>
                             <ng-template #footerTpl>
-                              <button tds-button>Đăng nhập ngay</button>
+                            <div class="py-8">
+                                <button [routerLink]="['/account/login']" tds-button>Đăng nhập ngay</button>
+                            </div>
                             </ng-template>
                           </tds-empty>
                         </ng-template>
@@ -227,6 +268,7 @@
                               </div>
                             </div>
                             <div tds-dropdown-item routerLink="/customer/profile">Tài khoản</div>
+                            <div tds-dropdown-item routerLink="/customer/order-refund">Đơn hàng của bạn</div>
                             <div tds-dropdown-item (click)="showModalChangePassword()">Đổi mật khẩu</div>
                             <div tds-dropdown-item (click)="onLogout($event)">
                               <a class="text-error-400">Đăng xuất</a>
@@ -256,7 +298,7 @@
       </div>
       <!-- main -->
       <div class="pt-[50px] flex-auto w-full  border-t border-neutral-2-200">
-        <router-outlet></router-outlet>
+        <router-outlet (activate)="onActivate($event)"></router-outlet>
       </div>
       <!-- <footer>-->
       <footer class="bg-neutral-1-900">
@@ -289,6 +331,12 @@
                 <br>
                 chuyến
                 đi tiếp theo của Quý khách
+              </div>
+              <div class="pt-[0%] relative">
+                <picture>
+                  <img class=" inset-0 top-0 left-0 object-contain"
+                    src="../../../../../assets/images/Đăng ký Bộ Công Thương 1.svg" alt="">
+                </picture>
               </div>
             </div>
             <div class="flex flex-col gap-6 ">

@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { getProductDTOAdmin } from '../dto/account.dto';
-import { getOrderDetailAdminDTO } from '../dto/orderDetail.dto';
+import { getOrderDetailAdminDTO, shipperDTO } from '../dto/orderDetail.dto';
 
 @Injectable({
   providedIn: 'root'
@@ -43,6 +43,14 @@ export class AdminService {
     return this.http.get<any>(
       environment.apiBNShop + `admin/account/${param}`)
   }
+  getRating(type?: number): Observable<any> {
+    let param = ''
+    if (type) {
+      param = `?type=${type}`
+    }
+    return this.http.get<any>(
+      environment.apiBNShop + `admin/rating/${param}`)
+  }
   getProduct(params?: getProductDTOAdmin): Observable<any> {
     return this.http.get<any>(
       environment.apiBNShop + `admin/product/${this.getParams(params)}`)
@@ -64,5 +72,18 @@ export class AdminService {
   DisableAccount(type?: number): Observable<any> {
     return this.http.patch<any>(
       environment.apiBNShop + `admin/account/deactive/${type}/`, '')
+  }
+  ActiveProduct(type?: number): Observable<any> {
+    return this.http.patch<any>(
+      environment.apiBNShop + `admin/product/active/${type}/`, '')
+  }
+
+  DisableProduct(type?: number): Observable<any> {
+    return this.http.delete<any>(
+      environment.apiBNShop + `admin/product/delete/${type}/`)
+  }
+  onShiper(id?: number, data?: shipperDTO): Observable<shipperDTO> {
+    return this.http.patch<shipperDTO>(
+      environment.apiBNShop + `admin/order_detail/${id}/`, data)
   }
 }

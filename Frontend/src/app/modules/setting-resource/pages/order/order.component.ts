@@ -14,20 +14,21 @@ import { ModalDeleteAllComponent } from '../../components/modal-delete-all/modal
 
 
 @Component({
-  selector: 'hrm-resource-type-management',
-  templateUrl: './resource-type-management.component.html',
-  styleUrls: ['./resource-type-management.component.scss'],
+  selector: 'hrm-order',
+  templateUrl: './order.component.html',
+  styleUrls: ['./order.component.scss'],
   
   providers:[
     TDSDestroyService
   ]
 })
-export class ResourceTypeManagementComponent implements OnInit {
+export class OrderComponent implements OnInit {
   checked = false;
   indeterminate = false;
   loading:boolean = false;
   listOfCurrentPageData:  Array<string> = [];
   setOfCheckedId = new Set<TDSSafeAny>();
+  expandSet = new Set<number>();
   public lstAccsetType: Array<getOrderDetailDTO> = []
 
   constructor(
@@ -43,35 +44,22 @@ export class ResourceTypeManagementComponent implements OnInit {
     this.getListAccsetType()
   }
 
-  updateCheckedSet(item: string, checked: boolean): void {
+  onExpandChange(id: number, checked: boolean): void {
+
+    // let param: getProductDTOAdmin = {
+    //   type: this.selectedStatus.toString(),
+    //   agency: id,
+    // }
+    // this.getProduct(param)
     if (checked) {
-        this.setOfCheckedId.add(item);
+      // this.expandSet = new Set<number>();
+      this.expandSet.add(id);
     } else {
-        this.setOfCheckedId.delete(item);
+      this.expandSet.delete(id);
     }
   }
 
-  onSelectChange(value: TDSSafeAny) {
-
-
-  }
-
-  onModelChange(value: TDSSafeAny) {
-
-
-  }
-  onItemChecked(item: TDSSafeAny, checked: boolean): void {
-      this.updateCheckedSet(item, checked);
-      this.refreshCheckedStatus();
-  }
-
-
-  onAllChecked(value: boolean): void {
-    this.listOfCurrentPageData.forEach(item => {
-      this.updateCheckedSet(item, value)
-      });
-      this.refreshCheckedStatus();
-  }
+ 
 
   onCurrentPageDataChange($event:  TDSSafeAny): void {
       this.listOfCurrentPageData = $event;
@@ -90,7 +78,8 @@ export class ResourceTypeManagementComponent implements OnInit {
     this.orderDetailService.getOrderDetail().pipe(takeUntil(this.destroy$))
     .subscribe({
       next: (res:TDSSafeAny) => {
-        this.lstAccsetType = res;
+        this.lstAccsetType = res
+        this.lstAccsetType = this.lstAccsetType.reverse();
         this.loading = false
       },
       error: (err) => {
