@@ -142,7 +142,7 @@ export class ModalEditProductComponent implements OnInit {
 
   createForm() {
     this.addaccsetForm = this.fb.group({
-      price: new FormControl(''),
+      price: new FormControl(null),
       describe: [
         '',
         Validators.compose([
@@ -175,22 +175,23 @@ export class ModalEditProductComponent implements OnInit {
         category: this.category.map(String),
         ...this.addaccsetForm.value
       }
-      this.productService.editProduct(this.lstResource.id,this.body)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe(
-          {
-            next: (res) => {
-              this.isSubmit = false
-              this.message.success("Sửa sản phẩm thành công")
-              this.modal.destroy(this.body);
-            },
-            error: (err) => {
-              this.isSubmit = false
-              this.message.error("sửa sản phẩm không thành công")
-              this.modal.destroy(this.params);
-            },
-          }
-        )
+      console.log(this.body)
+      // this.productService.editProduct(this.lstResource.id,this.body)
+      //   .pipe(takeUntil(this.destroy$))
+      //   .subscribe(
+      //     {
+      //       next: (res) => {
+      //         this.isSubmit = false
+      //         this.message.success("Sửa sản phẩm thành công")
+      //         this.modal.destroy(this.body);
+      //       },
+      //       error: (err) => {
+      //         this.isSubmit = false
+      //         this.message.error("sửa sản phẩm không thành công")
+      //         this.modal.destroy(this.params);
+      //       },
+      //     }
+      //   )
 
     }
   }
