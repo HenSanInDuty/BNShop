@@ -271,7 +271,7 @@ class OrderDetailViewAll(generics.GenericAPIView):
   
   @swagger_auto_schema(manual_parameters=[status_param])
   def get(self,request):
-    all_orderdetail = OrderDetail.objects.all()
+    all_orderdetail = OrderDetail.objects.all().order_by('-date_order')
     status = request.GET.get('status')
     if status:
       all_orderdetail = OrderDetail.objects.filter(status=status)
