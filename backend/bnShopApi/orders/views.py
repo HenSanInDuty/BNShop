@@ -121,7 +121,7 @@ def get_order_detail(od):
         "customer":{
             "user_id":od.customer.user.id,
             "name":od.customer.user.name,
-            "phone":od.customer.user.user.phone
+            "phone":od.customer.user.account.phone
         },
         "agency":{
             "user_id":od.agency.user.id,
