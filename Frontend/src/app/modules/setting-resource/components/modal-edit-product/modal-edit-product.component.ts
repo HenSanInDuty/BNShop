@@ -175,23 +175,22 @@ export class ModalEditProductComponent implements OnInit {
         category: this.category.map(String),
         ...this.addaccsetForm.value
       }
-      console.log(this.body)
-      // this.productService.editProduct(this.lstResource.id,this.body)
-      //   .pipe(takeUntil(this.destroy$))
-      //   .subscribe(
-      //     {
-      //       next: (res) => {
-      //         this.isSubmit = false
-      //         this.message.success("Sửa sản phẩm thành công")
-      //         this.modal.destroy(this.body);
-      //       },
-      //       error: (err) => {
-      //         this.isSubmit = false
-      //         this.message.error("sửa sản phẩm không thành công")
-      //         this.modal.destroy(this.params);
-      //       },
-      //     }
-      //   )
+      this.productService.editProduct(this.lstResource.id,this.body)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(
+          {
+            next: (res) => {
+              this.isSubmit = false
+              this.message.success("Sửa sản phẩm thành công")
+              this.modal.destroy(this.body);
+            },
+            error: (err) => {
+              this.isSubmit = false
+              this.message.error("sửa sản phẩm không thành công")
+              this.modal.destroy(this.params);
+            },
+          }
+        )
 
     }
   }
