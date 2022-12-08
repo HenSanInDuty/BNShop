@@ -12,7 +12,12 @@ from rating.serializers import CreateRateSerializer, RateSerializer, ReplySerial
 @swagger_auto_schema()
 class RatingViewAll(generics.GenericAPIView):
     serializer_class = RateSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = []
+
+    def get_permissions(self):
+        per = super().get_permissions()
+        if self.request.method != "GET":
+            return [*per,IsAuthenticated()]
     
     def get(self,request,**kwargs):
         customer = request.user.user.customer
@@ -50,7 +55,12 @@ class RatingViewAll(generics.GenericAPIView):
 @swagger_auto_schema()      
 class RatingViewReplyDetail(generics.GenericAPIView):
     serializer_class = RateSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = []
+
+    def get_permissions(self):
+        per = super().get_permissions()
+        if self.request.method != "GET":
+            return [*per,IsAuthenticated()]
     
     def get(self,request,id,**kwargs):
         rate = Rate.objects.filter(product_id=id, is_approved=True)
@@ -106,8 +116,13 @@ class ReplyViews(generics.GenericAPIView):
 @swagger_auto_schema()
 class RatingProductViewAll(generics.GenericAPIView):
     serializer_class = RateSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = []
     
+    def get_permissions(self):
+        per = super().get_permissions()
+        if self.request.method != "GET":
+            return [*per,IsAuthenticated()]
+
     def get(self,request,**kwargs):
         user = request.user
         if user.is_customer:
