@@ -213,7 +213,8 @@ class ProductViewAll(generics.GenericAPIView):
         if request.GET.get('category'):
             category_filter = request.GET.get('category').split()
         query = Q()
-        query = query.add(Q(is_approved=True,is_delete=False),Q.AND)
+        if not request.user.is_agency:
+            query = query.add(Q(is_approved=True,is_delete=False),Q.AND)
         if type_filter:
             sub_query = Q()
             for type in type_filter:
