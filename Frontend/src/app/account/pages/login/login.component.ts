@@ -52,7 +52,7 @@ export class LoginComponent implements OnInit {
             next: (data: TDSSafeAny) => {
               switch (data.data.role) {
                 case 'Admin':
-                  that.router.navigate(['/admin/product']);
+                  that.router.navigate(['/admin']);
                   break;
                 case 'Agency':
                   that.router.navigate(['/dashboard']);

@@ -69,7 +69,7 @@ export const DATA_MENU: Array<TDSMenuDTO> = [
             // },
             {
                 "name": "Giao hàng",
-                "link": "admin/order"
+                "link": "order"
             },
             // {
             //     "name": "Chức vụ",
