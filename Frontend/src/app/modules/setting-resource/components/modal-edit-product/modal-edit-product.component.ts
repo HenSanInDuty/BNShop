@@ -142,7 +142,7 @@ export class ModalEditProductComponent implements OnInit {
 
   createForm() {
     this.addaccsetForm = this.fb.group({
-      price: new FormControl(null),
+      price: new FormControl(0),
       describe: [
         '',
         Validators.compose([
