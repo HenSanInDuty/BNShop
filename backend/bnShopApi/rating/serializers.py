@@ -12,6 +12,7 @@ class RateSerializer(serializers.ModelSerializer):
     def get_customer_info(self,obj):
         return {
             'name':obj.customer.user.name,
+            'phone':obj.customer.user.account.phones,
             'avatar':obj.customer.user.avatar
         }
 
