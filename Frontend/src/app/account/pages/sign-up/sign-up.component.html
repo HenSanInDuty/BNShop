@@ -1,103 +1,116 @@
 <hrm-account-layout>
- <img width="400" height="381" src="../assets/images/login/forgot-password.svg" alt="THRM">
- <div class="w-full h-full flex items-center justify-center">
-  <div class="w-[300px] md:w-[768px] flex  flex-col">
-   <div class=" py-4 text-header-1 text-neutral-1-900 font-semibold">
-   Tạo tài khoản mới
-   </div>
-    <tds-spin [spinning]="isSubmit">
-      <form id="resetPasswordForm" [formGroup]="RegisterForm" (ngSubmit)="onSubmit()">
-        <div class="flex flex-col gap-4 pb-4">
-          <tds-form-field class="min-w-fit">
-            <tds-label>Tên</tds-label>
-            <input tdsInput type="text" [autofocus]="true" placeholder="Nhập họ và tên" formControlName="name" />
-            <tds-error *ngIf="RegisterForm.get('name')?.touched && !!RegisterForm.get('name')?.hasError('required')">
-              Vui lòng nhập họ và tên
-            </tds-error>
-            <tds-error
-              *ngIf="RegisterForm.get('phone')?.touched && !RegisterForm.get('phone')?.hasError('required') && !!RegisterForm.get('phone')?.hasError('isMobile') ">
-              Số điện thoại không đúng định dạng
-            </tds-error>
-          </tds-form-field>
-          <tds-form-field class="min-w-fit">
-            <tds-label>Số điện thoại</tds-label>
-            <input tdsInput type="text" [autofocus]="true" placeholder="Nhập số điện thoại" formControlName="phone" />
-            <tds-error *ngIf="RegisterForm.get('phone')?.touched && !!RegisterForm.get('phone')?.hasError('required')">
-              Vui lòng nhập số điện thoại
-            </tds-error>
-            <tds-error
-              *ngIf="RegisterForm.get('phone')?.touched && !RegisterForm.get('phone')?.hasError('required') && !!RegisterForm.get('phone')?.hasError('isMobile') ">
-              Số điện thoại không đúng định dạng
-            </tds-error>
-          </tds-form-field>
-          <tds-form-field>
-            <tds-label>Mật khẩu mới</tds-label>
-            <div class="flex items-center">
-              <input tdsInput autocomplete="off" [type]=" isShowPassWord ? 'text' : 'password' "
-                placeholder="Nhập mật khẩu mới" [required]="true" formControlName="password1" />
-              <span tdsSuffix><i (click)="showPassword()"
-                  [ngClass]="isShowPassWord ? 'tdsi-eye-open-fill' : 'tdsi-eye-close-fill'"
-                  class="text-neutral-1-400"></i></span>
-            </div>
-            <tds-error>
-              <span *ngIf="RegisterForm.controls['password1'].hasError('required')">Vui lòng nhập mật khẩu
-                mới</span>
-              <span *ngIf="RegisterForm.controls['password1'].hasError('pattern')">Mật khẩu từ 8-32 kí tự
-                gồm chữ hoa, chữ
-                thường và số</span>
-              <span *ngIf="!checkOldPass">Mật khẩu không được trùng với mật khẩu cũ</span>
-            </tds-error>
-          </tds-form-field>
-          <tds-form-field [color]="checkOldPass ? 'default':'error'">
-            <tds-label>Nhập lại mật khẩu mới</tds-label>
-            <div class="flex items-center">
-              <input tdsInput autocomplete="off" [type]=" isShowPassWordNew ? 'text' : 'password' "
-                placeholder="Nhập lại mật khẩu mới" [required]="true" formControlName="password2" />
-              <span tdsSuffix><i (click)="showPasswordNew()"
-                  [ngClass]="isShowPassWordNew ? 'tdsi-eye-open-fill' : 'tdsi-eye-close-fill'"
-                  class="text-neutral-1-400"></i></span>
-            </div>
-            <tds-error>
-              <ng-container
-                *ngIf="RegisterForm.controls['password2'].hasError('required'); then thenTemplate; else elseTemplate">
-              </ng-container>
-              <ng-template #thenTemplate>
-                <span>Vui lòng nhập lại mật khẩu</span>
-              </ng-template>
-              <ng-template #elseTemplate>
-                <span
-                  *ngIf="RegisterForm.controls['password2'].hasError('notSame') && !RegisterForm.controls['password2'].hasError('pattern')">Mật
-                  khẩu nhập lại không khớp</span>
-                <span *ngIf="RegisterForm.controls['password2'].hasError('pattern')">Mật khẩu từ 8-32 kí tự
+  <img width="400" height="381" src="../assets/images/login/forgot-password.svg" alt="THRM">
+  <div class="w-full h-full flex items-center justify-center">
+    <div class="w-[300px] md:w-[768px] flex  flex-col">
+      <div class=" py-4 text-header-1 text-neutral-1-900 font-semibold">
+        Tạo tài khoản mới
+      </div>
+      <tds-spin [spinning]="isSubmit">
+        <form id="resetPasswordForm" [formGroup]="RegisterForm" (ngSubmit)="onSubmit()">
+          <div class="flex flex-col gap-4 pb-4">
+            <tds-form-field class="min-w-fit">
+              <tds-label>Tên</tds-label>
+              <input tdsInput type="text" [autofocus]="true" placeholder="Nhập họ và tên" formControlName="name" />
+              <tds-error *ngIf="RegisterForm.get('name')?.touched && !!RegisterForm.get('name')?.hasError('required')">
+                Vui lòng nhập họ và tên
+              </tds-error>
+              <tds-error
+                *ngIf="RegisterForm.get('phone')?.touched && !RegisterForm.get('phone')?.hasError('required') && !!RegisterForm.get('phone')?.hasError('isMobile') ">
+                Số điện thoại không đúng định dạng
+              </tds-error>
+            </tds-form-field>
+            <tds-form-field class="min-w-fit">
+              <tds-label>Số điện thoại</tds-label>
+              <input tdsInput type="text" [autofocus]="true" placeholder="Nhập số điện thoại" formControlName="phone" />
+              <tds-error
+                *ngIf="RegisterForm.get('phone')?.touched && !!RegisterForm.get('phone')?.hasError('required')">
+                Vui lòng nhập số điện thoại
+              </tds-error>
+              <tds-error
+                *ngIf="RegisterForm.get('phone')?.touched && !RegisterForm.get('phone')?.hasError('required') && !!RegisterForm.get('phone')?.hasError('isMobile') ">
+                Số điện thoại không đúng định dạng
+              </tds-error>
+            </tds-form-field>
+            <tds-form-field>
+              <tds-label>Email</tds-label>
+              <input [required]="true" tdsInput autocomplete="off" placeholder="Nhập Email" formControlName="email" />
+              <tds-error
+                *ngIf="RegisterForm.get('email')?.touched && !RegisterForm.get('email')?.hasError('required') && !!RegisterForm.get('email')?.hasError('isEmail')">
+                Email không hợp lệ
+              </tds-error>
+            </tds-form-field>
+            <tds-form-field>
+              <tds-label>Mật khẩu mới</tds-label>
+              <div class="flex items-center">
+                <input tdsInput autocomplete="off" [type]=" isShowPassWord ? 'text' : 'password' "
+                  placeholder="Nhập mật khẩu mới" [required]="true" formControlName="password1" />
+                <span tdsSuffix><i (click)="showPassword()"
+                    [ngClass]="isShowPassWord ? 'tdsi-eye-open-fill' : 'tdsi-eye-close-fill'"
+                    class="text-neutral-1-400"></i></span>
+              </div>
+              <tds-error>
+                <span *ngIf="RegisterForm.controls['password1'].hasError('required')">Vui lòng nhập mật khẩu
+                  mới</span>
+                <span *ngIf="RegisterForm.controls['password1'].hasError('pattern')">Mật khẩu từ 8-32 kí tự
                   gồm chữ hoa, chữ
                   thường và số</span>
                 <span *ngIf="!checkOldPass">Mật khẩu không được trùng với mật khẩu cũ</span>
-              </ng-template>
-            </tds-error>
-          </tds-form-field>
-          <tds-form-field class="min-w-fit">
-            <tds-label>Căn cước công dân</tds-label>
-            <input tdsInput type="text" [autofocus]="true" placeholder="Nhập số căn cước công dân" formControlName="identify" />
-            <tds-error *ngIf="RegisterForm.get('identify')?.touched && RegisterForm.get('identify')?.hasError('required')">
-             Vui lòng nhập căn cước công dân
-            </tds-error>
-            <tds-error *ngIf="RegisterForm.get('identify')?.hasError('pattern')">
-             Căn cước công dân gồm 9 - 12 số
-            </tds-error>
-          </tds-form-field>
-          <tds-form-field class="min-w-fit">
-            <tds-label>Ngành hàng chính</tds-label>
-            <input tdsInput type="text" [autofocus]="true" placeholder="Nhập ngành hàng" formControlName="main_industry" />
-            <tds-error *ngIf="RegisterForm.get('main_industry')?.touched && !!RegisterForm.get('main_industry')?.hasError('required')">
-              Vui lòng nhập ngành hàng kinh doanh chính
-            </tds-error>
-          </tds-form-field>
-        </div>
-        <button class="py-2 w-full text-center bg-primary-1 text-white rounded-md">
-          Tiếp tục
-        </button>
-      </form>
-    </tds-spin>
+              </tds-error>
+            </tds-form-field>
+            <tds-form-field [color]="checkOldPass ? 'default':'error'">
+              <tds-label>Nhập lại mật khẩu mới</tds-label>
+              <div class="flex items-center">
+                <input tdsInput autocomplete="off" [type]=" isShowPassWordNew ? 'text' : 'password' "
+                  placeholder="Nhập lại mật khẩu mới" [required]="true" formControlName="password2" />
+                <span tdsSuffix><i (click)="showPasswordNew()"
+                    [ngClass]="isShowPassWordNew ? 'tdsi-eye-open-fill' : 'tdsi-eye-close-fill'"
+                    class="text-neutral-1-400"></i></span>
+              </div>
+              <tds-error>
+                <ng-container
+                  *ngIf="RegisterForm.controls['password2'].hasError('required'); then thenTemplate; else elseTemplate">
+                </ng-container>
+                <ng-template #thenTemplate>
+                  <span>Vui lòng nhập lại mật khẩu</span>
+                </ng-template>
+                <ng-template #elseTemplate>
+                  <span
+                    *ngIf="RegisterForm.controls['password2'].hasError('notSame') && !RegisterForm.controls['password2'].hasError('pattern')">Mật
+                    khẩu nhập lại không khớp</span>
+                  <span *ngIf="RegisterForm.controls['password2'].hasError('pattern')">Mật khẩu từ 8-32 kí tự
+                    gồm chữ hoa, chữ
+                    thường và số</span>
+                  <span *ngIf="!checkOldPass">Mật khẩu không được trùng với mật khẩu cũ</span>
+                </ng-template>
+              </tds-error>
+            </tds-form-field>
+            <tds-form-field class="min-w-fit">
+              <tds-label>Căn cước công dân</tds-label>
+              <input tdsInput type="text" [autofocus]="true" placeholder="Nhập số căn cước công dân"
+                formControlName="identify" />
+              <tds-error
+                *ngIf="RegisterForm.get('identify')?.touched && RegisterForm.get('identify')?.hasError('required')">
+                Vui lòng nhập căn cước công dân
+              </tds-error>
+              <tds-error *ngIf="RegisterForm.get('identify')?.hasError('pattern')">
+                Căn cước công dân gồm 9 - 12 số
+              </tds-error>
+            </tds-form-field>
+            <tds-form-field class="min-w-fit">
+              <tds-label>Ngành hàng chính</tds-label>
+              <input tdsInput type="text" [autofocus]="true" placeholder="Nhập ngành hàng"
+                formControlName="main_industry" />
+              <tds-error
+                *ngIf="RegisterForm.get('main_industry')?.touched && !!RegisterForm.get('main_industry')?.hasError('required')">
+                Vui lòng nhập ngành hàng kinh doanh chính
+              </tds-error>
+            </tds-form-field>
+          </div>
+          <button class="py-2 w-full text-center bg-primary-1 text-white rounded-md">
+            Tiếp tục
+          </button>
+        </form>
+      </tds-spin>
+    </div>
   </div>
- </div>
 </hrm-account-layout>

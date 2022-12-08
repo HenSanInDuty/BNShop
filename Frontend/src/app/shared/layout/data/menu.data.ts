@@ -26,8 +26,8 @@ export const DATA_MENU: Array<TDSMenuDTO> = [
     //     ]
     // },
     {
-        "name": "Cấu hình",
-        "icon": "tdsi-gear-1-fill",
+        "name": "Quản lý bán hàng",
+        "icon": "tdsi-shop-fill",
         // "background": "bg-info-300",
         // "backgroundHover": "bg-info-400",
         // "roles": ["admin", "direction", "hr-admin"],
@@ -39,7 +39,7 @@ export const DATA_MENU: Array<TDSMenuDTO> = [
             {
                 "name": "Quản lý sản phẩm",
                 // "roles": ["admin", "direction"],
-                "link": "setting-resource/accset"
+                "link": "/store/product"
             },
             // {
             //     "name": "Phân quyền",
@@ -52,7 +52,7 @@ export const DATA_MENU: Array<TDSMenuDTO> = [
             // },
             {
                 "name": "Quản lý danh mục",
-                "link": "setting-resource/category"
+                "link": "/store/category"
             }
         ]
     },
@@ -69,7 +69,7 @@ export const DATA_MENU: Array<TDSMenuDTO> = [
             // },
             {
                 "name": "Giao hàng",
-                "link": "hr-management/department"
+                "link": "/store/ship/order"
             },
             // {
             //     "name": "Chức vụ",

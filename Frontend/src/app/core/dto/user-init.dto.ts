@@ -1,7 +1,7 @@
 import { AppUserProfileDto } from "@commom/hrm/models";
 import { TDSSafeAny } from "tds-ui/shared/utility";
 
-export interface CoreUserInitDTO  {
+export interface CoreUserInitDTO extends CoreCustomerInitDTO{
     id: TDSSafeAny;
     name: string;
     email: string;

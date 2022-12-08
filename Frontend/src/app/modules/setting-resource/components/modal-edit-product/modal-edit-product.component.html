@@ -1,0 +1,72 @@
+<tds-spin [spinning]="isSubmit">
+ <form [formGroup]="addaccsetForm" id="formAddEditAccset" (ngSubmit)="onSubmit()">
+  <div class="flex flex-col gap-4 h-[calc(60vh)] overflow-auto tds-custom-scroll pb-4">
+   <div class="flex gap-4">
+    <tds-form-field class="w-full col-span-2">
+     <tds-label>Thay đổi loại danh mục</tds-label>
+     <tds-select valueField="id" textField="name" [ngModelOptions]="{standalone: true}"
+      (selectChange)="onModelChange2($event)" [(ngModel)]="selected2" mode="multiple" placeholder='Chọn loại danh mục'
+      [data]="lstCategory">
+     </tds-select>
+    </tds-form-field>
+   </div>
+   <tds-form-field>
+    <tds-label>Thay dổi giá của sản phẩm (đ)</tds-label>
+    <tds-input-number [min]="1000" [step]="1000" tdsInput autocomplete="off" [decimal]="'not-zero'"
+     placeholder="Số lượng sản phẩm"  formControlName="price"></tds-input-number>
+    <tds-error>Vui lòng nhập giá sản phẩm</tds-error>
+   </tds-form-field>
+   <div class="flex flex-col items-start gap-2">
+    <tds-label>Nhập mô tả sản phẩm</tds-label>
+    <tds-editor formControlName="describe"></tds-editor>
+   </div>
+   <tds-image-group class="grid grid-cols-6 gap-x-6 gap-y-3 items-start w-full">
+    <tds-upload [multiple]="true" [(fileList)]="fileListAvatar" [customRequest]="handleUpload"
+     (change)="handleChangeFile($event)" [showButton]="true" [showUploadList]="false"
+     [beforeUpload]="beforeUploadAvatar" [download]="handleDownload">
+     <div class="flex items-center justify-center w-[104px] h-[104px] rounded-2xl">
+      <div class="border border-primary-1 rounded border-dashed flex items-start w-[104px] h-[104px]">
+       <div class="flex flex-col">
+        <div class="flex items-start justify-center mt-0 rounded">
+         <div class="w-[104px] h-[104px]  rounded flex flex-col justify-center items-center">
+          <i class="tdsi-images-fill text-heading-2 text-primary-1"></i>
+          <span class="text-body-2 font-regular text-primary-1">Thêm ảnh mới</span>
+         </div>
+        </div>
+       </div>
+      </div>
+     </div>
+    </tds-upload>
+    <div *ngFor="let item of previewAvatar" class="relative group w-[104px] h-[104px] rounded-md">
+     <div
+      class=" justify-center absolute w-[104px] h-[104px] rounded-md text-white hidden  group-hover:flex pointer-events-none group-hover:bg-black group-hover:bg-opacity-40">
+      <div class="flex items-center">
+       <button tds-flat-button-icon class="bg-transparent p-2">
+        <span class="flex items-center">
+         <i class="pointer-events-auto tdsi-eye-open-fill  text-lg leading-5"></i>
+        </span>
+       </button>
+      </div>
+      <div class="flex items-center">
+       <button tds-flat-button-icon class="bg-transparent p-2 pointer-events-auto">
+        <span class="flex items-center">
+         <i class="tdsi-trash-fill text-lg leading-5"></i>
+        </span>
+       </button>
+      </div>
+     </div>
+     <img class="w-[104px] h-[104px] rounded-md  object-cover cursor-pointer" tds-image disablePreview="true"
+      width="280px" height="280px" [tdsSrc]="item" />
+    </div>
+   </tds-image-group>
+  </div>
+  <div *tdsModalFooter class="flex justify-end gap-3 p-4">
+   <button (click)="cancel()" tds-button color="secondary" class="min-w-[100px]">
+    Hủy
+   </button>
+   <button tds-button form='formAddEditAccset' type="submit" color="primary" class="min-w-[100px]">
+    Thêm
+   </button>
+  </div>
+ </form>
+</tds-spin>

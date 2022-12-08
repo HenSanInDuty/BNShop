@@ -16,6 +16,12 @@ export class OrdersService {
     return this.http.get<getOrderDTO>(
       environment.apiBNShop + `orders/`)
   }
+  editOrder(id:number,data: number): Observable<getOrderDTO> {
+    return this.http.patch<getOrderDTO>(
+      environment.apiBNShop + `orders/${id}/`, {
+        qty: data
+      })
+  }
 
   createOrder(data: OrderDTO): Observable<OrderDTO> {
     return this.http.post<OrderDTO>(

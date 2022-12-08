@@ -11,6 +11,7 @@ import { TDSI18nService } from 'tds-ui/i18n';
 import { TDSMessageService } from 'tds-ui/message';
 import { TDSModalRef } from 'tds-ui/modal';
 import { TDSSafeAny } from 'tds-ui/shared/utility';
+import * as data from '../../../../assets/data.json';  
 
 @Component({
   selector: 'hrm-modal-add-address',
@@ -26,6 +27,7 @@ export class ModalAddAddressComponent implements OnInit {
   params: TDSSafeAny
   body?: FurloughKindUpdateDto
   lstProvince?:provinceDTO
+  private _jsonURL = 'assets/data.json';
   constructor(
     private fb: FormBuilder,
     private destroy$: TDSDestroyService,
@@ -41,6 +43,7 @@ export class ModalAddAddressComponent implements OnInit {
 
   ngOnInit(): void {
     this.createForm();
+    console.log(data)
     // this.getProvince()
   }
 

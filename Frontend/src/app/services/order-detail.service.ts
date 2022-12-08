@@ -15,7 +15,7 @@ export class OrderDetailService {
     return this.http.get<getOrderDetailDTO[]>(
       environment.apiBNShop + `orders/order-detail/`)
   }
-  getOrderDetailId(id:string): Observable<getOrderDetailDTO> {
+  getOrderDetailId(id: number): Observable<getOrderDetailDTO> {
     return this.http.get<getOrderDetailDTO>(
       environment.apiBNShop + `orders/order-detail/${id}/`)
   }

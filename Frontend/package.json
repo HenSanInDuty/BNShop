@@ -29,6 +29,7 @@
     "file-saver": "^2.0.5",
     "ng-openapi-gen": "https://tang-ui.tpos.dev/lib/ng-openapi-gen-0.21.2.tgz",
     "rxjs": "~7.5.0",
+    "tds-editor": "https://tang-ui.tpos.dev/lib/tds-editor-2.3.5.tgz",
     "tds-report": "https://tang-ui.tpos.dev/lib/tds-report-2.0.0.tgz",
     "tds-ui": "https://tang-ui.tpos.dev/lib/tds-ui-2.3.1.tgz",
     "tslib": "^2.3.0",

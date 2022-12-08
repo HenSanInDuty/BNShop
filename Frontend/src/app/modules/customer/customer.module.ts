@@ -35,6 +35,18 @@ import { OrderDetailComponent } from './pages/order-detail/order-detail.componen
 import { PipeDatePipe } from 'src/app/pipes/pipe-date.pipe';
 import { ProfileComponent } from './pages/profile/profile.component';
 import { TDSTimelineModule } from 'tds-ui/timeline';
+import { TDSRateModule } from 'tds-ui/rate';
+import { OrderRefundComponent } from './pages/order-refund/order-refund.component';
+import { TDSCollapseModule } from 'tds-ui/collapse';
+import { LiveDatePipe } from 'src/app/pipes/live-date.pipe';
+import { TDSStepsModule } from 'tds-ui/step';
+import { ModalDeliveryStatusComponent } from './modal-delivery-status/modal-delivery-status.component';
+import { TDSBreadCrumbModule } from 'tds-ui/breadcrumb';
+import { ModalFeedbackComponent } from './components/modal-feedback/modal-feedback.component';
+import { TDSUploadModule } from 'tds-ui/upload';
+import { TDSDividerModule } from 'tds-ui/divider';
+import { TDSEditorModule } from 'tds-editor';
+import { TDSPaginationModule } from 'tds-ui/pagination';
 
 
 @NgModule({
@@ -49,7 +61,12 @@ import { TDSTimelineModule } from 'tds-ui/timeline';
     ModalAddAddressComponent,
     OrderDetailComponent,
     PipeDatePipe,
-    ProfileComponent
+    ProfileComponent,
+    OrderRefundComponent,
+    LiveDatePipe,
+    ModalDeliveryStatusComponent,
+    ModalFeedbackComponent,
+
   ],
   imports: [
     CommonModule,
@@ -76,7 +93,16 @@ import { TDSTimelineModule } from 'tds-ui/timeline';
     TDSInputNumberModule,
     TDSImageModule,
     TDSAutocompleteModule,
-    TDSTimelineModule
+    TDSTimelineModule,
+    TDSRateModule,
+    TDSCollapseModule,
+    TDSStepsModule,
+    TDSBreadCrumbModule,
+    TDSUploadModule,
+    TDSDividerModule,
+    TDSEditorModule,
+    TDSPaginationModule,
+    TDSAutocompleteModule
     
   ]
 })

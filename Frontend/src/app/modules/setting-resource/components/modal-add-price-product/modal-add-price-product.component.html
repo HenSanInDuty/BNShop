@@ -1,0 +1,37 @@
+<tds-spin [spinning]="isSubmit">
+ <form id="addEditHolidaysForm" [formGroup]="addEditHolidaysForm" (ngSubmit)="onSubmit()">
+  <div class="flex flex-col gap-4">
+   <tds-form-field>
+    <tds-label>Chọn sản phẩm</tds-label>
+    <tds-select [data]="lstProduct" valueField="id" textField="name" formControlName="id"
+     placeholder='Chọn hsản phẩm muốn ghi hàng' [required]="true">
+    </tds-select>
+    <tds-error>Vui lòng chọn sản phẩm</tds-error>
+   </tds-form-field>
+   <tds-form-field>
+    <tds-label>Nhập số lượng muốn nhập vào</tds-label>
+    <div class="flex items-start ">
+     <tds-input-number [min]="1" [step]="1" tdsInput autocomplete="off" placeholder="Số lượng sản phẩm" [required]="true"
+      formControlName="quantity"></tds-input-number>
+    </div>
+    <tds-error>Vui lòng nhập số lượng</tds-error>
+   </tds-form-field>
+   <tds-form-field>
+    <tds-label>Ghi chú</tds-label>
+    <div class="flex items-start h-20">
+     <input tdsInput autocomplete="off" placeholder="Ghi chú"  formControlName="quantity_note" />
+    </div>
+   </tds-form-field>
+  </div>
+  <div *tdsModalFooter class="flex  p-4 items-center">
+   <div class="flex gap-3  justify-end w-full">
+    <button (click)="cancel()" tds-button color="secondary" class="min-w-[100px]">
+     Hủy
+    </button>
+    <button tds-button form='addEditHolidaysForm' type="submit" color="primary" class="min-w-[100px]">
+     Thêm
+    </button>
+   </div>
+  </div>
+ </form>
+</tds-spin>
