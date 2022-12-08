@@ -120,7 +120,8 @@ def get_order_detail(od):
         "payment":od.payment.name,
         "customer":{
             "user_id":od.customer.user.id,
-            "name":od.customer.user.name
+            "name":od.customer.user.name,
+            "phone":od.customer.user.user.phone
         },
         "agency":{
             "user_id":od.agency.user.id,
