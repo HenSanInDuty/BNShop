@@ -17,9 +17,41 @@ export class ProductService {
   public idProduct: BehaviorSubject<number> = new BehaviorSubject<number>(1);
   constructor(private apiService: CoreCommonService, private http: HttpClient) { }
 
+  getParams(params?: paramGetProductDTO) {
+    let result: String[] = [];
+    let resultFinal =`?`
+    if (params?.agency) {
+      result.push(`agency=${params.agency}`)
+    }
+    if (params?.brand) {
+      result.push(`brand=${params.brand}`)
+
+    }
+    if (params?.category) {
+      result.push(`category=${params.category}`)
+
+    }
+    if (params?.type) {
+      result.push(`type=${params.type}`)
+
+    }
+
+    if (result.length > 0) {
+      for (let i = 0; i < result.length; i++) {
+        if (i == 0) {
+          resultFinal += result[i]
+          continue
+        }
+        resultFinal += '&' + result[i]
+      }
+
+    }
+    return resultFinal
+  }
+
   getProduct(params?: paramGetProductDTO): Observable<getProductDTO> {
     return this.http.get<getProductDTO>(
-      environment.apiBNShop + `products/`)
+      environment.apiBNShop + `products/${this.getParams(params)}`)
   }
   getProductId(id:number): Observable<getProductDTO> {
     return this.http.get<getProductDTO>(

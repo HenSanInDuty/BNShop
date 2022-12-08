@@ -1,128 +1,159 @@
 <tds-spin [spinning]="loading">
- <div class="px-6 py-8 ">
-  <div class="flex flex-col gap-2 ">
-   <div class="flex flex-col items-center gap-2 bg-white px-4 py-4 shadow-xl rounded-md ">
-    <div class="w-full h-80">
-     <tds-carousel tdsAutoPlaySpeed="6000" [tdsEffect]="effect" class="w-full  truncate">
-      <div tds-carousel-content *ngFor="let data of listOfData">
-       <div class="flex justify-center items-center w-full h-full">
-        <img class="h-full object-fill w-full" src="{{ data.image }}" alt="" />
-       </div>
-      </div>
-     </tds-carousel>
-    </div>
-    <div class="flex items-center gap-2 bg-white  shadow-xl rounded-md w-full">
-     <div class="w-3/5 h-80">
-      <tds-carousel tdsAutoPlaySpeed="6000" [tdsEffect]="effect" class="w-full  truncate">
-       <div tds-carousel-content *ngFor="let data of listOfData2">
-        <div class="flex justify-center items-center w-full h-full">
-         <img class="h-full object-fill w-full" src="{{ data.image }}" alt="" />
+      <div class="w-full h-full flex justify-center">
+        <div class="px-6 py-8 w-full lg:max-w-7xl ">
+          <div class="flex flex-col gap-4 ">
+            <div class="flex flex-col items-center gap-4 bg-white px-4 py-4 shadow-xl rounded-md ">
+              <div class="w-full h-80">
+                <tds-carousel tdsAutoPlay tdsAutoPlaySpeed="3000" [tdsEffect]="effect" class="w-full  truncate">
+                  <div tds-carousel-content *ngFor="let data of listOfData">
+                    <div class="flex justify-center items-center w-full h-full">
+                      <img class="h-full object-fill w-full" src="{{ data.image }}" alt="" />
+                    </div>
+                  </div>
+                </tds-carousel>
+              </div>
+              <div class="flex items-center gap-2 bg-white  shadow-xl rounded-md w-full">
+                <div class="w-3/5 h-80">
+                  <tds-carousel tdsAutoPlay tdsAutoPlaySpeed="4000" [tdsEffect]="effect" class="w-full  truncate">
+                    <div tds-carousel-content *ngFor="let data of listOfData2">
+                      <div class="flex justify-center items-center w-full h-full">
+                        <img class="h-full object-fill w-full" src="{{ data.image }}" alt="" />
+                      </div>
+                    </div>
+                  </tds-carousel>
+                </div>
+                <div class="w-2/5 flex flex-col gap-2 h-80">
+                  <div class="w-full  h-1/2 ">
+                    <img class="h-full w-full object-fill " src="assets/images/banner5.webp" alt="">
+                  </div>
+                  <div class="w-full h-1/2">
+                    <img class="h-full w-full object-fill " src="assets/images/banner4.webp" alt="panner2">
+                  </div>
+                </div>
+              </div>
+            </div>
+        
+            <!-- <div class="flex items-center gap-4 ">
+            <div class="w-1/5 flex flex-col gap-4 h-80">
+             <div class="w-full h-full">
+              <img class="h-full w-full object-cover rounded-3xl" src="assets/images/pic2.png" alt="panner2">
+             </div>
+            </div>
+            <div class="w-full h-80">
+             <tds-carousel tdsAutoPlaySpeed="6000" [tdsEffect]="effect" class="w-full truncate rounded-3xl">
+              <div tds-carousel-content *ngFor="let data of listOfData">
+               <div class="flex justify-center items-center">
+                <img class="object-cover w-full" src="{{ data.image }}" alt="" />
+               </div>
+              </div>
+             </tds-carousel>
+            </div>
+            <div class="w-1/5 flex flex-col gap-4 h-80">
+             <div class="w-full h-full">
+              <img class="h-full w-full object-cover rounded-3xl" src="assets/images/pic2.png" alt="panner2">
+             </div>
+            </div>
+           </div> -->
+            <!-- Button Link -->
+            <div class="flex flex-col gap-8 p-4 bg-white shadow-xl rounded-lg">
+              <div class="text-heading-4 font-semibold text-neutral-1-900 font-sans">Danh mục nổi bật</div>
+              <div class="relative grid grid-cols-8 gap-y-4 items-center justify-evenly h-[244px]">
+                <div (click)="movetoProduct(item)" *ngFor="let item of lstType | slice: start:start+16; let i = index "
+                  class="flex h-full flex-col gap-2 items-center cursor-pointer">
+                  <tds-avatar class="bg-white  text-white rounded-20" [shape]="'square'" [size]="72" [tdsSrc]="lstImg[start+i]">
+                  </tds-avatar>
+                  <div class="text-title-1 text-neutral-1-900 font-sans font-nomal">{{item.name}}</div>
+                </div>
+                <div class="absolute -translate-x-3 -translate-y-3">
+                  <i (click)="changeListType(-16)"
+                    class="tdsi-arrow-left-fill border-0 box-border dark:hover:bg-d-neutral-3-300 dark:text-d-neutral-1-500 focus:outline-none h-7 hover:bg-neutral-3-50 hover:rounded-md inline-flex items-center justify-center leading-4 p-1.5 relative text-xl text-neutral-1-500 cursor-pointer"></i>
+                </div>
+                <div class="absolute right-0 translate-x-3 -translate-y-3">
+                  <i (click)="changeListType(16)"
+                    class="tdsi-arrow-right-fill border-0 box-border dark:hover:bg-d-neutral-3-300 dark:text-d-neutral-1-500 focus:outline-none h-7 hover:bg-neutral-3-50 hover:rounded-md inline-flex items-center justify-center leading-4 p-1.5 relative text-xl text-neutral-1-500 cursor-pointer"></i>
+                </div>
+              </div>
+            </div>
+            <!-- panner 2 -->
+            <div class="flex w-full gap-3  p-4 items-center bg-white shadow-xl rounded-lg">
+              <div class="w-1/4 h-40">
+                <img class="rounded-3xl h-full" src="assets/images/pic3.webp" alt="">
+              </div>
+              <div class="w-1/4 h-40 ">
+                <img class="rounded-3xl  h-full" src="assets/images/banner/banner.webp" alt="">
+              </div>
+              <div class="w-1/4 h-40 ">
+                <img class="rounded-3xl  h-full" src="assets/images/banner/banner1.webp" alt="">
+              </div>
+              <div class="w-1/4 h-40 ">
+                <img class="rounded-3xl  h-full" src="assets/images/banner/banner2.webp" alt="">
+              </div>
+            </div>
+            <!-- panner -->
+            <!-- <div class="flex items-center gap-2 w-full">
+            <div class="w-full h-40">
+             <tds-carousel tdsAutoPlaySpeed="6000" [tdsEffect]="effect" class="w-full truncate">
+              <div tds-carousel-content *ngFor="let data of listOfData">
+               <div class="flex justify-center items-center">
+                <img class="h-full object-fill" src="{{ data.image }}" alt="" />
+               </div>
+              </div>
+             </tds-carousel>
+            </div>
+           </div> -->
+            <!-- <--List product -->
+            <div class="flex flex-col gap-8 w-full h-full px-4 py-8 bg-white shadow-xl">
+              <div class="flex items-center justify-between">
+                <div class="text-heading-4 font-semibold text-neutral-1-900 font-sans">Một số mặt hàng tiêu
+                  biểu</div>
+                <div [routerLink]="['/customer/product']"
+                  class="text-title-1 text-primary-1 font-sans font-semibold cursor-pointer">Xem tất cả
+                </div>
+              </div>
+              <div class="grid grid-cols-5 gap-3 h-[400px] cursor-pointer">
+                <div *ngFor="let product of lstProduct | slice: 0:5; let i=index;"
+                  class="flex flex-col gap-2 px-4 py-2 items-center border rounded-lg hover:border-3 hover:border-primary-1 relative">
+                  <div class="relative pt-[40%] w-[220px] h-[220px]" (click)="productDetail(product)">
+                    <img class="top-0 h-full first-line:left-0 absolute object-cover" [src]="product.display_image" alt="">
+                  </div>
+                  <div class="flex gap-2 items-center justify-start  w-full">
+                    <div class="text-lg text-primary-1 font-semibold text-left truncate">Thương hiệu: </div>
+                    <div class="text-header-2 text-neutral-1-500 font-semibold truncate">{{product.brand.name}}
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-2  w-full">
+                    <div class="text-neutral-1-900 font-semibold line-clamp-1 text-header-1 text-left w-full">
+                      {{product.name}}</div>
+                    <div class="flex flex-col gap-2">
+                      <div [ngClass]="product.last_price.end_datetime ? 'text-error-500': ''"
+                        class="text-header-2 text-back font-semibold">{{product.last_price.price |
+                        currency:'VND':true }}</div>
+                      <div *ngIf="product.last_price.end_datetime" class="flex absolute top-2 right-2">
+                        <!-- <div class="">{{product.last_price.end_datetime | date: "HH:mm /MM/YYYY"}}</div> -->
+                        <div class="text-header-2 text-back font-semibold  line-through">
+                          {{product.pre_price?.price | currency:'VND':true }}</div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- <div class="flex gap-1 justify-between w-full items-center">
+                      <span>
+                        <tds-rate size="sm" [ngModel]="2.5" allowHalf></tds-rate>
+                      </span>
+                      <div class="text-neutral-1-900 font-normal line-clamp-1 text-xs text-left">
+                        Đánh giá
+                      </div>
+                    </div> -->
+                  <div class="w-full">
+                    <button (click)="addOrder(product)" class="w-full" tds-button color="primary" size="xl">
+                      <span class="flex items-center justify-center w-full gap-4">
+                        <i class="tdsi-add-to-cart-fill text-lg leading-none"></i>Thêm vào giỏ hàng
+                      </span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-       </div>
-      </tds-carousel>
-     </div>
-     <div class="w-2/5 flex flex-col gap-2 h-80">
-      <div class="w-full  h-1/2 ">
-       <img class="h-full w-full object-fill " src="assets/images/banner5.webp" alt="">
       </div>
-      <div class="w-full h-1/2">
-       <img class="h-full w-full object-fill " src="assets/images/banner4.webp" alt="panner2">
-      </div>
-     </div>
-    </div>
-   </div>
- 
-   <!-- <div class="flex items-center gap-4 ">
-    <div class="w-1/5 flex flex-col gap-4 h-80">
-     <div class="w-full h-full">
-      <img class="h-full w-full object-cover rounded-3xl" src="assets/images/pic2.png" alt="panner2">
-     </div>
-    </div>
-    <div class="w-full h-80">
-     <tds-carousel tdsAutoPlaySpeed="6000" [tdsEffect]="effect" class="w-full truncate rounded-3xl">
-      <div tds-carousel-content *ngFor="let data of listOfData">
-       <div class="flex justify-center items-center">
-        <img class="object-cover w-full" src="{{ data.image }}" alt="" />
-       </div>
-      </div>
-     </tds-carousel>
-    </div>
-    <div class="w-1/5 flex flex-col gap-4 h-80">
-     <div class="w-full h-full">
-      <img class="h-full w-full object-cover rounded-3xl" src="assets/images/pic2.png" alt="panner2">
-     </div>
-    </div>
-   </div> -->
-   <!-- Button Link -->
-   <div class="flex flex-col gap-8 p-4 bg-neutral-3-50 rounded-lg">
-    <div class="text-heading-4 font-semibold text-neutral-1-900 font-sans">Danh mục nổi bật</div>
-    <div class="grid grid-cols-8 gap-y-4 items-center justify-evenly">
-     <div *ngFor="let item of lstType | slice: start:start+16; let i = index " class="flex flex-col gap-2 items-center cursor-pointer">
-      <tds-avatar class="bg-gray-500  text-white rounded-20" [shape]="'square'" [size]="72"
-       [icon]="'tdsi-callcenter-fill'">
-      </tds-avatar>
-      <div class="text-title-1 text-neutral-1-900 font-sans font-nomal">{{item.name}}</div>
-     </div>
-    </div>
-   </div>
-   <!-- panner 2 -->
-   <!-- <div class="flex w-full gap-3 items-center">
-    <div class="w-1/4 ">
-     <img class="rounded-3xl" src="assets/images/pic3.webp" alt="">
-    </div>
-    <div class="w-1/4 ">
-     <img class="rounded-3xl" src="assets/images/pic3.webp" alt="">
-    </div>
-    <div class="w-1/4 ">
-     <img class="rounded-3xl" src="assets/images/pic3.webp" alt="">
-    </div>
-    <div class="w-1/4 ">
-     <img class="rounded-3xl" src="assets/images/pic3.webp" alt="">
-    </div>
-   </div> -->
-   <!-- panner -->
-   <!-- <div class="flex items-center gap-2 w-full">
-    <div class="w-full h-40">
-     <tds-carousel tdsAutoPlaySpeed="6000" [tdsEffect]="effect" class="w-full truncate">
-      <div tds-carousel-content *ngFor="let data of listOfData">
-       <div class="flex justify-center items-center">
-        <img class="h-full object-fill" src="{{ data.image }}" alt="" />
-       </div>
-      </div>
-     </tds-carousel>
-    </div>
-   </div> -->
-   <!-- <--List product -->
-   <div class="flex flex-col gap-8 w-full h-full p-4 bg-white">
-    <div class="flex items-center justify-between">
-     <div class="text-heading-4 font-semibold text-neutral-1-900 font-sans">Một số mặt hàng tiêu biểu</div>
-     <div class="text-title-1 text-primary-1 font-sans font-semibold cursor-pointer">Xem tất cả</div>
-    </div>
-    <div class="grid grid-cols-5 gap-3 h-[400px] cursor-pointer">
-     <div *ngFor="let product of lstProduct | slice: 0:5; let i=index;"
-      class="flex flex-col gap-2 p-4 items-center border rounded-lg hover:border-3 hover:border-primary-1">
-      <div class="relative pt-[40%] w-[220px] h-[220px]" (click)="productDetail(product)">
-       <img class="top-0 h-full first-line:left-0 absolute object-cover" [src]="product.display_image" alt="">
-      </div>
-      <div class="flex gap-4 items-center justify-start">
-       <div class="text-header-1 text-primary-1 font-semibold">Thương hiệu</div>
-       <div class="text-header-2 text-neutral-1-500 font-semibold">{{product.brand.name}}</div>
-      </div>
-      <div class="text-neutral-1-900 font-semibold line-clamp-1 text-header-2">{{product.name}}</div>
-      <div class="flex gap-2 items-center">
-       <div class="text-header-1 text-primary-1 font-semibold">Giá bán</div>
-       <div class="text-header-1 text-back font-semibold">{{product.last_price.price | currency:'đ':'code' }}</div>
-      </div>
-      <div class="w-full">
-       <button (click)="addOrder(product)" class="w-full" tds-button color="primary" size="xl">
-        <span class="flex items-center justify-center w-full gap-4">
-         <i class="tdsi-add-to-cart-fill text-lg leading-none"></i>Thêm vào giỏ hàng
-        </span>
-       </button>
-      </div>
-     </div>
-    </div>
-   </div>
-  </div>
- </div>
 </tds-spin>

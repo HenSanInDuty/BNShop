@@ -37,6 +37,30 @@ export class HomePageComponent implements OnInit {
   loading = false;
   start = 0
   lstType?: TypeProductDTO[] = []
+  lstImg: string [] = [
+    "assets/images/type/Img1.jpg",
+    "assets/images/type/Img2.jpg",
+    "assets/images/type/Img3.jpg",
+    "assets/images/type/Img4.jpg",
+    "assets/images/type/Img5.jpg",
+    "assets/images/type/Img6.jpg",
+    "assets/images/type/Img7.jpg",
+    "assets/images/type/Img8.jpg",
+    "assets/images/type/Img9.jpg",
+    "assets/images/type/Img10.jpg",
+    "assets/images/type/Img11.jpg",
+    "assets/images/type/Img12.png",
+    "assets/images/type/Img13.png",
+    "assets/images/type/Img14.jpg",
+    "assets/images/type/Img15.jpg",
+    "assets/images/type/Img16.png",
+    "assets/images/type/Img17.png",
+    "assets/images/type/Img18.jpg",
+    "assets/images/type/Img19.webp",
+    "assets/images/type/Img20.jpg",
+    "assets/images/type/Img21.jpg",
+    "assets/images/type/Img22.jpg",
+  ]
   listOfData: Array<TDSSafeAny> = [
     {
       image: "assets/images/banner1.webp",
@@ -117,7 +141,7 @@ export class HomePageComponent implements OnInit {
 
       });
   }
-
+  
   // Lấy danh sách product từ api
   getListProduct() {
     this.loading = true
@@ -211,6 +235,40 @@ export class HomePageComponent implements OnInit {
     this.productService.idProduct.next(data.id)
     localStorage.setItem("idProduct", data.id);
     this.router.navigateByUrl('/customer/product-detail');
+  }
+  movetoProduct(data: TDSSafeAny) {
+    // this.productService.idProduct.next(data.id)
+    localStorage.setItem("idType", data.id);
+    this.router.navigateByUrl('/customer/product');
+  }
+
+  changeListType(param: number) {
+    if (param == 16) {
+      if (TDSHelperObject.hasValue(this.lstType)) {
+        this.start += param
+        if (this.start >= this.lstType!.length) {
+          this.start = this.lstType!.length - this.lstType!.length % 16
+        }
+        // this.currenPage = Math.ceil(this.start / 5) + 1
+      }
+      else {
+        this.start = 0;
+        // this.currenPage = 0;
+      }
+    }
+    if (param == -16) {
+      this.start += param
+      if (TDSHelperObject.hasValue(this.lstType)) {
+        if (this.start <= 0) {
+          this.start = 0
+        }
+        // this.currenPage = Math.ceil(this.start / 5) + 1
+      }
+      else {
+        this.start = 0;
+        // this.currenPage = 0;
+      }
+    }
   }
 }
 

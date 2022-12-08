@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AdminGuardService, CustomerGuardService } from '@core/authentication';
+import { AdminGuard } from '@core/authentication/admin.guard';
 import { LayoutComponent } from '@shared/layout/layout/layout.component';
 
 const routes: Routes = [
@@ -35,8 +36,8 @@ const routes: Routes = [
         loadChildren: () => import('./modules/property-management/property-management.module').then(m => m.PropertyManagementModule)
       },
       {
-        path: 'setting-resource',
-        loadChildren: () => import('./modules/setting-resource/setting-resource.module').then(m => m.SettingResourceModule)
+        path: 'store',
+        loadChildren: () => import('./modules/setting-resource/store.module').then(m => m.SettingResourceModule)
       },
       // {
       //   path: 'time-keepper',
@@ -48,6 +49,11 @@ const routes: Routes = [
     path: 'customer',
     canActivate: [CustomerGuardService],
     loadChildren: () => import('./modules/customer/customer.module').then(m => m.CustomerModule)
+  },
+  {
+    path: 'admin',
+    canActivate: [AdminGuard],
+    loadChildren: () => import('./modules/admin/admin.module').then(m => m.AdminModule)
   },
 ];
 

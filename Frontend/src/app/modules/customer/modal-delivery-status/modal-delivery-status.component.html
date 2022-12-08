@@ -1,0 +1,350 @@
+<tds-spin [spinning]="false">
+ <div class="flex flex-col gap-4  h-[calc(35vh)] overflow-auto tds-custom-scroll">
+  <div class="p-4 rounded-xl border border-neutral-2-200">
+   <div class="flex flex-col gap-4">
+    <div class="flex gap-4 items-center">
+     <div class="flex-auto text-title-1 font-semibold text-neutral-1-900">Trạng thái đơn yêu cầu </div>
+    </div>
+    <div class="flex flex-col gap-4">
+     <div [ngSwitch]="order?.status" class="w-full mt-5">
+      <tds-steps *ngSwitchCase="5" [current]="5" [borderStyle]="'border-dashed'">
+       <tds-step [tdsTitle]="titleTemplate8" [icon]="iconTemplate8" >
+       </tds-step>
+        <ng-template #titleTemplate8>
+         <div class="flex items-center justify-center text-neutral-1-900 text-body-2">
+          Yêu cầu xác nhận
+         </div>
+        </ng-template>
+       <ng-template #iconTemplate8>
+        <div class="w-8 h-8 bg-white  flex items-center justify-center">
+         <span class="tdsi-confirm-page-line text-2xl leading-6 text-neutral-1-500"></span>
+        </div>
+       </ng-template>
+       <ng-template #descriptionTemplate8>
+        <div class="flex items-center pt-1">
+         <div class="flex items-center pr-4 text-caption-2 font-regular text-primary-1">
+          <span><i class="tdsi-time-line mr-1 text-primary-1"></i></span> {{order?.date_order| date: "dd/MM/yyyy"}}
+         </div>
+         <div class="text-caption-2 font-regular text-primary-1">
+          {{order?.date_order| date: "HH:MM"}}
+         </div>
+        </div>
+       </ng-template>
+       <tds-step tdsTitle="Xác nhận thành công" [icon]="iconTemplate7" >
+       </tds-step>
+       <ng-template #iconTemplate7>
+        <div class="w-8 h-8 bg-white  flex items-center justify-center">
+         <span class="tdsi-success-line text-2xl leading-6  text-neutral-1-400"></span>
+        </div>
+       </ng-template>
+       <tds-step tdsTitle="Đơn hàng đã gửi vận chuyển" [icon]="iconTemplate3">
+       </tds-step>
+       <ng-template #iconTemplate3>
+        <div class="w-8 h-8 bg-white  flex items-center justify-center">
+         <span class="tdsi-truck-line text-2xl leading-6  text-neutral-1-400"></span>
+        </div>
+       </ng-template>
+       <tds-step tdsTitle="Đơn hàng đang giao" [icon]="iconTemplate2" >
+       </tds-step>
+       <ng-template #iconTemplate2>
+        <div class="w-8 h-8 bg-white  flex items-center justify-center">
+         <span class="tdsi-shipper-line text-2xl leading-6  text-neutral-1-400"></span>
+        </div>
+       </ng-template>
+       <ng-template #descriptionTemplate2>
+        <div class="flex items-center pt-1">
+         <div class="flex items-center pr-4 text-caption-2 font-regular ">
+          <span><i class="tdsi-time-line mr-1 "></i></span> 19/12/2021
+         </div>
+         <div class="text-caption-2 font-regular">
+          20:21
+         </div>
+        </div>
+       </ng-template>
+       <tds-step [tdsTitle]="titleTemplate" [icon]="iconTemplate" [description]="descriptionTemplate8">
+       </tds-step>
+       <ng-template #titleTemplate>
+        <div class="flex items-center justify-center text-primary-1 text-body-2">
+         Giao hàng thành công
+        </div>
+       </ng-template>
+       <ng-template #iconTemplate>
+        <div class="w-8 h-8 bg-white  flex items-center justify-center">
+         <span class="tdsi-bag-success-line text-2xl leading-6  text-primary-1"></span>
+        </div>
+       </ng-template>
+      </tds-steps>
+      <tds-steps *ngSwitchCase="4" [current]="3" [borderStyle]="'border-dashed'">
+       <tds-step [tdsTitle]="titleTemplate8" [icon]="iconTemplate8" >
+       </tds-step>
+        <ng-template #titleTemplate8>
+         <div class="flex items-center justify-center text-neutral-1-900 text-body-2">
+          Yêu cầu xác nhận
+         </div>
+        </ng-template>
+       <ng-template #iconTemplate8>
+        <div class="w-8 h-8 bg-white  flex items-center justify-center">
+         <span class="tdsi-confirm-page-line text-2xl leading-6 text-neutral-1-500"></span>
+        </div>
+       </ng-template>
+       <ng-template #descriptionTemplate8>
+        <div class="flex items-center pt-1">
+         <div class="flex items-center pr-4 text-caption-2 font-regular text-primary-1">
+          <span><i class="tdsi-time-line mr-1 text-primary-1"></i></span> {{order?.date_order| date: "dd/MM/yyyy"}}
+         </div>
+         <div class="text-caption-2 font-regular text-primary-1">
+          {{order?.date_order| date: "HH:MM"}}
+         </div>
+        </div>
+       </ng-template>
+       <tds-step tdsTitle="Xác nhận thành công" [icon]="iconTemplate7" >
+       </tds-step>
+       <ng-template #iconTemplate7>
+        <div class="w-8 h-8 bg-white  flex items-center justify-center">
+         <span class="tdsi-success-line text-2xl leading-6  text-neutral-1-400"></span>
+        </div>
+       </ng-template>
+       <tds-step tdsTitle="Đơn hàng đã gửi vận chuyển" [icon]="iconTemplate3">
+       </tds-step>
+       <ng-template #iconTemplate3>
+        <div class="w-8 h-8 bg-white  flex items-center justify-center">
+         <span class="tdsi-truck-line text-2xl leading-6  text-neutral-1-400"></span>
+        </div>
+       </ng-template>
+       <tds-step [tdsTitle]="titleTemplate2" [icon]="iconTemplate2" [description]="descriptionTemplate8">
+       </tds-step>
+        <ng-template #titleTemplate2>
+         <div class="flex items-center justify-center text-error-500 text-body-2">
+          Đơn hàng đã bị hủy
+         </div>
+        </ng-template>
+       <ng-template #iconTemplate2>
+        <div class="w-8 h-8 bg-white  flex items-center justify-center">
+         <span class="tdsi-error-fill text-2xl leading-6  text-error-500"></span>
+        </div>
+       </ng-template>
+       <ng-template #descriptionTemplate2>
+        <div class="flex items-center pt-1">
+         <div class="flex items-center pr-4 text-caption-2 font-regular ">
+          <span><i class="tdsi-time-line mr-1 "></i></span> 19/12/2021
+         </div>
+         <div class="text-caption-2 font-regular">
+          20:21
+         </div>
+        </div>
+       </ng-template>
+       <tds-step [tdsTitle]="titleTemplate" [icon]="iconTemplate">
+       </tds-step>
+       <ng-template #titleTemplate>
+        <div class="flex items-center justify-center text-neutral-1-500 text-body-2">
+         Giao hàng thành công
+        </div>
+       </ng-template>
+       <ng-template #iconTemplate>
+        <div class="w-8 h-8 bg-white  flex items-center justify-center">
+         <span class="tdsi-bag-success-line text-2xl leading-6  text-neutral-1-500"></span>
+        </div>
+       </ng-template>
+      </tds-steps>
+      <tds-steps *ngSwitchCase="3" [current]="3" [borderStyle]="'border-dashed'">
+       <tds-step [tdsTitle]="titleTemplate8" [icon]="iconTemplate8" >
+       </tds-step>
+        <ng-template #titleTemplate8>
+         <div class="flex items-center justify-center text-neutral-1-900 text-body-2">
+          Yêu cầu xác nhận
+         </div>
+        </ng-template>
+       <ng-template #iconTemplate8>
+        <div class="w-8 h-8 bg-white  flex items-center justify-center">
+         <span class="tdsi-confirm-page-line text-2xl leading-6 text-neutral-1-500"></span>
+        </div>
+       </ng-template>
+       <ng-template #descriptionTemplate8>
+        <div class="flex items-center pt-1">
+         <div class="flex items-center pr-4 text-caption-2 font-regular text-primary-1">
+          <span><i class="tdsi-time-line mr-1 text-primary-1"></i></span> {{order?.date_order| date: "dd/MM/yyyy"}}
+         </div>
+         <div class="text-caption-2 font-regular text-primary-1">
+          {{order?.date_order| date: "HH:MM"}}
+         </div>
+        </div>
+       </ng-template>
+       <tds-step tdsTitle="Xác nhận thành công" [icon]="iconTemplate7" >
+       </tds-step>
+       <ng-template #iconTemplate7>
+        <div class="w-8 h-8 bg-white  flex items-center justify-center">
+         <span class="tdsi-success-line text-2xl leading-6  text-neutral-1-400"></span>
+        </div>
+       </ng-template>
+       <tds-step tdsTitle="Đơn hàng đã gửi vận chuyển" [icon]="iconTemplate3">
+       </tds-step>
+       <ng-template #iconTemplate3>
+        <div class="w-8 h-8 bg-white  flex items-center justify-center">
+         <span class="tdsi-truck-line text-2xl leading-6  text-neutral-1-500"></span>
+        </div>
+       </ng-template>
+       <tds-step [tdsTitle]="titleTemplate2" [icon]="iconTemplate2" [description]="descriptionTemplate8">
+       </tds-step>
+       <ng-template #titleTemplate2>
+        <div class="flex items-center justify-center text-primary-1 text-body-2">
+        Đơn hàng đang giao
+        </div>
+       </ng-template>
+       <ng-template #iconTemplate2>
+        <div class="w-8 h-8 bg-white  flex items-center justify-center">
+         <span class="tdsi-shipper-line text-2xl leading-6  text-primary-1"></span>
+        </div>
+       </ng-template>
+       <tds-step [tdsTitle]="titleTemplate" [icon]="iconTemplate">
+       </tds-step>
+       <ng-template #titleTemplate>
+        <div class="flex items-center justify-center text-neutral-1-500 text-body-2">
+         Giao hàng thành công
+        </div>
+       </ng-template>
+       <ng-template #iconTemplate>
+        <div class="w-8 h-8 bg-white  flex items-center justify-center">
+         <span class="tdsi-bag-success-line text-2xl leading-6  text-neutral-1-500"></span>
+        </div>
+       </ng-template>
+      </tds-steps>
+      <tds-steps *ngSwitchCase="2" [current]="1" [borderStyle]="'border-dashed'">
+       <tds-step [tdsTitle]="titleTemplate8" [icon]="iconTemplate8">
+       </tds-step>
+        <ng-template #titleTemplate8>
+         <div class="flex items-center justify-center text-neutral-1-900 text-body-2">
+          Yêu cầu xác nhận
+         </div>
+        </ng-template>
+       <ng-template #iconTemplate8>
+        <div class="w-8 h-8 bg-white  flex items-center justify-center">
+         <span class="tdsi-confirm-page-line text-2xl leading-6 text-neutral-1-500"></span>
+        </div>
+       </ng-template>
+       <ng-template #descriptionTemplate8>
+        <div class="flex items-center pt-1">
+         <div class="flex items-center pr-4 text-caption-2 font-regular text-primary-1">
+          <span><i class="tdsi-time-line mr-1 text-primary-1"></i></span> {{order?.date_order| date: "dd/MM/yyyy"}}
+         </div>
+         <div class="text-caption-2 font-regular text-primary-1">
+          {{order?.date_order| date: "HH:MM"}}
+         </div>
+        </div>
+       </ng-template>
+       <tds-step [tdsTitle]="titleTemplate7" [icon]="iconTemplate7" [description]="descriptionTemplate8">
+       </tds-step>
+       <ng-template #titleTemplate7>
+        <div class="flex items-center justify-center text-primary-1 text-body-2">
+        Xác nhận thành công
+        </div>
+       </ng-template>
+       <ng-template #iconTemplate7>
+        <div class="w-8 h-8 bg-white  flex items-center justify-center">
+         <span class="tdsi-success-line text-2xl leading-6  text-primary-1"></span>
+        </div>
+       </ng-template>
+       <tds-step tdsTitle="Đơn hàng đã gửi vận chuyển" [icon]="iconTemplate3">
+       </tds-step>
+       <ng-template #iconTemplate3>
+        <div class="w-8 h-8 bg-white  flex items-center justify-center">
+         <span class="tdsi-truck-line text-2xl leading-6  text-neutral-1-500"></span>
+        </div>
+       </ng-template>
+       <tds-step [tdsTitle]="titleTemplate2" [icon]="iconTemplate2">
+       </tds-step>
+       <ng-template #titleTemplate2>
+        <div class="flex items-center justify-center text-neutral-1-500 text-body-2">
+        Đơn hàng đang giao
+        </div>
+       </ng-template>
+       <ng-template #iconTemplate2>
+        <div class="w-8 h-8 bg-white  flex items-center justify-center">
+         <span class="tdsi-shipper-line text-2xl leading-6  text-neutral-1-500"></span>
+        </div>
+       </ng-template>
+       <tds-step [tdsTitle]="titleTemplate" [icon]="iconTemplate">
+       </tds-step>
+       <ng-template #titleTemplate>
+        <div class="flex items-center justify-center text-neutral-1-500 text-body-2">
+         Giao hàng thành công
+        </div>
+       </ng-template>
+       <ng-template #iconTemplate>
+        <div class="w-8 h-8 bg-white  flex items-center justify-center">
+         <span class="tdsi-bag-success-line text-2xl leading-6  text-neutral-1-500"></span>
+        </div>
+       </ng-template>
+      </tds-steps>
+      <tds-steps *ngSwitchCase="'Waiting for confirm'" [current]="0" [borderStyle]="'border-dashed'">
+       <tds-step [tdsTitle]="titleTemplate8" [icon]="iconTemplate8" [description]="descriptionTemplate8">
+       </tds-step>
+        <ng-template #titleTemplate8>
+         <div class="flex items-center justify-center text-primary-1 text-body-2">
+          Yêu cầu xác nhận
+         </div>
+        </ng-template>
+       <ng-template #iconTemplate8>
+        <div class="w-8 h-8 bg-white  flex items-center justify-center">
+         <span class="tdsi-confirm-page-line text-2xl leading-6 text-primary-1 "></span>
+        </div>
+       </ng-template>
+       <ng-template #descriptionTemplate8>
+        <div class="flex items-center pt-1">
+         <div class="flex items-center pr-4 text-caption-2 font-regular text-primary-1">
+          <span><i class="tdsi-time-line mr-1 text-primary-1"></i></span> {{order?.date_order| date: "dd/MM/yyyy"}}
+         </div>
+         <div class="text-caption-2 font-regular text-primary-1">
+          {{order?.date_order| date: "HH:MM"}}
+         </div>
+        </div>
+       </ng-template>
+       <tds-step [tdsTitle]="titleTemplate7" [icon]="iconTemplate7" >
+       </tds-step>
+       <ng-template #titleTemplate7>
+        <div class="flex items-center justify-center text-neutral-1-500 text-body-2">
+        Xác nhận thành công
+        </div>
+       </ng-template>
+       <ng-template #iconTemplate7>
+        <div class="w-8 h-8 bg-white  flex items-center justify-center">
+         <span class="tdsi-success-line text-2xl leading-6  text-neutral-1-500"></span>
+        </div>
+       </ng-template>
+       <tds-step tdsTitle="Đơn hàng đã gửi vận chuyển" [icon]="iconTemplate3">
+       </tds-step>
+       <ng-template #iconTemplate3>
+        <div class="w-8 h-8 bg-white  flex items-center justify-center">
+         <span class="tdsi-truck-line text-2xl leading-6  text-neutral-1-500"></span>
+        </div>
+       </ng-template>
+       <tds-step [tdsTitle]="titleTemplate2" [icon]="iconTemplate2">
+       </tds-step>
+       <ng-template #titleTemplate2>
+        <div class="flex items-center justify-center text-neutral-1-500 text-body-2">
+        Đơn hàng đang giao
+        </div>
+       </ng-template>
+       <ng-template #iconTemplate2>
+        <div class="w-8 h-8 bg-white  flex items-center justify-center">
+         <span class="tdsi-shipper-line text-2xl leading-6  text-neutral-1-500"></span>
+        </div>
+       </ng-template>
+       <tds-step [tdsTitle]="titleTemplate" [icon]="iconTemplate">
+       </tds-step>
+       <ng-template #titleTemplate>
+        <div class="flex items-center justify-center text-neutral-1-500 text-body-2">
+         Giao hàng thành công
+        </div>
+       </ng-template>
+       <ng-template #iconTemplate>
+        <div class="w-8 h-8 bg-white  flex items-center justify-center">
+         <span class="tdsi-bag-success-line text-2xl leading-6  text-neutral-1-500"></span>
+        </div>
+       </ng-template>
+      </tds-steps>
+     </div>
+    </div>
+   </div>
+  </div>
+ </div>
+</tds-spin>

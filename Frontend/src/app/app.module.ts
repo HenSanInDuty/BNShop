@@ -16,6 +16,7 @@ import { TDSEchartsModule } from 'tds-report';
 import { THRMApiModule } from '@commom/hrm/thrm-api.module';
 import { environment } from 'src/environments/environment';
 import { InterceptorCore } from '@core/authentication/HttpInterceptor';
+import { LiveDatePipe } from './pipes/live-date.pipe';
 
 // Thiết lập tiếng Việt
 registerLocaleData(localeVi);

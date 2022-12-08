@@ -1,0 +1,25 @@
+<tds-spin [spinning]="isSubmit">
+ <form id="addShipper" [formGroup]="addShipper" (ngSubmit)="onSubmit()">
+  <div class="flex flex-col gap-4">
+   <tds-form-field>
+    <tds-label>Chọn người giao hàng</tds-label>
+    <div class="flex items-start ">
+      <tds-select [data]="lstShipper" valueField="id" textField="name" formControlName="id"
+       placeholder='Chọn hình thức trả' [required]="true">
+      </tds-select>
+    </div>
+    <tds-error>Vui lòng chọn người giao hàng</tds-error>
+   </tds-form-field>
+  </div>
+  <div *tdsModalFooter class="flex justify-end p-4 items-center">
+   <div class="flex gap-3  ">
+    <button (click)="cancel()" tds-button color="secondary" class="min-w-[100px]">
+     Hủy
+    </button>
+    <button tds-button form='addShipper' type="submit" color="primary" class="min-w-[100px]">
+     Tiến hành giao hàng
+    </button>
+   </div>
+  </div>
+ </form>
+</tds-spin>

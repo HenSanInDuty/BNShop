@@ -3,7 +3,8 @@
     <div [style.min-width.px]="!isCollapsed ? 256 : 64" class="h-full">
       <tds-menu [data]="lstData" [inlineCollapsed]="isCollapsed" [showLogo]="true"
         (onOpenChange)="onOpenChange($event)">
-       <!-- <div class="text-heading-1 text-white">BNZON</div> -->
+        <img src="assets/images/LogoBNZON.svg" logo-text width="156" height="48" viewBox="0 0 156 48" fill="none">
+        <img src="assets/images/LogoShort.svg" logo>
       </tds-menu>
     </div>
     <div class="flex-auto flex flex-col h-full">
@@ -181,7 +182,7 @@
                           <div class="flex w-full">
                             <div class="flex gap-2">
                               <tds-avatar class="bg-base-orange-500 dark:bg-d-base-orange-500 text-white"
-                                [shape]="'square'"  [tdsSrc]="userProfile$?.avatar" [text]="nameProfile">
+                                [shape]="'square'" [tdsSrc]="userProfile$?.avatar" [text]="nameProfile">
                               </tds-avatar>
                             </div>
                             <div class="flex flex-auto flex-col ml-2">
