@@ -14,8 +14,11 @@ class RatingViewAll(generics.GenericAPIView):
     serializer_class = RateSerializer
 
     def get_permissions(self):
+        per = super().get_permissions()
         if self.request.method != "GET":
             return [IsAuthenticated()]
+        else:
+            return per
     
     def get(self,request,**kwargs):
         customer = request.user.user.customer
@@ -55,9 +58,11 @@ class RatingViewReplyDetail(generics.GenericAPIView):
     serializer_class = RateSerializer
 
     def get_permissions(self):
-        print("alo")
+        per = super().get_permissions()
         if self.request.method != "GET":
             return [IsAuthenticated()]
+        else:
+            return per
     
     def get(self,request,id,**kwargs):
         rate = Rate.objects.filter(product_id=id, is_approved=True)
@@ -115,8 +120,11 @@ class RatingProductViewAll(generics.GenericAPIView):
     serializer_class = RateSerializer
 
     def get_permissions(self):
+        per = super().get_permissions()
         if self.request.method != "GET":
             return [IsAuthenticated()]
+        else:
+            return per
 
     def get(self,request,**kwargs):
         user = request.user
