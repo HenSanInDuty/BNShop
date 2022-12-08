@@ -47,7 +47,7 @@ class MyTokenObtainPairViewSerializer(TokenObtainPairSerializer):
         data['refresh'] = str(refresh)
         data['access'] = str(refresh.access_token)
         data['data'] = {
-            'id': self.user.user.id if rold != 'Admin' else self.user.id,
+            'id': self.user.user.id if role != 'Admin' else self.user.id,
             'phoneNumber': self.user.phone,
             'role': role
         }
