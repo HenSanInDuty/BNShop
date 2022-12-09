@@ -100,7 +100,7 @@ class Users(models.Model):
 class Agency(models.Model):
     user = models.OneToOneField(Users,on_delete=models.CASCADE,related_name='agency')
     main_industry = models.CharField(max_length=100)
-    identify = models.CharField(max_length=12)
+    identify = models.CharField(max_length=12,unique=True)
     def __str__(self):
         return self.user.name
     
