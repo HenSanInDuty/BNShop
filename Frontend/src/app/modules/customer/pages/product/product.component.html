@@ -1,5 +1,5 @@
 <div class="flex flex-col items-center gap-8  h-full w-full bg-neutral-3-50 px-[150px]">
-  <div class="flex flex-col items-center  gap-8  h-[900px] w-full max-w-7xl bg-white  my-8">
+  <div class="flex flex-col items-center  gap-8  min-h-[900px] w-full max-w-7xl bg-white  my-8 pb-4">
     <!-- <div class="w-full h-96">
       <tds-carousel tdsAutoPlaySpeed="6000" [tdsEffect]="effect" class="w-full truncate">
         <div tds-carousel-content *ngFor="let data of listOfData">
@@ -42,51 +42,53 @@
         </div>
         <div class=""></div>
       </div>
-      <ng-container *ngIf="lstProduct.length > 0; then thenTemplate; else elseTemplate"></ng-container>
-      <ng-template #thenTemplate>
-        <div class="w-4/5 grid grid-cols-4 gap-2">
-          <div *ngFor="let product of lstProduct | slice: 0:5; let i=index;"
-            class="flex flex-col gap-2 items-center border rounded-lg  relative " (click)="productDetail(product)">
-            <div class="relative pt-[100%] w-full min-h-[158px] ">
-              <img class="top-0 h-full first-line:left-0 absolute object-cover w-full" [src]="product.display_image"
-                alt="">
-            </div>
-            <div class="flex flex-col gap-2 p-2 w-full">
-              <div class="text-neutral-1-900 font-normal line-clamp-1 text-xs text-left w-full">
-                {{product.name}}</div>
-              <div class="flex flex-col gap-4 items-start  w-full">
-                <div class="flex  gap-2">
-                  <div *ngIf="product.last_price.end_datetime" class="flex top-2 right-2">
-                    <!-- <div class="">{{product.last_price.end_datetime | date: "HH:mm /MM/YYYY"}}</div> -->
-                    <div class="text-xs text-back font-semibold  line-through">
-                      {{product.pre_price?.price | currency:'VND':true }}</div>
+      <tds-spin [spinning]="loading" class="!w-4/5 min-h-[900px]">
+        <ng-container *ngIf="lstProduct.length > 0; then thenTemplate; else elseTemplate"></ng-container>
+        <ng-template #thenTemplate>
+          <div class="w-full grid grid-cols-4 gap-2">
+            <div *ngFor="let product of lstProduct  let i=index;"
+              class="flex flex-col gap-2 items-center border rounded-lg  relative " (click)="productDetail(product)">
+              <div class="relative pt-[100%] w-full min-h-[158px] ">
+                <img class="top-0 h-full first-line:left-0 absolute object-cover w-full" [src]="product.display_image"
+                  alt="">
+              </div>
+              <div class="flex flex-col gap-2 p-2 w-full">
+                <div class="text-neutral-1-900 font-normal line-clamp-1 text-xs text-left w-full">
+                  {{product.name}}</div>
+                <div class="flex flex-col gap-4 items-start  w-full">
+                  <div class="flex  gap-2">
+                    <div *ngIf="product.last_price.end_datetime" class="flex top-2 right-2">
+                      <!-- <div class="">{{product.last_price.end_datetime | date: "HH:mm /MM/YYYY"}}</div> -->
+                      <div class="text-xs text-back font-semibold  line-through">
+                        {{product.pre_price?.price | currency:'VND':true }}</div>
+                    </div>
+                    <div [ngClass]="product.last_price.end_datetime ? 'text-error-500': ''"
+                      class="text-xs text-back font-normal">
+                      {{product.last_price.price |
+                      currency:'VND':true }}</div>
                   </div>
-                  <div [ngClass]="product.last_price.end_datetime ? 'text-error-500': ''"
-                    class="text-xs text-back font-normal">
-                    {{product.last_price.price |
-                    currency:'VND':true }}</div>
+                  <!-- <div class="flex gap-1 justify-between items-center">
+                                <span>
+                                  <tds-rate size="sm" [ngModel]="2.5" allowHalf></tds-rate>
+                                </span>
+                                <div class="text-neutral-1-900 font-normal line-clamp-1 text-xs text-left">
+                                  Đã đánh giá
+                                </div>
+                              </div> -->
                 </div>
-                <!-- <div class="flex gap-1 justify-between items-center">
-                              <span>
-                                <tds-rate size="sm" [ngModel]="2.5" allowHalf></tds-rate>
-                              </span>
-                              <div class="text-neutral-1-900 font-normal line-clamp-1 text-xs text-left">
-                                Đã đánh giá
-                              </div>
-                            </div> -->
               </div>
             </div>
           </div>
-        </div>
-      </ng-template>
-      <ng-template #elseTemplate>
-        <div class="flex items-center justify-center min-h-[900px] w-full bg-neutral-3-200">
-          <div class="flex flex-col gap-6 items-center py-8">
-            <img src="assets//images//dashboard//No data.svg" alt="" srcset="">
-            <div class="text-body-2 font-regular text-neutral-1-300">Không có hàng nào được tìm thấy
+        </ng-template>
+        <ng-template #elseTemplate>
+          <div class="flex items-center justify-center min-h-[900px] w-full bg-neutral-3-50">
+            <div class="flex flex-col gap-6 items-center py-8">
+              <img src="assets//images//dashboard//No data.svg" alt="" srcset="">
+              <div class="text-body-2 font-regular text-neutral-1-300">Không có hàng nào được tìm thấy
+              </div>
             </div>
           </div>
-        </div>
-      </ng-template>
+        </ng-template>
+      </tds-spin>
     </div>
   </div>
