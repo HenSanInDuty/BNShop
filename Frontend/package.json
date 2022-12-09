@@ -25,7 +25,7 @@
     "@ngx-pwa/local-storage": "^13.0.3",
     "@tailwindcss/line-clamp": "^0.4.2",
     "date-fns": "^2.28.0",
-    "echarts": "^5.2.2",
+    "echarts": "^5.4.0",
     "file-saver": "^2.0.5",
     "ng-openapi-gen": "https://tang-ui.tpos.dev/lib/ng-openapi-gen-0.21.2.tgz",
     "rxjs": "~7.5.0",
@@ -37,7 +37,7 @@
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~13.3.7",
-    "@angular/cli": "~13.3.7",
+    "@angular/cli": "^13.3.7",
     "@angular/compiler-cli": "~13.3.0",
     "@tailwindcss/forms": "^0.5.2",
     "@tailwindcss/typography": "^0.5.2",
@@ -52,7 +52,6 @@
     "karma-jasmine": "~4.0.0",
     "karma-jasmine-html-reporter": "~1.7.0",
     "postcss": "^8.4.14",
-    "tailwindcss": "^3.1.4",
-    "typescript": "~4.6.2"
+    "tailwindcss": "^3.1.4"
   }
 }

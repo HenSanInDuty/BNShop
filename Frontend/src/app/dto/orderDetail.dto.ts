@@ -48,6 +48,7 @@ export interface Address {
 export interface Customer {
  user_id: number
  name: string
+ phone:string
 }
 
 export interface Agency {

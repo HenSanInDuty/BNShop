@@ -26,6 +26,12 @@ import { UsePersonalDTO } from '../../models/user.dto';
 })
 export class DashboardComponent implements OnInit {
 
+  product:any
+  productPending:any
+  productNo:any
+  order:any
+  orderSuccess:any
+  orderError:any
   listYear = [
     { year: new Date().getFullYear() - 1, name: "Năm trước" },
     { year: new Date().getFullYear(), name: "Năm nay" },
@@ -67,10 +73,6 @@ export class DashboardComponent implements OnInit {
   paramsTotalUserNew: UsePersonalDTO = {
     month: new Date().getMonth() + 1,
     year: new Date().getFullYear()
-  }
-  body: ResourceTicketFromToTimeDto = {
-    from: this.getNextMinus(new Date()).toISOString(),
-    to: this.datePipe.transform(endOfMonth(new Date()).toISOString(), 'yyyy-MM-ddT23:59:59')?.toString()
   }
   rkPersonal?: TDSSafeAny
   barCharOptions: TDSSafeAny;
@@ -287,9 +289,14 @@ export class DashboardComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.product = localStorage.getItem("productAgency")
+    this.productPending = localStorage.getItem("productAgencyPending")
+    this.productNo = localStorage.getItem("productAgencyNo")
+    this.order = localStorage.getItem("order")
+    this.orderSuccess = localStorage.getItem("orderSuccess")
+    this.orderError = localStorage.getItem("orderError")
     this.barCharOptions = this.chartOptions.BarChartOption(this.barChartComponent);
     this.pieCharOptions = this.chartOptions.DonutChartOption(this.pieChartComponent, 130, 100);
-    // this.getTotalStaff()
     this.authService.getObsUserProfile().pipe(takeUntil(this.destroy$)).subscribe({
       next: (res) => {
         this.userProfile$ = res;
@@ -297,16 +304,9 @@ export class DashboardComponent implements OnInit {
         this.cd.detectChanges();
       },
     });
-    // this.getTotalUserNew(this.paramsTotalUserNew)
-    // this.getTotalQuitJob(this.paramsTotalUserNew)
-    // this.getListBirthDay(this.paramsTotalUserNew)
-    // this.getReportKeepingPersonal(this.paramsTotalUserNew)
-    // this.getResourceTicketRangeTime()
   }
 
   ngAfterViewInit(): void {
-    // this.getStatisticalVolatility(this.paramsTotalUserNew.year)
-    // this.getStatisticalPosition(this.paramsTotalUserNew)
     let sum = this.total;
     this.pieChartComponent.series[0].label!.formatter = function (params: TDSSafeAny) {
       return `{header|${sum}}\n{body| Tổng sản phẩm }`;
@@ -314,12 +314,6 @@ export class DashboardComponent implements OnInit {
     this.cd.detectChanges()
   }
 
-  // Lấy ngày hôm qua
-  getNextMinus(date = new Date()) {
-    const previous = new Date(date.getTime());
-    previous.setMinutes(date.getMinutes() + 1);
-    return previous;
-  }
 
   onModelChangeStatisticalVolatility(e: TDSSafeAny) {
     this.getStatisticalVolatility(e)
@@ -330,162 +324,6 @@ export class DashboardComponent implements OnInit {
     this.getStatisticalPosition(this.paramsTotalUserNew)
   }
 
-  getResourceTicketRangeTime() {
-    this.loadingResourceTicket = true;
-    this.resourceTicketService.postResourceTicketRelatedToCurrentUserWithRangeTime_Json({ body: this.body }).subscribe({
-      next: (res) => {
-        if (TDSHelperArray.hasListValue(res)) {
-          this.listResourceCurrentTime = res;
-        }
-        this.cd.detectChanges();
-      },
-      error: (err) => {
-        this.listResourceCurrentTime = undefined;
-        this.cd.detectChanges();
-      },
-      complete: () => {
-        this.loadingResourceTicket = false;
-      },
-    })
-  }
-
-  getTotalStaff() {
-    this.userService.getUserTotalCount_Json()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (res) => {
-          if (res) {
-            this.totalStaff = res;
-          }
-          this.cd.detectChanges();
-        },
-        error: (err) => {
-          if (err) {
-            this.messageService.error(err.error.message)
-          }
-          this.cd.detectChanges();
-        }
-      })
-
-  }
-
-  getTotalUserNew(param: UsePersonalDTO) {
-    this.userService.getUserTotalNewbie_Json(param)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (res) => {
-          if (res) {
-            this.totalNewStaff = res
-          }
-          this.cd.detectChanges();
-        },
-        error: (err) => {
-          if (err) {
-            // this.messageService.error(err.error.message)
-          }
-          this.cd.detectChanges();
-        }
-      })
-
-  }
-
-  getListBirthDay(param: UsePersonalDTO) {
-    this.loadingBirthDay = true;
-    this.userService.getUserListAndTotalBirthdayInMonth_Json({
-      month: param.month
-    }).subscribe({
-      next: (res) => {
-        if (TDSHelperArray.hasListValue(res.users)) {
-          this.totalBirthDayUser = res.totalCount;
-          this.listBirthDay = res.users;
-          this.startPage = Math.ceil(this.listBirthDay!.length / 5);
-          this.currenPage = 1;
-        };
-        this.cd.detectChanges();
-      },
-      error: (err) => {
-        if (!err || !err.error) {
-          this.messageService.error('Lỗi tải dữ liệu');
-        } else {
-          if (!err.error.validationErrors) {
-            this.messageService.error(err?.error?.message);
-            this.loadingBirthDay = false;
-          }
-          else {
-            for (let i = 0; i < err.error?.validationErrors.length; i++) {
-              this.messageService.error(err.error?.validationErrors[i]?.message);
-            }
-          }
-        }
-        this.loadingBirthDay = false;
-        this.cd.detectChanges();
-      },
-      complete: () => {
-        this.loadingBirthDay = false;
-        this.cd.detectChanges();
-      },
-    })
-  }
-
-  getTotalQuitJob(param: UsePersonalDTO) {
-    this.userService.getUserTotalQuitJob_Json(param)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (res) => {
-          if (res) {
-            this.totalQuitJob = res;
-          }
-          this.cd.detectChanges();
-        },
-        error: (err) => {
-          if (!err || !err.error) {
-            this.messageService.error('Lỗi tải dữ liệu');
-          } else {
-            if (!err.error.validationErrors) {
-              this.messageService.error(err?.error?.message);
-              this.loading = false
-            }
-            else {
-              for (let i = 0; i < err.error?.validationErrors.length; i++) {
-                this.messageService.error(err.error?.validationErrors[i]?.message);
-              }
-            }
-          }
-          this.loading = false
-          this.cd.detectChanges();
-        }
-      })
-  }
-
-  getReportKeepingPersonal(param: UsePersonalDTO) {
-    this.userService.getUserReportKeepingPersonal_Json(param)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (res) => {
-          if (res) {
-            this.rkPersonal = res;
-          }
-          this.cd.detectChanges();
-        },
-        error: (err) => {
-          if (!err || !err.error) {
-            this.messageService.error('Lỗi tải dữ liệu');
-          } else {
-            if (!err.error.validationErrors) {
-              this.messageService.error(err?.error?.message);
-              this.loading = false
-            }
-            else {
-              for (let i = 0; i < err.error?.validationErrors.length; i++) {
-                this.messageService.error(err.error?.validationErrors[i]?.message);
-              }
-            }
-          }
-          this.loading = false
-          this.cd.detectChanges();
-        }
-      })
-  }
 
   getStatisticalPosition(param: UsePersonalDTO) {
     this.loading = true
@@ -507,7 +345,7 @@ export class DashboardComponent implements OnInit {
             this.total = res.total
             let sum = this.total
             this.pieChartComponent.series[0].label!.formatter = function (params: TDSSafeAny) {
-              return `{header|${sum}}\n{body| Tổng nhân viên }`;
+              return `{header|${sum}}\n{body| Tổng đơn hàng }`;
             }
             this.pieCharOptions = this.chartOptions.DonutChartOption(this.pieChartComponent, 130, 100);
             this.cd.detectChanges();
