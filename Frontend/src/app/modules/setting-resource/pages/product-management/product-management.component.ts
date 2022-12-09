@@ -249,6 +249,9 @@ export class ProductManagementComponent implements OnInit {
           if (res) {
             // this.getStatus()
             this.lstResource = res;
+            localStorage.setItem("productAgency", this.lstResource.length.toString())
+            localStorage.setItem("productAgencyPending", this.lstResource.filter(item => item.is_approved === false).length.toString())
+            localStorage.setItem("productAgencyNo", this.lstResource.filter(item => item.quantity ==0).length.toString())
             this.lstBackup = res;
             this.lstData[0].count = this.lstResource.length
             this.lstData[1].count = this.lstResource.filter(item => (item.is_approved === true && item.is_delete === false)).length

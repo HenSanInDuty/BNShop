@@ -29,7 +29,10 @@ export class OrderComponent implements OnInit {
   listOfCurrentPageData:  Array<string> = [];
   setOfCheckedId = new Set<TDSSafeAny>();
   expandSet = new Set<number>();
+  pageIndex = 1;
+  pageSize = 20;
   public lstAccsetType: Array<getOrderDetailDTO> = []
+  public lstAccsetTypeBackup: Array<getOrderDetailDTO> = []
 
   constructor(
     private resourceTypeService: ResourceTypeService,
@@ -44,6 +47,16 @@ export class OrderComponent implements OnInit {
     this.getListAccsetType()
   }
 
+  search(event: TDSSafeAny): void {
+    this.lstAccsetType = this.lstAccsetTypeBackup;
+    if (event.value != null) {
+      this.lstAccsetType = this.lstAccsetType.filter(item => item.order_detail_no.toLowerCase().includes(event.value.toLowerCase()) == true || item.customer.name.toLowerCase().includes(event.value.toLowerCase()) == true || 
+        item.order[0].product.name.toLowerCase().includes(event.value.toLowerCase()) == true);
+      if (this.lstAccsetType[0].order[0].product.name.toLowerCase().includes(event.value.toLowerCase()) == true){
+        this.expandSet.add(this.lstAccsetType[0].id);
+      }
+    }
+  }
   onExpandChange(id: number, checked: boolean): void {
 
     // let param: getProductDTOAdmin = {
@@ -73,12 +86,14 @@ export class OrderComponent implements OnInit {
 
   getListAccsetType(){
     this.loading = true
-    this.setOfCheckedId = new Set<TDSSafeAny>();
-    this.refreshCheckedStatus();
     this.orderDetailService.getOrderDetail().pipe(takeUntil(this.destroy$))
     .subscribe({
       next: (res:TDSSafeAny) => {
         this.lstAccsetType = res
+        this.lstAccsetTypeBackup = res
+        localStorage.setItem("orderSuccess", this.lstAccsetType.filter(item => item.status == '5').length.toString())
+        localStorage.setItem("order", this.lstAccsetType.length.toString())
+        localStorage.setItem("orderError", this.lstAccsetType.filter(item => item.status == '4').length.toString())
         this.lstAccsetType = this.lstAccsetType.reverse();
         this.loading = false
       },
@@ -89,48 +104,6 @@ export class OrderComponent implements OnInit {
     });
   }
 
-  // showModalAdd(): void {
-  //   let modalAdd = this.modalService.create({
-  //     title: 'Thêm tài loại sản mới',
-  //     content: ModalAddEditResourceTypeComponent,
-  //     size: "md",
-  //     viewContainerRef: this.viewContainerRef,
-  //     componentParams:{
-  //     },
-  //   });
-  //   modalAdd.afterClose.subscribe(
-  //     {
-  //       next: (res) =>{
-  //       if(TDSHelperObject.hasValue(res))
-  //       this.getListAccsetType();
-  //       },
-  //       error: (err) => {
-  //       }
-  //     }
-  //   )
-  // }
-
-  // showModalEdit(data: TDSSafeAny): void {
-  //   let modalEdit = this.modalService.create({
-  //     title: 'Chỉnh sửa loại tài sản',
-  //     content: ModalAddEditResourceTypeComponent,
-  //     size: "md",
-  //     viewContainerRef: this.viewContainerRef,
-  //     componentParams:{
-  //       lstAccsetType: data,
-  //     },
-  //   });
-  //   modalEdit.afterClose.subscribe(
-  //     {
-  //       next: (res) =>{
-  //       if(TDSHelperObject.hasValue(res))
-  //         this.getListAccsetType();
-  //       },
-  //       error: (err) => {
-  //       }
-  //     }
-  //   )
-  // }
   accept(data: TDSSafeAny): void {
     const modal = this.modalService.info({
       title: 'Xác nhận phê duyệt đơn hàng',

@@ -2,7 +2,8 @@
   <div class="flex items-center  justify-end px-4 py-2.5">
     <div class="flex gap-2">
       <tds-form-field>
-        <input class="w-96" tdsInput autocomplete="off" placeholder="Tìm kiếm theo tên đơn hàng" [required]="true" />
+        <input class="w-96" tdsInput autocomplete="off" [tdsInputDebounce]="500" (inputKeyup)="search($event)"
+          placeholder="Tìm kiếm theo mã đơn hàng, khách hàng và tên sản phẩm" />
         <span tdsPrefix><i class="tdsi-search-fill"></i></span>
       </tds-form-field>
       <button (click)="onDeleteAll()" tds-button-outline-icon color="secondary">
@@ -32,7 +33,7 @@
         <ng-template ngFor let-data [ngForOf]="rowSelectionTable.data" let-index='index' let-odd='odd'>
           <tr>
             <td width="48px" [expand]="expandSet.has(data.id)" (expandChange)="onExpandChange(data.id, $event)"></td>
-            <td width="50px">{{ index+1}}</td>
+            <td width="50px">{{(pageIndex-1) * pageSize + index + 1}}</td>
             <td width="100px">{{ data.order_detail_no}}</td>
             <td width="100px">
               <div class="flex flex-col">
@@ -40,7 +41,7 @@
                   {{ data.customer.name }}
                 </div>
                 <div class="flex items-center gap-1 text-neutral-1-400 text-body-2 font-regular"><i
-                    class="tdsi-call-fill text-neutral-1-500"></i> </div>
+                    class="tdsi-call-fill text-neutral-1-500"></i>{{ data.customer.phone }} </div>
               </div>
             </td>
             <td width="150px">{{ data.date_order | date: "HH:mm dd/MM/YYYY"}}</td>

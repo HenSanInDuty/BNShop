@@ -7,7 +7,7 @@
             <img src="../../../../../assets/images/dashboard/totalStaff.svg" />
             <div class="flex flex-col gap-2 items-center">
               <div class="text-body-2 font-semibold text-neutral-1-700">Tổng sản phẩm</div>
-              <div class=" font-semibold text-info-500 text-heading-3">{{totalStaff}}</div>
+              <div class=" font-semibold text-info-500 text-heading-3">{{product}}</div>
             </div>
           </div>
         </div>
@@ -19,7 +19,7 @@
                 <div class="text-body-2 font-semibold text-neutral-1-700 w-full">Sản phẩm chờ duyệt</div>
 
               </div>
-              <div class="font-semibold text-neutral-1-900 text-heading-3">{{totalNewStaff || 0 }}</div>
+              <div class="font-semibold text-neutral-1-900 text-heading-3">{{productPending || 0 }}</div>
             </div>
           </div>
         </div>
@@ -30,7 +30,7 @@
               <div class="flex gap-3 items-center">
                 <div class="text-body-2 font-semibold text-neutral-1-700">Sản phẩm hết hàng</div>
               </div>
-              <div class=" font-semibold text-neutral-1-900 text-heading-3">{{totalQuitJob || 0}}</div>
+              <div class=" font-semibold text-neutral-1-900 text-heading-3">{{productNo || 0}}</div>
             </div>
           </div>
         </div>
@@ -191,16 +191,16 @@
         </div>
         <div class="flex justify-around w-full">
           <div class="flex flex-col gap-1 items-center">
-            <div class="text-caption-1 font-regular text-neutral-1-600">Số sản phẩm</div>
-            <div class="text-heading-3 font-semibold text-neutral-1-900">{{rkPersonal?.totalKeeping || 0}}</div>
+            <div class="text-caption-1 font-regular text-neutral-1-600">Số đơn hàng hủy</div>
+            <div class="text-heading-3 font-semibold text-neutral-1-900">{{orderError || 0}}</div>
           </div>
           <div class="flex flex-col gap-1 items-center">
             <div class="text-caption-1 font-regular text-neutral-1-600">Số đơn hàng</div>
-            <div class="text-heading-3 font-semibold text-neutral-1-900">{{rkPersonal?.totalFurloughKind || 0}}</div>
+            <div class="text-heading-3 font-semibold text-neutral-1-900">{{order || 0}}</div>
           </div>
           <div class="flex flex-col gap-1 items-center">
             <div class="text-caption-1 font-regular text-neutral-1-600">Tỉ lệ giao thành công</div>
-            <div class="text-heading-3 font-semibold text-neutral-1-900">{{rkPersonal?.annualLeaveDay || 0}}</div>
+            <div class="text-heading-3 font-semibold text-neutral-1-900">{{orderSuccess/order*100 || 0}}</div>
           </div>
         </div>
       </div>
