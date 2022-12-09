@@ -1,3 +1,4 @@
+import { LocalStorage } from '@ngx-pwa/local-storage';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, Output, ViewContainerRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CoreAuthService } from '@core/authentication';
@@ -239,6 +240,11 @@ export class HomePageComponent implements OnInit {
   movetoProduct(data: TDSSafeAny) {
     // this.productService.idProduct.next(data.id)
     localStorage.setItem("idType", data.id);
+    this.router.navigateByUrl('/customer/product');
+  }
+  movetoProduct2() {
+    // this.productService.idProduct.next(data.id)
+    localStorage.removeItem('idType')
     this.router.navigateByUrl('/customer/product');
   }
 
