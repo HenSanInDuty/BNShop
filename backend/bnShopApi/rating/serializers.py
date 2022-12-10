@@ -4,6 +4,7 @@ from products.models import Product
 class RateSerializer(serializers.ModelSerializer):
     image = serializers.SerializerMethodField()
     customer_info = serializers.SerializerMethodField()
+    product_info = serializers.SerializerMethodField()
 
     class Meta:
         model = Rate
@@ -21,6 +22,21 @@ class RateSerializer(serializers.ModelSerializer):
         for img in obj.image.all():
             result.append(img.image_url)
         return result
+
+    def get_product_info(self,obj):
+        product = obj.product
+        agency = product.agency.first().user
+        return {
+            'name':product.name,
+            'product_no':f'SP{product.id}DL{agency.id}',
+            'display_image': product.display_image,
+            'category':product.category,
+            'agency':{
+                'name':agency.name,
+                'avatar':agency.avatar,
+                'phone':agency.account.phone
+            }
+        }
 
 class CreateRateSerializer(serializers.Serializer):
     product = serializers.IntegerField()
