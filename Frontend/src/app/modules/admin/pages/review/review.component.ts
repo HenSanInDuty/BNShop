@@ -4,6 +4,7 @@ import { CoreUserInitDTO } from '@core/dto';
 import { takeUntil } from 'rxjs';
 import { getAgencyDTO, getProductDTOAdmin } from 'src/app/dto/account.dto';
 import { getProductDTO } from 'src/app/dto/product.dto';
+import { RatingDTO } from 'src/app/dto/rating.dto';
 import { FilterStatusItemDTO } from 'src/app/modules/setting-resource/models/accset.dto';
 import { AccountService } from 'src/app/services/account.service';
 import { AdminService } from 'src/app/services/admin.service';
@@ -24,7 +25,7 @@ import { TDSTableQueryParams } from 'tds-ui/table';
 export class ReviewComponent implements OnInit {
 
   expandSet = new Set<number>();
-  lstAccount: getAgencyDTO[] = []
+  lstAccount: RatingDTO[] = []
   lstProduct: getProductDTO[] = []
   lstData: Array<FilterStatusItemDTO> = [
     {
@@ -110,13 +111,13 @@ export class ReviewComponent implements OnInit {
   // checked selected
   onExpandChange(id: number, checked: boolean): void {
 
-    let param: getProductDTOAdmin = {
-      type: this.selectedStatus.toString(),
-      agency: id,
-    }
+    // let param: getProductDTOAdmin = {
+    //   type: this.selectedStatus.toString(),
+    //   agency: id,
+    // }
     if (checked) {
-      this.getProduct(param)
-      this.expandSet = new Set<number>();
+      // this.getProduct(param)
+      // this.expandSet = new Set<number>();
       this.expandSet.add(id);
     } else {
       this.expandSet.delete(id);
@@ -230,17 +231,13 @@ export class ReviewComponent implements OnInit {
       //   Lưu ý: Không thể khôi phục thông tin sản phẩm này sau khi xóa
       // </span>`,
       onOk: () => {
-        this.adminService.ActiveProduct(data.id)
+        this.adminService.ActiveRating(data.id)
           .pipe(takeUntil(this.destroy$))
           .subscribe(
             {
               next: (res) => {
-                this.message.success("Kích hoạt sản phẩm thành công");
-                let param: getProductDTOAdmin = {
-                  type: this.selectedStatus.toString(),
-                  agency: Array.from(this.expandSet)[0],
-                }
-                this.getProduct(param)
+                this.message.success("Kích hoạt đánh giá thành công");
+                this.getAccount(this.selected!)
                 modal.destroy(data.id);
               },
               error: (err) => {
@@ -257,18 +254,18 @@ export class ReviewComponent implements OnInit {
   // Modal kích hoạt tài khoản
   onDisable(data: TDSSafeAny): void {
     const modal = this.modalService.warning({
-      title: 'Bạn muốn hủy kích hoạt đại lý này',
+      title: 'Bạn muốn hủy đánh giá này',
       //   content: `<span  class="text-yellow-500">
       //   Lưu ý: Không thể khôi phục thông tin sản phẩm này sau khi xóa
       // </span>`,
       onOk: () => {
-        this.adminService.DisableAccount(data.id)
+        this.adminService.DisableRating(data.id)
           .pipe(takeUntil(this.destroy$))
           .subscribe(
             {
               next: (res) => {
                 this.getAccount(this.selected!)
-                this.message.success("Dừng kích hoạt người dùng thành công")
+                this.message.success("Dừng đánh giá thành công thành công")
                 modal.destroy(data.id);
               },
               error: (err) => {

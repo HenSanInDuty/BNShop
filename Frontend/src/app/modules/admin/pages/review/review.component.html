@@ -70,12 +70,11 @@
      <th width="48px">
       STT
      </th>
-     <th width="120px">Tên người dùng</th>
+     <th width="120px">Khách hàng đánh giá</th>
      <th width="100px">Hình ảnh</th>
-     <th width="140px">Căn cước công dân</th>
-     <th width="100px">Ngành hàng chínhn</th>
-     <th width="100px">Quốc gia</th>
-     <th width="180px">Email</th>
+     <th width="150px">Nội dung</th>
+     <th width="100px">Đánh giá</th>
+     <th width="180px">Sản phẩm</th>
      <th width="100px">Trạng thái</th>
      <th width="100px" [tdsRight]="true">Thao tác</th>
     </tr>
@@ -87,24 +86,32 @@
       <td width="48px">
        {{(pageIndex-1) * pageSize + i + 1}}
       </td>
-      <td width="120px">{{ data.name }}</td>
-      <td width="100px">
-       <tds-avatar [shape]="'square'" [isAvatar]="false" [size]="'lg'" [tdsSrc]=data.avatar>
-       </tds-avatar>
-      </td>
-      <td width="140px">
-       {{ data.identify }}
-      </td>
-      <td width="100px">
-       {{ data.main_industry }}
+      <td width="120px">
+        <div class="flex flex-col">
+          <div class="text-body-2 font-regular text-neutral-1-900">
+            {{ data.customer_info.name }}
+          </div>
+          <div class="flex items-center gap-1 text-neutral-1-400 text-body-2 font-regular"><i
+              class="tdsi-call-fill text-neutral-1-500"></i> {{ data.customer_info.phone}} </div>
+        </div>
       </td>
       <td width="100px">
-       {{ data.nationality}}
+       <!-- <tds-avatar [shape]="'square'" [isAvatar]="false" [size]="'lg'" [tdsSrc]=data.avatar>
+       </tds-avatar> -->
       </td>
-      <td width="180px" class="text-body-2 text-neutral-900 font-sans font-normal">{{ data.email }}
+      <td width="150px">
+   <div class="flex flex-col gap-2">
+    <div class="text-body-2 font-semibold text-neutral-1-900">{{ data.title }}</div>
+    <div class="text-body-2 font-nomal text-neutral-1-900">{{ data.content }}</div>
+   </div>
+      </td>
+      <td width="100px">
+        <tds-rate size="xl" [ngModel]="data.star || 0" [disabled]="true"></tds-rate>
+      </td>
+      <td width="180px" class="text-body-2 text-neutral-900 font-sans font-normal">
       </td>
       <td width="100px" class="text-body-2 text-neutral-900 font-sans font-normal">
-       <div [ngSwitch]="data.is_active" class="">
+       <div [ngSwitch]="data.is_approved" class="">
         <tds-tag *ngSwitchCase="true" status='success' type="outline"
          class="text-body-2 font-regular text-neutral-1-900">
          Đã kích hoạt</tds-tag>
@@ -114,7 +121,7 @@
       </td>
       <td width="100px" [tdsRight]="true">
        <div class="flex gap-2">
-        <ng-container *ngIf="data.is_active; then thenTemplate; else elseTemplate">
+        <ng-container *ngIf="data.is_approved; then thenTemplate; else elseTemplate">
         </ng-container>
         <ng-template #thenTemplate>
          <div (click)="onDisable(data)" class="text-body-2 font-medium text-info-500 cursor-pointer">
@@ -122,7 +129,7 @@
          </div>
         </ng-template>
         <ng-template #elseTemplate>
-         <div (click)="onActive(data)" class="text-body-2 font-medium text-info-500 cursor-pointer">
+         <div (click)="onActiveProduct(data)" class="text-body-2 font-medium text-info-500 cursor-pointer">
           kích hoạt
          </div>
         </ng-template>
@@ -135,6 +142,7 @@
         <thead>
          <tr>
           <th width="54px">STT</th>
+          <th width="54px">Mã đơn hàng</th>
           <th width="120px">Tên sản phẩm</th>
           <th width="100px">Hình ảnh</th>
           <th width="100px">Trạng thái</th>
@@ -144,10 +152,11 @@
    <tbody>
     <tr *ngFor="let data of table.data; ; let i=index;">
      <td width="54px">{{(pageIndex-1) * pageSize + i + 1}}</td>
-     <td width="120px">{{ data.name }}</td>
+     <td width="54px"></td>
+     <td width="120px"></td>
      <td width="100px">
-      <tds-avatar [shape]="'square'" [isAvatar]="false" [size]="'lg'" [tdsSrc]=data.display_image>
-      </tds-avatar>
+      <!-- <tds-avatar [shape]="'square'" [isAvatar]="false" [size]="'lg'" [tdsSrc]=data.product_info.display_image>
+      </tds-avatar> -->
      </td>
      <th width="100px">
       <ng-container *ngIf="data.is_delete; then thenTemplate; else elseTemplate"></ng-container>
@@ -169,7 +178,7 @@
       </ng-template>
      </th>
      <td width="100px" [tdsRight]="true">
-      <div class="flex gap-2">
+      <!-- <div class="flex gap-2">
        <div class="flex gap-2 justify-center cursor-pointer">
         <div (click)="onActiveProduct(data)" *ngIf="!data.is_approved" tds-tooltip tooltipTitle="Kích hoạt sản phẩm"
          class="text-body-2 font-medium text-info-500">
@@ -182,7 +191,7 @@
          Xóa sản phẩm
         </div>
        </div>
-      </div>
+      </div> -->
      </td>
     </tr>
    </tbody>
@@ -218,8 +227,7 @@
        <div class="py-1.5 px-4.5 flex items-center rounded-2xl mr-2" [ngClass]="{'text-white bg-primary-1':active,'
                                                                             hover:bg-primary-1 group':!disabled}">
         <div class="text-body-2 font-semibold" [ngClass]="{'text-white':active,'text-neutral-1-400
-                                                                      group-hover:text-white':!active}">
-         {{name}}
+                                                                      group-hover:text-white':!active}">3
         </div>
        </div>
       </ng-template>

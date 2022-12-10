@@ -686,6 +686,9 @@ module.exports = {
         drawer:
           "0.3s cubic-bezier(0.23, 1, 0.32, 1) 0s 1 normal none running tdsDrawerFadeIn",
       },
+      backgroundImage: {
+        'banner': "url('src/assets/images/login/png-transparent-delivery-shipping-service-elements-navigation-mark-shippers-removebg.png')",
+      }
     },
   },
   plugins: [require("@tailwindcss/forms"), require("@tailwindcss/typography"), require('@tailwindcss/line-clamp'),],
