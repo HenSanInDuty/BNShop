@@ -29,7 +29,15 @@ class RateSerializer(serializers.ModelSerializer):
         print(product)
         print(agency)
         return {
-            
+            'name':product.name,
+            'product_no':f'SP{product.id}DL{agency.id}',
+            'display_image': product.display_image,
+            'category':[c.name for c in product.category],
+            'agency':{
+                'name':agency.name,
+                'avatar':agency.avatar,
+                'phone':agency.account.phone
+            }
         }
 
 class CreateRateSerializer(serializers.Serializer):
