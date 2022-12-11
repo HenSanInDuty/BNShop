@@ -109,9 +109,9 @@ class RoleAgency(models.Model):
     role = models.IntegerField(choices=ROLES)
 
 class SubAgency(models.Model):
-    user = models.OneToOneField(Users,on_delete=models.CASCADE,related_name='agency')
+    user = models.OneToOneField(Users,on_delete=models.CASCADE,related_name='sub_agency')
     agency = models.ForeignKey(Agency,on_delete=models.CASCADE,related_name='sub_agency')
-    role = models.ManyToManyField(RoleAgency)
+    role = models.ManyToManyField(RoleAgency, related_name='sub_agency')
 
 
 class Customer(models.Model):
