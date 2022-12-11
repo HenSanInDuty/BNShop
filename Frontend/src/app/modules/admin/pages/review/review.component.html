@@ -19,44 +19,6 @@
    </ng-template>
   </tds-filter-status>
   <div class="flex gap-2">
-   <!-- <button tds-button color="primary">
-    <span class="flex items-center">
-     <i class="tdsi-plus-circle-fill text-lg leading-none mr-2"></i>Thêm sản phẩm mới
-    </span>
-   </button>
-   <button tds-button color="secondary">
-    <span class="flex items-center">Nhập hàng
-    </span>
-   </button>
-   <tds-form-field>
-    <input class="w-96" tdsInput autocomplete="off" [tdsInputDebounce]="500" placeholder="Tìm kiếm theo tên sản phẩm" />
-    <span tdsPrefix><i class="tdsi-search-fill"></i></span>
-   </tds-form-field>
-   <button tds-button-outline-icon color="secondary" class="context-area">
-    <i class="tdsi-filter-2-line text-neutral-1-500 border-neutral-2-200"></i>
-   </button>
-   <tds-dropdown-menu #menu1="tdsDropdownMenu">
-    <div class="flex flex-col gap-8 p-4">
-     <div class="flex flex-col gap-3">
-      <div class="font-semibold text-xs text-neutral-1-900">LỌC THEO NHÀ SẢN XUẤT</div>
-      <div class="flex gap-1">
-      </div>
-     </div>
-     <div class="flex flex-col gap-3">
-      <div class="font-semibold text-xs text-neutral-1-900">LỌC THEO TÊN</div>
-      <div class="flex  gap-1">
-
-      </div>
-     </div>
-     <div class="flex justify-end gap-3">
-      <button tds-button color="secondary">Hủy</button>
-      <button (click)="onFilter()" tds-button color="primary">Áp dụng</button>
-     </div>
-    </div>
-   </tds-dropdown-menu>
-   <button tds-button-outline-icon color="secondary">
-    <i class="tdsi-marketing-fill text-neutral-1-500 border-neutral-2-200"></i>
-   </button> -->
   </div>
  </div>
  <div class="w-full h-full">
@@ -70,11 +32,16 @@
      <th width="48px">
       STT
      </th>
-     <th width="120px">Khách hàng đánh giá</th>
+     <th width="100px">
+      Mã sản phẩm
+     </th>
+     <th width="100px">
+      Tên sản phẩm
+     </th>
+     <th width="150px">Khách hàng đánh giá</th>
+     <th width="150px">Tại đại lý</th>
      <th width="100px">Hình ảnh</th>
-     <th width="150px">Nội dung</th>
      <th width="100px">Đánh giá</th>
-     <th width="180px">Sản phẩm</th>
      <th width="100px">Trạng thái</th>
      <th width="100px" [tdsRight]="true">Thao tác</th>
     </tr>
@@ -86,7 +53,13 @@
       <td width="48px">
        {{(pageIndex-1) * pageSize + i + 1}}
       </td>
-      <td width="120px">
+      <td width="100px">
+       {{data.product_info.product_no}}
+      </td>
+      <td width="100px">
+       {{data.product_info.name}}
+      </td>
+      <td width="150px">
         <div class="flex flex-col">
           <div class="text-body-2 font-regular text-neutral-1-900">
             {{ data.customer_info.name }}
@@ -95,20 +68,15 @@
               class="tdsi-call-fill text-neutral-1-500"></i> {{ data.customer_info.phone}} </div>
         </div>
       </td>
-      <td width="100px">
-       <!-- <tds-avatar [shape]="'square'" [isAvatar]="false" [size]="'lg'" [tdsSrc]=data.avatar>
-       </tds-avatar> -->
-      </td>
       <td width="150px">
-   <div class="flex flex-col gap-2">
-    <div class="text-body-2 font-semibold text-neutral-1-900">{{ data.title }}</div>
-    <div class="text-body-2 font-nomal text-neutral-1-900">{{ data.content }}</div>
-   </div>
+        {{ data.product_info.agency.name }}
+      </td>
+      <td width="100px">
+       <tds-avatar [shape]="'square'" [isAvatar]="false" [size]="'lg'" [tdsSrc]=data.product_info.display_image>
+       </tds-avatar>
       </td>
       <td width="100px">
         <tds-rate size="xl" [ngModel]="data.star || 0" [disabled]="true"></tds-rate>
-      </td>
-      <td width="180px" class="text-body-2 text-neutral-900 font-sans font-normal">
       </td>
       <td width="100px" class="text-body-2 text-neutral-900 font-sans font-normal">
        <div [ngSwitch]="data.is_approved" class="">
@@ -124,8 +92,8 @@
         <ng-container *ngIf="data.is_approved; then thenTemplate; else elseTemplate">
         </ng-container>
         <ng-template #thenTemplate>
-         <div (click)="onDisable(data)" class="text-body-2 font-medium text-info-500 cursor-pointer">
-          Hủy kích hoạt
+         <div (click)="onDisable(data)" class="text-body-2 font-medium text-error-500 cursor-pointer">
+          Xóa đánh giá
          </div>
         </ng-template>
         <ng-template #elseTemplate>
@@ -218,22 +186,7 @@
  </div>
  <ng-template #title [ngOutletContext]="context">
   <div class="flex flex-col gap-2 justify-between ">
-   <div class="text-header-1 text-neutral-1-900 font-semibold">Thông tin sản phẩm của shop</div>
-   <tds-filter-status class="w-full" [(ngModel)]='selectedStatus' (selectChange)="onSelectStatus($event)">
-    <ng-template ngFor let-item [ngForOf]="lstStatus" let-i="index">
-     <tds-filter-status-item [name]='item.name' [count]='item.count!' [value]="item.value">
-      <ng-template tds-filter-status-template let-active='active' let-disabled="disabled" let-count='count'
-       let-name='name' let-value>
-       <div class="py-1.5 px-4.5 flex items-center rounded-2xl mr-2" [ngClass]="{'text-white bg-primary-1':active,'
-                                                                            hover:bg-primary-1 group':!disabled}">
-        <div class="text-body-2 font-semibold" [ngClass]="{'text-white':active,'text-neutral-1-400
-                                                                      group-hover:text-white':!active}">3
-        </div>
-       </div>
-      </ng-template>
-     </tds-filter-status-item>
-    </ng-template>
-   </tds-filter-status>
+   <div class="text-header-1 text-neutral-1-900 font-semibold">Thông tin đánh giá</div>
   </div>
  </ng-template>
  </tr>

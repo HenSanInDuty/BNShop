@@ -2,25 +2,14 @@
   <form id="addEditHolidaysForm" [formGroup]="addEditHolidaysForm" (ngSubmit)="onSubmit()">
     <div class="flex flex-col gap-4">
       <tds-form-field>
-        <tds-label>Tên ngày lễ</tds-label>
+        <tds-label>Lời phản hồi</tds-label>
         <div class="flex items-start ">
-          <input tdsInput autocomplete="off" placeholder="Nhập tên ngày lễ" formControlName="name" />
+          <input tdsInput autocomplete="off" placeholder="Nhập phản hồi" formControlName="content" />
         </div>
-        <tds-error>Vui lòng nhập tên ngày lễ</tds-error>
-      </tds-form-field>
-      <tds-form-field class="w-full">
-        <tds-label>Thời gian</tds-label>
-        <tds-range-picker [(ngModel)]="fromToDayOff" [required]="true" [ngModelOptions]="{standalone: true}"
-          (ngModelChange)="onChangeDayOff($event)">
-        </tds-range-picker>
-        <tds-error *ngIf="addEditHolidaysForm.invalid">Vui lòng chọn thời gian bắt đầu và kết thúc</tds-error>
+        <tds-error>Vui lòng nhập phản hồi cho khách hàng</tds-error>
       </tds-form-field>
     </div>
-    <div *tdsModalFooter class="flex justify-between p-4 items-center">
-      <div class="flex gap-2">
-        <div class="text-body-2 font-regular text-primary-1">Ngày nghỉ đã chọn: </div>
-        <div class="text-body-2 font-semibold text-primary-1">{{dayOff}}</div>
-      </div>
+    <div *tdsModalFooter class="flex justify-end p-4 items-center">
       <div class="flex gap-3  ">
         <button (click)="cancel()" tds-button color="secondary" class="min-w-[100px]">
           Hủy

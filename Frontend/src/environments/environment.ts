@@ -9,6 +9,7 @@ export const environment = {
   apiTDesk:"http://172.29.4.193:2609/api/v1/",
   apiTHRM:"https://bn-shop.herokuapp",
   apiBNShop:"http://103.178.233.178:8000/api/",
+  socketUrl: "wss://demo.piesocket.com/v3/channel_123?api_key=VCXCEuvhGcBDP7XhiJJUDvR1e1D3eiVjgZ9VRiaV&notify_self",
   urlLogin:"/account/login",
   accountServer: "https://account-dev.tpos.dev/api/v1/",
   notifyServer: "https://test.notification.tmtco.dev/api/v1/",

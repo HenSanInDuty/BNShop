@@ -100,7 +100,7 @@ export class ReviewComponent implements OnInit {
 
   //Hàm thay đổi status của tab
   onSelectStatus(value: TDSSafeAny) {
-    this.selectedStatus = value;
+    this.selected = value;
     let param: getProductDTOAdmin = {
       type: value.toString(),
       agency: Array.from(this.expandSet)[0],
@@ -175,7 +175,8 @@ export class ReviewComponent implements OnInit {
   // }
 
   onSelectChange(value: TDSSafeAny) {
-    this.getAccount(value);
+    this.selected = value;
+    this.getAccount(this.selected!);
   }
 
   onChange(isActive: TDSSafeAny, index: number, result: TDSSafeAny) {

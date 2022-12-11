@@ -1,77 +1,157 @@
-<tds-spin [spinning]="false" class="w-full">
-  <div class="bg-white  w-full pb-2.5 h-full  rounded-lg  overflow-hidden  flex flex-col">
-    <div class="flex items-center  justify-end px-4 py-2.5">
-      <div class="flex gap-2">
-        <button (click)="showModalAdd()" tds-button color="primary">
-          <span class="flex items-center">
-            <i class="tdsi-plus-circle-fill text-lg leading-none mr-2"></i>Thêm mới
-          </span>
-        </button>
-        <tds-form-field>
-          <input class="w-96" tdsInput autocomplete="off" [tdsInputDebounce]="500" (inputKeyup)="search($event)"
-            placeholder="Tìm kiếm theo ca làm việc" />
-          <span tdsPrefix><i class="tdsi-search-fill"></i></span>
-        </tds-form-field>
-        <button (click)="onDeleteAll()" tds-button-outline-icon color="secondary">
-          <i class="tdsi-trash-fill text-neutral-1-500 border-neutral-2-200"></i>
-        </button>
+<div class="w-full h-full flex flex-col ">
+  <div class="flex w-full pt-4 bg-white border-b">
+    <tds-page-header title="Đánh giá của khách hàng">
+      <tds-page-header-content>
+        <div class="w-full">
+          <a routerLink="/store/review" routerLinkActive #rls="routerLinkActive">
+            <tds-tag mode="checkable" [disabled]="true" [checked]="rls.isActive"
+              [rounded]='rls.isActive ? "rounded-full":"rounded-full rounded-full !border-0"' class="mr-2">
+             Đánh giá
+            </tds-tag>
+          </a>
+        </div>
+      </tds-page-header-content>
+    </tds-page-header>
+  </div>
+  <div class="flex-auto p-4 h-full w-full">
+    <div class="bg-white  w-full pb-2.5 h-full  rounded-lg  overflow-hidden  flex flex-col">
+      <div class="flex items-center  justify-between px-4">
+
+        <div class="flex gap-2">
+        </div>
       </div>
-    </div>
-    <div class="w-full h-full">
-      <tds-table #rowSelectionTable showSizeChanger [frontPagination]="true" [listData]="lstShift.items!"
-        [scroll]="{y:'auto'}" [total]="total" [loading]="loading" [(pageSize)]="pageSize" [(pageIndex)]="pageIndex"
-        (currentPageDataChange)="onCurrentPageDataChange($event)" (queryParams)="onQueryParamsChange($event)">
-        <thead>
-          <tr>
-            <th width="48px" [(checked)]="checked" [indeterminate]="indeterminate"
-              (checkedChange)="onAllChecked($event)"></th>
-            <th class="text-body-2 font-semibold text-neutral-1-900" width="54px">STT</th>
-            <th class="text-body-2 font-semibold text-neutral-1-900" width="158px">Tên ca làm việc</th>
-            <th class="text-body-2 font-semibold text-neutral-1-900" width="135px">Thời gian</th>
-            <th class="text-body-2 font-semibold text-neutral-1-900" width="140px">Ca trong ngày</th>
-            <th class="text-body-2 font-semibold text-neutral-1-900" width="140px">Nghỉ giữa ca</th>
-            <th class="text-body-2 font-semibold text-neutral-1-900" width="80px">Số công</th>
-            <th class="text-body-2 font-semibold text-neutral-1-900" width="140px">Đi trễ về sớm</th>
-            <th class="text-body-2 font-semibold text-neutral-1-900" width="170px">Cho phép đi trễ (phút)</th>
-            <th class="text-body-2 font-semibold text-neutral-1-900" width="175px">Cho phép về sớm (phút)</th>
-            <th class="text-body-2 font-semibold text-neutral-1-900" width="170px">Tổng giờ công (phút)</th>
-            <th class="text-body-2 font-semibold text-neutral-1-900" width="100px" [tdsRight]="true">Thao tác</th>
-          </tr>
-        </thead>
-        <tbody>
-          <ng-template ngFor let-data [ngForOf]="rowSelectionTable.data" let-index='index' let-odd='odd'>
+      <div class="w-full h-full">
+        <tds-table #table showSizeChanger [frontPagination]="false" (queryParams)="onQueryParamsChange($event)"
+          (currentPageDataChange)="onCurrentPageDataChange($event)" [scroll]="{y:'auto'}" [loading]="loading"
+          [total]="lstAccount.length" [(pageSize)]="pageSize" [listData]="lstAccount" [(pageIndex)]="pageIndex">
+          <thead>
             <tr>
-              <td class="text-body-2 font-regular text-neutral-1-900" width="48px" [checked]="setOfCheckedId.has(data)" (checkedChange)="onItemChecked(data, $event)"></td>
-              <td class="text-body-2 font-regular text-neutral-1-900" width="54px">{{(pageIndex-1) * pageSize + index + 1}}</td>
-              <td class="text-body-2 font-regular text-neutral-1-900" width="158px">{{data.name}}</td>
-              <td class="text-body-2 font-regular text-neutral-1-900" width="135px">{{data.start!.split(':')[0]+':'+data.start!.split(':')[1]}} -
-                {{data.end!.split(':')[0]+':'+data.end!.split(':')[1]}}</td>
-              <td *ngIf="data.startEndIsDay" class="text-body-2 font-regular text-neutral-1-900" width="147px">Có</td>
-              <td *ngIf="data.startEndIsDay == false" class="text-body-2 font-regular text-neutral-1-900" width="140px">Không</td>
-              <td *ngIf="data.midStartEndIsDay ==false" class="text-body-2 font-regular text-neutral-1-900" width="140px">Không</td>
-              <td *ngIf="data.midStartEndIsDay " class="text-body-2 font-regular text-neutral-1-900" width="147px">
-                {{data.midStart!.split(':')[0]+':'+data.start!.split(':')[1]}} -
-                {{data.midEnd!.split(':')[0]+':'+data.midEnd!.split(':')[1]}}</td>
-              <td class="text-body-2 font-regular text-neutral-1-900" width="80px">{{data.keepingNumber}}</td>
-              <td *ngIf="data.isDeviation" class="text-body-2 font-regular text-neutral-1-900" width="140px">Được phép</td>
-              <td *ngIf="data.isDeviation ==false" class="text-body-2 font-regular text-neutral-1-900" width="140px">Không được phép</td>
-              <td class="text-body-2 font-regular text-neutral-1-900" width="170px">{{data.startDeviation}}</td>
-              <td class="text-body-2 font-regular text-neutral-1-900" width="175px">{{data.endDeviation}}</td>
-              <td class="text-body-2 font-regular text-neutral-1-900" width="170px">{{data.workingTimeNumber}}</td>
-              <td class="text-body-2 font-regular text-neutral-1-900" width="100px" [tdsRight]="true">
-                <div class="flex gap-2">
-                  <button (click)="showModalEdit(data)" tds-button-outline-icon color="secondary">
-                    <i class="tdsi-edit-fill text-neutral-1-300 border-neutral-2-100"></i>
-                  </button>
-                  <button (click)="onDeleteOne(data)" tds-button-outline-icon color="secondary">
-                    <i class="tdsi-trash-fill text-neutral-1-300 border-neutral-1-200"></i>
-                  </button>
-                </div>
+              <th width="48px">
+              </th>
+              <th width="48px">
+                STT
+              </th>
+              <th width="100px">
+                Mã sản phẩm
+              </th>
+              <th width="100px">
+                Tên sản phẩm
+              </th>
+              <th width="150px">Khách hàng đánh giá</th>
+              <th width="100px">Hình ảnh</th>
+              <th width="100px">Đánh giá</th>
+              <th width="100px" [tdsRight]="true">Thao tác</th>
+            </tr>
+          </thead>
+          <tbody>
+            <ng-container *ngFor="let data of table.data; let i = index">
+              <tr>
+                <td width="48px" [expand]="expandSet.has(data.id)" (expandChange)="onExpandChange(data.id, $event)"></td>
+                <td width="48px">
+                  {{(pageIndex-1) * pageSize + i + 1}}
+                </td>
+                <td width="100px">
+                  {{data.product_info.product_no}}
+                </td>
+                <td width="100px">
+                  {{data.product_info.name}}
+                </td>
+                <td width="150px">
+                  <div class="flex flex-col">
+                    <div class="text-body-2 font-regular text-neutral-1-900">
+                      {{ data.customer_info.name }}
+                    </div>
+                    <div class="flex items-center gap-1 text-neutral-1-400 text-body-2 font-regular"><i
+                        class="tdsi-call-fill text-neutral-1-500"></i> {{ data.customer_info.phone}} </div>
+                  </div>
+                </td>
+                <td width="100px">
+                  <tds-avatar [shape]="'square'" [isAvatar]="false" [size]="'lg'" [tdsSrc]=data.product_info.display_image>
+                  </tds-avatar>
+                </td>
+                <td width="100px">
+                  <tds-rate size="xl" [ngModel]="data.star || 0" [disabled]="true"></tds-rate>
+                </td>
+                <td width="100px" [tdsRight]="true">
+                  <div (click)="onActiveProduct(data)" class="text-body-2 font-medium text-info-500 cursor-pointer">
+                    Phản hồi
+                  </div>
+                </td>
+              </tr>
+              <tr [expand]="expandSet.has(data.id)" class="   border-neutral-2-100 text-neutral-1-900 bg-neutral-3-200 ">
+                <div class="bg-white flex flex-col  pt-4 pb-10 border rounded-md w-full overflow-auto tds-custom-scroll">
+                  <tds-table #table  [title]="title" [showPagination]="false">
+                    <thead>
+                      <tr>
+                        <th width="54px">STT</th>
+                        <th width="54px">Mã đơn hàng</th>
+                        <th width="120px">Tên sản phẩm</th>
+                        <th width="100px">Hình ảnh</th>
+                        <th width="100px">Trạng thái</th>
+                        <th width="100px" [tdsRight]="true">Thao tác</th>
+                      </tr>
+                    </thead>
+          <tbody>
+            <tr>
+              <td width="54px">{{(pageIndex-1) * pageSize + i + 1}}</td>
+              <td width="54px"></td>
+              <td width="120px"></td>
+              <td width="100px">
+                <!-- <tds-avatar [shape]="'square'" [isAvatar]="false" [size]="'lg'" [tdsSrc]=data.product_info.display_image>
+          </tds-avatar> -->
+              </td>
+              <th width="100px">
+             
+              </th>
+              <td width="100px" [tdsRight]="true">
+                <!-- <div class="flex gap-2">
+           <div class="flex gap-2 justify-center cursor-pointer">
+            <div (click)="onActiveProduct(data)" *ngIf="!data.is_approved" tds-tooltip tooltipTitle="Kích hoạt sản phẩm"
+             class="text-body-2 font-medium text-info-500">
+             Kích hoạt sản phẩm
+            </div>
+           </div>
+           <div class="flex gap-2 justify-center cursor-pointer">
+            <div *ngIf="!data.is_delete" (click)="onDisableProduct(data)" tds-tooltip tooltipTitle="Xóa sản phẩm"
+             class="text-body-2 font-medium text-error-500">
+             Xóa sản phẩm
+            </div>
+           </div>
+          </div> -->
               </td>
             </tr>
-          </ng-template>
-        </tbody>
+          </tbody>
+        </tds-table>
+        <!-- <div class="flex justify-end pr-16 py-4 ">
+              <div class="flex flex-col gap-4">
+                <div class="flex justify-between">
+                  <div class="mr-20 text-body-2 font-regular text-neutral-1-900">2 sản phẩm </div>
+                  <div class="flex gap-1 text-body-2 font-medium text-neutral-1-900"> <u
+                      class="text-neutral-1-400 font-regular">đ</u>
+                    2.400.000</div>
+                </div>
+                <div class="flex justify-between">
+                  <div class="text-body-2 font-regular text-neutral-1-900">Phí giao hàng</div>
+                  <div class="flex gap-1  text-body-2 font-medium text-neutral-1-900"> <u
+                      class="text-neutral-1-400 font-regular">đ</u> 2.400.000</div>
+                </div>
+                <div class="flex justify-between">
+                  <div class="text-title-1 font-medium text-neutral-1-900">Tổng tiền </div>
+                  <div class="flex gap-1 text-header-1 text-primary-1 font-semibold"> <u>đ</u> 2.700.000</div>
+                </div>
+              </div>
+            </div> -->
+      </div>
+      <ng-template #title [ngOutletContext]="context">
+        <div class="flex flex-col gap-2 justify-between ">
+          <div class="text-header-1 text-neutral-1-900 font-semibold">Thông tin đánh giá</div>
+        </div>
+      </ng-template>
+      </tr>
+      </ng-container>
+      </tbody>
       </tds-table>
     </div>
+    </div>
   </div>
-</tds-spin>
+</div>

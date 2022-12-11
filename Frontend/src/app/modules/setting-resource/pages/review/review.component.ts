@@ -1,150 +1,217 @@
-import { Component, OnInit, ViewContainerRef } from '@angular/core';
-
-import { ShiftDto, ShiftDtoPagedResultDto } from '@commom/hrm/models';
-import { ShiftService } from '@commom/hrm/services';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewContainerRef } from '@angular/core';
+import { CoreAuthService } from '@core/authentication';
+import { CoreUserInitDTO } from '@core/dto';
 import { takeUntil } from 'rxjs';
+import { getAgencyDTO, getProductDTOAdmin } from 'src/app/dto/account.dto';
+import { getProductDTO } from 'src/app/dto/product.dto';
+import { RatingDTO } from 'src/app/dto/rating.dto';
+import { FilterStatusItemDTO } from 'src/app/modules/setting-resource/models/accset.dto';
+import { AccountService } from 'src/app/services/account.service';
+import { AdminService } from 'src/app/services/admin.service';
+import { RatingService } from 'src/app/services/rating.service';
 import { TDSDestroyService } from 'tds-ui/core/services';
 import { TDSMessageService } from 'tds-ui/message';
 import { TDSModalService } from 'tds-ui/modal';
 import { TDSHelperObject, TDSSafeAny } from 'tds-ui/shared/utility';
 import { TDSTableQueryParams } from 'tds-ui/table';
-import { ModalAddEditShiftComponent } from '../../components/modal-add-edit-shift/modal-add-edit-shift.component';
-import { ModalDeleteAllComponent } from '../../components/modal-delete-all/modal-delete-all.component';
-import { ParamGetShiftDTO } from '../../models/time-attendace.dto';
-
+import { ModalAddEditHolidaysComponent } from '../../components/modal-add-edit-holidays/modal-add-edit-holidays.component';
 
 @Component({
   selector: 'hrm-review',
   templateUrl: './review.component.html',
   styleUrls: ['./review.component.scss'],
-  host: { class: 'h-full w-full flex' },
-  providers: [
-    TDSDestroyService
-  ]
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { class: 'bg-white flex flex-col rounded-xl w-full h-full' },
+  providers: [TDSModalService, TDSDestroyService]
 })
 export class ReviewComponent implements OnInit {
 
-  loading = false
-  listOfData: Array<string> = [];
+  expandSet = new Set<number>();
+  lstAccount: RatingDTO[] = []
+  lstData: Array<FilterStatusItemDTO> = [
+    {
+      name: 'Kích hoạt',
+      value: 1,
+      count: 0,
+      disabled: false
+    },
+    {
+      name: "Chưa kích hoạt",
+      value: 2,
+      count: 0,
+      disabled: false
+    },
+  ]
+  selectedStatus = 2
+  lstStatus: Array<TDSSafeAny> = [
+    {
+      name: "Đã duyệt",
+      value: 2,
+    },
+    {
+      name: "Chưa duyệt",
+      value: 1,
+    },
+    {
+      name: "Đã xóa",
+      value: 3,
+    },
+  ]
+  listOfCurrentPageData: Array<string> = [];
   setOfCheckedId = new Set<TDSSafeAny>();
-  listOfCurrentPageData: Array<ShiftDto> = [];
   pageIndex = 1;
   pageSize = 20;
-  total = 0
+  isSubmit: boolean = false;
+  checked = false;
   skipCount = 0
-  params: ParamGetShiftDTO = {
-    SkipCount: 0,
-    MaxResultCount: 10,
-    SearchText: '',
-    Sorting: '',
-  }
-
-  indeterminate = false
-  checked = false
-  public lstShift: ShiftDtoPagedResultDto = {
-    items: [],
-    totalCount: 0
-  }
-
+  totalStatus = 0
+  loading: boolean = false
+  active: boolean = true;
+  indeterminate = false;
+  userProfile$?: CoreUserInitDTO
+  private _jsonURL = 'assets/data.json';
   constructor(
-    private shiftService: ShiftService,
+    private destroy$: TDSDestroyService,
     private modalService: TDSModalService,
     private viewContainerRef: ViewContainerRef,
+    private authService: CoreAuthService,
     private message: TDSMessageService,
-    private destroy$: TDSDestroyService
+    private cd: ChangeDetectorRef,
+    private accountService: AccountService,
+    private RatingService: RatingService
   ) { }
 
   ngOnInit(): void {
+    this.authService.getObsUserProfile().pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: TDSSafeAny) => {
+        this.userProfile$ = res;
+        // this.params.agency = res?.id
+        this.getAccount()
+        // this.getListProduct(this.params)
+        // this.nameProfile = this.userProfile$?.name.split(" ")[this.userProfile$?.name.split(" ").length - 1].charAt(0);
+        this.cd.detectChanges()
+      },
+      error: (err: TDSSafeAny) => {
+        this.message.error(err.error.message)
+        this.cd.detectChanges()
+      },
+    });
   }
 
-  updateCheckedSet(id: TDSSafeAny, checked: boolean): void {
+ 
+  // checked selected
+  onExpandChange(id: number, checked: boolean): void {
+
+    // let param: getProductDTOAdmin = {
+    //   type: this.selectedStatus.toString(),
+    //   agency: id,
+    // }
     if (checked) {
-      this.setOfCheckedId.add(id)
+      // this.getProduct(param)
+      // this.expandSet = new Set<number>();
+      this.expandSet.add(id);
     } else {
-      this.setOfCheckedId.delete(id)
+      this.expandSet.delete(id);
     }
   }
-
-  onItemChecked(id: TDSSafeAny, checked: boolean): void {
-    this.updateCheckedSet(id, checked)
-    this.refreshCheckedStatus()
-  }
-
-  onAllChecked(value: boolean): void {
-    this.listOfCurrentPageData.forEach(item => this.updateCheckedSet(item, value));
-    this.refreshCheckedStatus()
-  }
-
-
-  refreshCheckedStatus(): void {
-    this.checked = this.listOfCurrentPageData.every(item => this.setOfCheckedId.has(item))
-    this.indeterminate = this.listOfCurrentPageData.some(item => this.setOfCheckedId.has(item)) && !this.checked
-  }
-
-  onCurrentPageDataChange($event: TDSSafeAny): void {
-    this.listOfCurrentPageData = $event
-    this.refreshCheckedStatus()
-  }
-
-  onQueryParamsChange(params: TDSTableQueryParams): void {
-    this.params.SkipCount = (params.pageIndex - 1) * this.pageSize;
-    this.params.MaxResultCount = params.pageSize
-    this.skipCount = this.params.SkipCount
-    this.getListShift(this.params)
-  }
-
-
-
-  onResetpage() {
-    this.pageIndex = 1
-  }
-
-  getListShift(params: ParamGetShiftDTO) {
-    this.loading = true
-    this.setOfCheckedId = new Set<TDSSafeAny>()
-    this.refreshCheckedStatus()
-    this.shiftService.getShift_Json(params)
-    .pipe(takeUntil(this.destroy$))
+  getAccount() {
+    this.loading = true;
+    this.RatingService.getRating()
+      .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (res) => {
-          if (res) {
-            this.lstShift.items = res.items
-            this.lstShift.totalCount = res.totalCount
-            this.loading = false
-            if (res.items!.length == 0) {
-              this.onResetpage()
-            }
-          }
-          else {
-            this.lstShift.items = []
-            this.total = 0
-            this.loading = false
-          }
+        next: (res: TDSSafeAny) => {
+          this.lstAccount = res;
+          this.loading = false;
+          this.cd.detectChanges()
         },
         error: () => {
-          this.lstShift.items = [];
-          this.loading = false
-          this.total = 0;
+          this.loading = false;
+          this.cd.detectChanges()
         }
       })
   }
 
-  showModalAdd(): void {
+
+  // search(event: TDSSafeAny): void {
+  //   if (event.value != null) {
+  //     this.lstResource = this.lstBackup;
+  //     this.lstResource = this.lstResource.filter(item => item.name.toLowerCase().includes(event.value.toLowerCase()) == true);
+  //     this.lstData[0].count = this.lstResource.length
+  //     this.lstData[1].count = this.lstResource.filter(item => (item.is_approved === true && item.is_delete === false)).length
+  //     this.lstData[2].count = this.lstResource.filter(item => item.is_approved === false).length
+  //     this.lstData[3].count = this.lstResource.filter(item => item.is_delete === true).length
+  //   }
+  //   if (!TDSHelperString.hasValueString(event.value)) {
+  //     this.lstResource = this.lstBackup;
+  //     this.lstData[0].count = this.lstResource.length
+  //     this.lstData[1].count = this.lstResource.filter(item => (item.is_approved === true && item.is_delete === false)).length
+  //     this.lstData[2].count = this.lstResource.filter(item => item.is_approved === false).length
+  //     this.lstData[3].count = this.lstResource.filter(item => item.is_delete === true).length
+  //   }
+  // }
+
+
+  onChange(isActive: TDSSafeAny, index: number, result: TDSSafeAny) {
+  }
+
+  onCurrentPageDataChange($event: TDSSafeAny): void {
+    this.listOfCurrentPageData = $event;
+    this.refreshCheckedStatus();
+  }
+
+  refreshCheckedStatus(): void {
+    this.checked = this.listOfCurrentPageData.every(item => this.setOfCheckedId.has(item));
+    this.indeterminate = this.listOfCurrentPageData.some(item => this.setOfCheckedId.has(item)) && !this.checked;
+  }
+
+  onQueryParamsChange(params: TDSTableQueryParams): void {
+    this.cd.detectChanges()
+  }
+  // Modal kích hoạt tài khoản
+  onActive(data: TDSSafeAny): void {
+    const modal = this.modalService.warning({
+      title: 'Bạn muốn kích hoạt đại lý này',
+      //   content: `<span  class="text-yellow-500">
+      //   Lưu ý: Không thể khôi phục thông tin sản phẩm này sau khi xóa
+      // </span>`,
+      onOk: () => {
+        // this.adminService.ActiveAccount(data.id)
+        //   .pipe(takeUntil(this.destroy$))
+        //   .subscribe(
+        //     {
+        //       next: (res) => {
+        //         modal.destroy(data.id);
+        //         this.message.success("Kích hoạt người dùng thành công")
+        //         this.getAccount(this.selected!)
+        //       },
+        //       error: (err) => {
+        //         this.message.error(err.message)
+        //       }
+        //     })
+      },
+      onCancel: () => { },
+      confirmIcon: 'tdsi-checkbox-check-fill',
+      okText: "Kích hoạt",
+      cancelText: "Hủy"
+    });
+  }
+  // Modal kích hoạt tài khoản
+  onActiveProduct(data: TDSSafeAny): void {
     const modalAdd = this.modalService.create({
-      title: 'Thêm ca làm việc',
-      content: ModalAddEditShiftComponent,
+      title: 'Phản hồi với khách hàng',
+      content: ModalAddEditHolidaysComponent,
       footer: null,
-      size: "lg",
+      size: "md",
       viewContainerRef: this.viewContainerRef,
       componentParams: {
-
+        data: data.id
       },
     });
     modalAdd.afterClose.subscribe(
       {
         next: (res) => {
           if (TDSHelperObject.hasValue(res))
-            this.getListShift(this.params);
+            this.getAccount();
         },
         error: (err) => {
 
@@ -152,88 +219,65 @@ export class ReviewComponent implements OnInit {
       }
     )
   }
-
-  search(event: TDSSafeAny): void {
-    if (event.value != null) {
-      this.params.SkipCount = 0;
-      this.onResetpage();
-      this.params.SearchText = event.value;
-      this.getListShift(this.params);
-    }
-  }
-
-  showModalEdit(data: TDSSafeAny): void {
-    const modalEdit = this.modalService.create({
-      title: 'Sửa ca làm việc',
-      content: ModalAddEditShiftComponent,
-      size: "lg",
-      viewContainerRef: this.viewContainerRef,
-      componentParams: {
-        //isDeviation: data.isDeviation,
-        lstShift: data,
-      },
-    });
-    modalEdit.afterClose.subscribe(
-      {
-        next: (res) => {
-          if (TDSHelperObject.hasValue(res))
-            this.getListShift(this.params);
-        },
-        error: (err) => {
-        }
-      }
-    )
-  }
-
-  onDeleteOne(data: TDSSafeAny): void {
-    const modal = this.modalService.error({
-      title: 'Xác nhận xóa ca làm việc',
-      content: `<span  class="text-error-500">
-      Lưu ý: Không thể khôi phục thông tin ca làm việc này sau khi xóa
-    </span>`,
+  // Modal kích hoạt tài khoản
+  onDisable(data: TDSSafeAny): void {
+    const modal = this.modalService.warning({
+      title: 'Bạn muốn hủy đánh giá này',
+      //   content: `<span  class="text-yellow-500">
+      //   Lưu ý: Không thể khôi phục thông tin sản phẩm này sau khi xóa
+      // </span>`,
       onOk: () => {
-        this.shiftService.deleteShiftDelete_Response({ id: data.id })
-        .pipe(takeUntil(this.destroy$))
-        .subscribe(
-          {
-            next: (res) => {
-              modal.destroy(this.params);
-              this.message.success("Xóa ca làm việc thành công")
-              this.getListShift(this.params)
-            },
-            error: (err) => {
-              this.message.error(err.code)
-              this.getListShift(this.params)
-            }
-          })
+        // this.adminService.DisableRating(data.id)
+        //   .pipe(takeUntil(this.destroy$))
+        //   .subscribe(
+        //     {
+        //       next: (res) => {
+        //         this.getAccount(this.selected!)
+        //         this.message.success("Dừng đánh giá thành công thành công")
+        //         modal.destroy(data.id);
+        //       },
+        //       error: (err) => {
+        //         this.message.error(err.message)
+        //       }
+        //     })
       },
       onCancel: () => { },
-      confirmIcon: 'tdsi-trash-fill',
+      confirmIcon: 'tdsi-close-fill',
+      okText: "Ngừng kích hoạt",
+      cancelText: "Hủy"
+    });
+  }
+  // Modal kích hoạt tài khoản
+  onDisableProduct(data: TDSSafeAny): void {
+    const modal = this.modalService.error({
+      title: 'Bạn muốn xóa sản phẩm của đại lý này',
+      content: `<span  class="text-error-500">
+        Lưu ý: Không thể khôi phục thông tin sản phẩm này sau khi xóa
+      </span>`,
+      onOk: () => {
+        // this.adminService.DisableProduct(data.id)
+        //   .pipe(takeUntil(this.destroy$))
+        //   .subscribe(
+        //     {
+        //       next: (res) => {
+        //         this.message.success("Xóa sản phẩm của đại lý thành công")
+        //         let param: getProductDTOAdmin = {
+        //           type: this.selectedStatus.toString(),
+        //           agency: Array.from(this.expandSet)[0],
+        //         }
+        //         this.getProduct(param)
+        //         modal.destroy(data.id);
+        //       },
+        //       error: (err) => {
+        //         this.message.error(err.message)
+        //       }
+        //     })
+      },
+      onCancel: () => { },
+      confirmIcon: 'tdsi-close-fill',
       okText: "Xóa",
       cancelText: "Hủy"
     });
   }
 
-  onDeleteAll(): void {
-    let modalDelete = this.modalService.create({
-      title: "Xác nhận xóa ca làm ",
-      content: ModalDeleteAllComponent,
-      size: "lg",
-      viewContainerRef: this.viewContainerRef,
-      footer: null,
-      componentParams: {
-        lstShift: [...this.setOfCheckedId]
-      },
-    })
-    modalDelete.afterClose.subscribe(
-      {
-        next: (res) => {
-          if (TDSHelperObject.hasValue(res))
-            this.getListShift(this.params);
-        },
-        error: (err) => {
-        }
-      }
-    )
-  }
 }
