@@ -15,12 +15,19 @@ export class RatingService {
     return this.http.get<RatingDTO[]>(
       environment.apiBNShop + `rating/`)
   }
-  getRatingId(id:number): Observable<RatingDTO> {
+  getRatingId(id: number): Observable<RatingDTO> {
     return this.http.get<RatingDTO>(
       environment.apiBNShop + `rating/${id}/`)
   }
-  createRating(id: number,data: ParamRatingDTO): Observable<any> {
+  createRating(id: number, data: ParamRatingDTO): Observable<any> {
     return this.http.post<any>(
       environment.apiBNShop + `rating/${id}/`, data)
+  }
+  replyRating(id: number, data: {
+    content: string,
+    user: 0
+  }): Observable<any> {
+    return this.http.post<any>(
+      environment.apiBNShop + `rating/reply/${id}/`, data)
   }
 }

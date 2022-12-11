@@ -12,6 +12,7 @@ import { ProductManagementComponent } from './pages/product-management/product-m
 import { ProductComponent } from './pages/product/product.component';
 import { CategoryManagementComponent } from './pages/category-management/category-management.component';
 import { OrderComponent } from './pages/order/order.component';
+import { ChatComponent } from './pages/chat/chat.component';
 
 const routes: Routes = [
   {
@@ -46,6 +47,11 @@ const routes: Routes = [
       {
         path: 'review',
         component: ReviewComponent,
+        pathMatch: "full"
+      },
+      {
+        path: 'chat',
+        component: ChatComponent,
         pathMatch: "full"
       },
       {

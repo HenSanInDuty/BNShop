@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { getProductDTOAdmin } from '../dto/account.dto';
 import { getOrderDetailAdminDTO, shipperDTO } from '../dto/orderDetail.dto';
+import { RatingDTO } from '../dto/rating.dto';
 
 @Injectable({
   providedIn: 'root'
@@ -43,13 +44,22 @@ export class AdminService {
     return this.http.get<any>(
       environment.apiBNShop + `admin/account/${param}`)
   }
-  getRating(type?: number): Observable<any> {
+  getRating(type?: number): Observable<RatingDTO[]> {
     let param = ''
     if (type) {
       param = `?type=${type}`
     }
-    return this.http.get<any>(
+    return this.http.get<RatingDTO[]>(
       environment.apiBNShop + `admin/rating/${param}`)
+  }
+  ActiveRating(type?: number): Observable<any> {
+    return this.http.patch<any>(
+      environment.apiBNShop + `admin/rating/active/${type}/`, '')
+  }
+
+  DisableRating(type?: number): Observable<any> {
+    return this.http.delete<any>(
+      environment.apiBNShop + `admin/rating/delete/${type}/`)
   }
   getProduct(params?: getProductDTOAdmin): Observable<any> {
     return this.http.get<any>(

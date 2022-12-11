@@ -1,3 +1,4 @@
+import { TDSRateModule } from 'tds-ui/rate';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
@@ -70,7 +71,8 @@ import { TDSBreadCrumbModule } from 'tds-ui/breadcrumb';
     TDSPageHeaderModule,
     TDSToolTipModule,
     TDSBadgeModule,
-    TDSBreadCrumbModule
+    TDSBreadCrumbModule,
+    TDSRateModule
   ]
 })
 export class AdminModule { }

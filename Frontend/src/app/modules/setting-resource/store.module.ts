@@ -60,6 +60,9 @@ import { ShipManagementComponent } from './pages/ship-management/ship-management
 import { OrderComponent } from './pages/order/order.component';
 import { StoreComponent } from './store.component';
 import { TDSBadgeModule } from 'tds-ui/badges';
+import { ChatComponent } from './pages/chat/chat.component';
+import { TDSBreadCrumbModule } from 'tds-ui/breadcrumb';
+import { TDSRateModule } from 'tds-ui/rate';
 
 @NgModule({
   declarations: [
@@ -87,7 +90,8 @@ import { TDSBadgeModule } from 'tds-ui/badges';
     ModalAddPriceProductComponent,
     ModalEditProductComponent,
     ModalAddPromotionsComponent,
-    ShipManagementComponent
+    ShipManagementComponent,
+    ChatComponent
   ],
   imports: [
     CommonModule,
@@ -126,7 +130,10 @@ import { TDSBadgeModule } from 'tds-ui/badges';
     TDSInputNumberModule,
     HttpClientModule,
     TDSEditorModule,
-    TDSBadgeModule
+    TDSBadgeModule,
+    TDSBreadCrumbModule,
+    TDSRateModule
+    
   ],
 })
 export class SettingResourceModule { }

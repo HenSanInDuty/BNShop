@@ -81,20 +81,34 @@ export const DATA_MENU: Array<TDSMenuDTO> = [
             // }
         ]
     },
-    // {
-    //     "name": "Quản lý team",
-    //     "icon": "tdsi-group-people-fill",
-    //     // "background": "bg-info-300",
-    //     // "backgroundHover": "bg-info-400",
-    //     // "roles": ["leader"],
-    //     "listChild": [
-    //         {
-    //             "link": "/team/my-team",
-    //             "name": "Team của tôi"
-    //         }
+    {
+        "name": "Đánh giá của khách hàng",
+        "icon": "tdsi-comment-on-fill",
+        // "background": "bg-info-300",
+        // "backgroundHover": "bg-info-400",
+        // "roles": ["leader"],
+        "listChild": [
+            {
+                "link": "/store/review",
+                "name": "Đánh giá"
+            }
 
-    //     ]
-    // },
+        ]
+    },
+    {
+        "name": "Trò truyện",
+        "icon": "tdsi-message-fill",
+        // "background": "bg-info-300",
+        // "backgroundHover": "bg-info-400",
+        // "roles": ["leader"],
+        "listChild": [
+            {
+                "link": "/store/chat",
+                "name": "Khách hàng"
+            }
+
+        ]
+    },
     // {
     //     "name": "Quản lý chấm công",
     //     "icon": "tdsi-variant-fill",
