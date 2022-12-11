@@ -43,6 +43,7 @@ export interface Agency {
 export interface Reply {
   content: string
   user: User
+  date_created: string
 }
 
 export interface User {
