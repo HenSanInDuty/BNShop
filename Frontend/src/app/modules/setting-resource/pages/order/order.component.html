@@ -91,59 +91,64 @@
           </tr>
           <tr [expand]="expandSet.has(data.id)" class="   border-neutral-2-100 text-neutral-1-900 bg-neutral-3-200 ">
             <div class="bg-white flex flex-col  pt-4 pb-10 border rounded-md w-full overflow-auto tds-custom-scroll">
-              <tds-table  [title]="title" [showPagination]="false">
+              <tds-table  #rowSelection  [title]="title" [showPagination]="false" [listData]="data.order">
                 <thead>
                   <tr>
                     <th width="120px">Tên sản phẩm</th>
                     <th width="100px">Hình ảnh</th>
-                    <th width="100px">Trạng thái</th>
+                    <th width="50px">Số lượng</th>
+                    <th width="50px">Tổng</th>
                     <th width="100px" [tdsRight]="true">Thao tác</th>
                   </tr>
                 </thead>
       <tbody>
-        <tr  *ngFor="let item of data.order let i = index; let last = last">
-          <td width="120px"></td>
-          <td width="100px">
-            {{item.product.name}}
-            <!-- <tds-avatar [shape]="'square'" [isAvatar]="false" [size]="'lg'" [tdsSrc]=data.display_image>
-            </tds-avatar> -->
-          </td>
-          <th width="100px">
-            <!-- <ng-container *ngIf="data.is_delete; then thenTemplate; else elseTemplate"></ng-container>
-            <ng-template #thenTemplate>
-              <tds-tag status='error' type="outline" class="text-body-2 font-regular text-neutral-1-900">
-                Đã xóa</tds-tag>
-            </ng-template>
-            <ng-template #elseTemplate>
-              <ng-container *ngIf="data.is_approved; then thenTemplate1; else elseTemplate1">
-              </ng-container>
-              <ng-template #thenTemplate1>
-                <tds-tag status='success' type="outline" class="text-body-2 font-regular text-neutral-1-900">
-                  Đã kích hoạt</tds-tag>
+        <ng-template ngFor let-data [ngForOf]="rowSelection.data" let-index='index' let-odd='odd'>
+          <tr >
+            <td width="120px">{{data.product.name}}</td>
+            <td width="100px">
+              <!-- {{data.order.}} -->
+              <tds-avatar [shape]="'square'" [isAvatar]="false" [size]="'lg'" [tdsSrc]=data.product.display_image>
+              </tds-avatar>
+            </td>
+            <td width="100px">
+              <!-- <ng-container *ngIf="data.is_delete; then thenTemplate; else elseTemplate"></ng-container>
+              <ng-template #thenTemplate>
+                <tds-tag status='error' type="outline" class="text-body-2 font-regular text-neutral-1-900">
+                  Đã xóa</tds-tag>
               </ng-template>
-              <ng-template #elseTemplate1>
-                <tds-tag status='secondary' type="outline" class="text-body-2 font-regular text-neutral-1-900">
-                  Chưa kích hoạt</tds-tag>
-              </ng-template>
-            </ng-template> -->
-          </th>
-          <td width="100px" [tdsRight]="true">
-            <!-- <div class="flex gap-2">
-              <div class="flex gap-2 justify-center cursor-pointer">
-                <div *ngIf="!data.is_approved" tds-tooltip
-                  tooltipTitle="Kích hoạt sản phẩm" class="text-body-2 font-medium text-info-500">
-                  Kích hoạt sản phẩm
+              <ng-template #elseTemplate>
+                <ng-container *ngIf="data.is_approved; then thenTemplate1; else elseTemplate1">
+                </ng-container>
+                <ng-template #thenTemplate1>
+                  <tds-tag status='success' type="outline" class="text-body-2 font-regular text-neutral-1-900">
+                    Đã kích hoạt</tds-tag>
+                </ng-template>
+                <ng-template #elseTemplate1>
+                  <tds-tag status='secondary' type="outline" class="text-body-2 font-regular text-neutral-1-900">
+                    Chưa kích hoạt</tds-tag>
+                </ng-template>
+              </ng-template> -->
+            </td>
+            <td width="50px">{{ data.buy}}</td>
+            <td width="50px">{{ data.amount|currency:'đ':'code'}}</td>
+            <td width="100px" [tdsRight]="true">
+              <!-- <div class="flex gap-2">
+                <div class="flex gap-2 justify-center cursor-pointer">
+                  <div *ngIf="!data.is_approved" tds-tooltip
+                    tooltipTitle="Kích hoạt sản phẩm" class="text-body-2 font-medium text-info-500">
+                    Kích hoạt sản phẩm
+                  </div>
                 </div>
-              </div>
-              <div class="flex gap-2 justify-center cursor-pointer">
-                <div *ngIf="!data.is_delete"  tds-tooltip tooltipTitle="Xóa sản phẩm"
-                  class="text-body-2 font-medium text-error-500">
-                  Xóa sản phẩm
+                <div class="flex gap-2 justify-center cursor-pointer">
+                  <div *ngIf="!data.is_delete"  tds-tooltip tooltipTitle="Xóa sản phẩm"
+                    class="text-body-2 font-medium text-error-500">
+                    Xóa sản phẩm
+                  </div>
                 </div>
-              </div>
-            </div> -->
-          </td>
-        </tr>
+              </div> -->
+            </td>
+          </tr>
+        </ng-template>
       </tbody>
     </tds-table>
     <!-- <div class="flex justify-end pr-16 py-4 ">

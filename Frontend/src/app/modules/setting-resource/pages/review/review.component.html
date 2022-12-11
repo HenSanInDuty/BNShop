@@ -6,7 +6,7 @@
           <a routerLink="/store/review" routerLinkActive #rls="routerLinkActive">
             <tds-tag mode="checkable" [disabled]="true" [checked]="rls.isActive"
               [rounded]='rls.isActive ? "rounded-full":"rounded-full rounded-full !border-0"' class="mr-2">
-             Đánh giá
+              Đánh giá
             </tds-tag>
           </a>
         </div>
@@ -27,12 +27,13 @@
           <thead>
             <tr>
               <th width="48px">
-              </th>
-              <th width="48px">
                 STT
               </th>
               <th width="100px">
                 Mã sản phẩm
+              </th>
+              <th width="100px">
+                Tên sản phẩm
               </th>
               <th width="100px">
                 Tên sản phẩm
@@ -46,12 +47,14 @@
           <tbody>
             <ng-container *ngFor="let data of table.data; let i = index">
               <tr>
-                <td width="48px" [expand]="expandSet.has(data.id)" (expandChange)="onExpandChange(data.id, $event)"></td>
                 <td width="48px">
                   {{(pageIndex-1) * pageSize + i + 1}}
                 </td>
                 <td width="100px">
                   {{data.product_info.product_no}}
+                </td>
+                <td width="100px">
+                  {{data.product_info.name}}
                 </td>
                 <td width="100px">
                   {{data.product_info.name}}
@@ -66,96 +69,35 @@
                   </div>
                 </td>
                 <td width="100px">
-                  <tds-avatar [shape]="'square'" [isAvatar]="false" [size]="'lg'" [tdsSrc]=data.product_info.display_image>
+                  <tds-avatar [shape]="'square'" [isAvatar]="false" [size]="'lg'"
+                    [tdsSrc]=data.product_info.display_image>
                   </tds-avatar>
                 </td>
                 <td width="100px">
                   <tds-rate size="xl" [ngModel]="data.star || 0" [disabled]="true"></tds-rate>
                 </td>
                 <td width="100px" [tdsRight]="true">
-                  <div *ngIf="data.reply.length == 0" (click)="onActiveProduct(data)" class="flex gap-2 items-center text-body-2 font-medium text-info-500 cursor-pointer">
-                    <i class="tdsi-reply-fill"></i>
-                    Phản hồi
-                  </div>
-                  <div *ngIf="data.reply.length > 0"  class="text-body-2 font-medium text-info-500">
-                    Đã phản hồi
-                  </div>
+                  <ng-container *ngIf="data?.reply?.length == 0; then thenTemplate1; else elseTemplate1"></ng-container>
+                  <ng-template #thenTemplate1>
+                    <div (click)="onActiveProduct(data)"
+                      class="flex gap-2 items-center text-body-2 font-medium text-info-500 cursor-pointer">
+                      <i class="tdsi-reply-fill"></i>
+                      Phản hồi
+                    </div>
+                  </ng-template>
+                  <ng-template #elseTemplate1>
+                    <div class="text-body-2 font-medium text-info-500">
+                      Đã phản hồi
+                    </div>
+                  </ng-template>
+
                 </td>
               </tr>
-              <tr [expand]="expandSet.has(data.id)" class="   border-neutral-2-100 text-neutral-1-900 bg-neutral-3-200 ">
-                <div class="bg-white flex flex-col  pt-4 pb-10 border rounded-md w-full overflow-auto tds-custom-scroll">
-                  <tds-table #table  [title]="title" [showPagination]="false">
-                    <thead>
-                      <tr>
-                        <th width="54px">STT</th>
-                        <th width="54px">Mã đơn hàng</th>
-                        <th width="120px">Tên sản phẩm</th>
-                        <th width="100px">Hình ảnh</th>
-                        <th width="100px">Trạng thái</th>
-                        <th width="100px" [tdsRight]="true">Thao tác</th>
-                      </tr>
-                    </thead>
-          <tbody>
-            <tr>
-              <td width="54px">{{(pageIndex-1) * pageSize + i + 1}}</td>
-              <td width="54px"></td>
-              <td width="120px"></td>
-              <td width="100px">
-                <!-- <tds-avatar [shape]="'square'" [isAvatar]="false" [size]="'lg'" [tdsSrc]=data.product_info.display_image>
-          </tds-avatar> -->
-              </td>
-              <th width="100px">
-             
-              </th>
-              <td width="100px" [tdsRight]="true">
-                <!-- <div class="flex gap-2">
-           <div class="flex gap-2 justify-center cursor-pointer">
-            <div (click)="onActiveProduct(data)" *ngIf="!data.is_approved" tds-tooltip tooltipTitle="Kích hoạt sản phẩm"
-             class="text-body-2 font-medium text-info-500">
-             Kích hoạt sản phẩm
-            </div>
-           </div>
-           <div class="flex gap-2 justify-center cursor-pointer">
-            <div *ngIf="!data.is_delete" (click)="onDisableProduct(data)" tds-tooltip tooltipTitle="Xóa sản phẩm"
-             class="text-body-2 font-medium text-error-500">
-             Xóa sản phẩm
-            </div>
-           </div>
-          </div> -->
-              </td>
-            </tr>
-          </tbody>
-        </tds-table>
-        <!-- <div class="flex justify-end pr-16 py-4 ">
-              <div class="flex flex-col gap-4">
-                <div class="flex justify-between">
-                  <div class="mr-20 text-body-2 font-regular text-neutral-1-900">2 sản phẩm </div>
-                  <div class="flex gap-1 text-body-2 font-medium text-neutral-1-900"> <u
-                      class="text-neutral-1-400 font-regular">đ</u>
-                    2.400.000</div>
-                </div>
-                <div class="flex justify-between">
-                  <div class="text-body-2 font-regular text-neutral-1-900">Phí giao hàng</div>
-                  <div class="flex gap-1  text-body-2 font-medium text-neutral-1-900"> <u
-                      class="text-neutral-1-400 font-regular">đ</u> 2.400.000</div>
-                </div>
-                <div class="flex justify-between">
-                  <div class="text-title-1 font-medium text-neutral-1-900">Tổng tiền </div>
-                  <div class="flex gap-1 text-header-1 text-primary-1 font-semibold"> <u>đ</u> 2.700.000</div>
-                </div>
-              </div>
-            </div> -->
-      </div>
-      <ng-template #title [ngOutletContext]="context">
-        <div class="flex flex-col gap-2 justify-between ">
-          <div class="text-header-1 text-neutral-1-900 font-semibold">Thông tin đánh giá</div>
-        </div>
-      </ng-template>
-      </tr>
+            
       </ng-container>
       </tbody>
       </tds-table>
     </div>
-    </div>
   </div>
+</div>
 </div>

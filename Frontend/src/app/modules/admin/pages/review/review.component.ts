@@ -11,7 +11,7 @@ import { AdminService } from 'src/app/services/admin.service';
 import { TDSDestroyService } from 'tds-ui/core/services';
 import { TDSMessageService } from 'tds-ui/message';
 import { TDSModalService } from 'tds-ui/modal';
-import { TDSSafeAny } from 'tds-ui/shared/utility';
+import { TDSHelperString, TDSSafeAny } from 'tds-ui/shared/utility';
 import { TDSTableQueryParams } from 'tds-ui/table';
 
 @Component({
@@ -26,6 +26,7 @@ export class ReviewComponent implements OnInit {
 
   expandSet = new Set<number>();
   lstAccount: RatingDTO[] = []
+  lstAccountBackup: RatingDTO[] = []
   lstProduct: getProductDTO[] = []
   lstData: Array<FilterStatusItemDTO> = [
     {
@@ -103,7 +104,15 @@ export class ReviewComponent implements OnInit {
     //   },
     // });
   }
-
+  search(event: TDSSafeAny): void {
+    if (event.value != null) {
+      this.lstAccount = this.lstAccountBackup
+      this.lstAccount = this.lstAccount.filter(item => (item.product_info.product_no.toLowerCase().includes(event.value.toLowerCase()) == true || item.customer_info.name.toLowerCase().includes(event.value.toLowerCase()) == true || item.product_info.agency.name.toLowerCase().includes(event.value.toLowerCase()) == true));
+    }
+    if (!TDSHelperString.hasValueString(event.value)) {
+      this.lstAccount = this.lstAccountBackup
+    }
+  }
   //Hàm thay đổi status của tab
   onSelectStatus(value: TDSSafeAny) {
     this.selected = value;
@@ -136,6 +145,7 @@ export class ReviewComponent implements OnInit {
       .subscribe({
         next: (res: TDSSafeAny) => {
           this.lstAccount = res;
+          this.lstAccountBackup = res;
           this.loading = false;
           this.cd.detectChanges()
         },

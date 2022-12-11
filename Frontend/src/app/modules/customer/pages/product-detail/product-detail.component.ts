@@ -190,8 +190,10 @@ export class ProductDetailComponent implements OnInit {
               rating: number,
               length: number,
             }[] = []
+            this.rating = []
             if (TDSHelperArray.hasListValue(item)) {
               this.rating = item
+              SumRating = [];
               this.ratingBackup = this.rating
               let rating: number[] = []
               for (let index = 0; index < this.rating?.length!; index++) {
@@ -204,7 +206,6 @@ export class ProductDetailComponent implements OnInit {
               this.cd.detectChanges()
             }
             this.SumRating = SumRating;
-            console.log(this.SumRating)
             this.loading = false;
             this.cd.detectChanges()
 

@@ -53,8 +53,8 @@ export class ProductService {
     return this.http.get<getProductDTO>(
       environment.apiBNShop + `products/${this.getParams(params)}`)
   }
-  getProductId(id:number): Observable<getProductDTO> {
-    return this.http.get<getProductDTO>(
+  getProductId(id:number): Observable<any> {
+    return this.http.get<any>(
       environment.apiBNShop + `products/${id}`)
   }
   getCategory(): Observable<getCategoryDTO> {

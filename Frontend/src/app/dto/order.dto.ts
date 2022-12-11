@@ -28,4 +28,8 @@ export interface getListOrderDTO {
  order_detail: any
  customer: number
 }
+export interface getListOrderAgencyDTO {
+ idAgency: any
+ order: getListOrderDTO []
+}
 

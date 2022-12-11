@@ -120,12 +120,25 @@ export const DATA_MENU: Array<TDSMenuDTO> = [
             // }
         ]
     },
-    // {
-    //     "name": "Kiểm duyệt",
-    //     "icon": "tdsi-variant-fill",
-    //     // "background": "bg-info-300",
-    //     // "backgroundHover": "bg-info-400",
-    //     // "roles": ["leader", "hr-admin"],
-    //     "link": "/approval"
-    // }
+    {
+        "name": "Kiểm duyệt",
+        "icon": "tdsi-variant-fill",
+        // "background": "bg-info-300",
+        // "backgroundHover": "bg-info-400",
+        // "roles": ["keeper-admin", "admin"],
+        "listChild": [
+            {
+                "name": "Đánh giá sản phâm",
+                "link": "product"
+            },
+            // {
+            //     "name": "Nghỉ phép",
+            //     "link": "/time-keepper/leave-history"
+            // },
+            // {
+            //     "name": "Xác nhận công",
+            //     "link": "/time-keepper/confirm-work"
+            // }
+        ]
+    },
 ];
