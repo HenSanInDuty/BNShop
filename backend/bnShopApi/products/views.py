@@ -289,6 +289,7 @@ class ProductViewDetail(generics.GenericAPIView):
         agency = request.user.user.agency
         prod = Product.objects.filter(id=id,agency=agency,is_delete=False)
         if prod:
+            print(prod.first())
             p = ProductUpdateSerializer(prod[0],data=request.data,context={'request':request})
             if p.is_valid():
                 p.save()
