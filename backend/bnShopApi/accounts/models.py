@@ -103,7 +103,17 @@ class Agency(models.Model):
     identify = models.CharField(max_length=12,unique=True)
     def __str__(self):
         return self.user.name
-    
+
+class RoleAgency(models.Model):
+    ROLES = ((1,'Product'),(2,'Rating'),(3,'Order'))
+    role = models.IntegerField(choices=ROLES)
+
+class SubAgency(models.Model):
+    user = models.OneToOneField(Users,on_delete=models.CASCADE,related_name='agency')
+    agency = models.ForeignKey(Agency,on_delete=models.CASCADE,related_name='sub_agency')
+    role = models.ManyToManyField(RoleAgency)
+
+
 class Customer(models.Model):
     user = models.OneToOneField(Users,on_delete=models.CASCADE,related_name='customer')
     follow = models.ManyToManyField(Agency,blank=True,related_name='followed')
