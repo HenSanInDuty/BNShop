@@ -49,7 +49,7 @@ export class ProductComponent implements OnInit {
 
   ngOnInit(): void {
     this.getType();
-    this.getListProduct(this.params);
+    // this.getListProduct(this.params);
   }
   ngAfterViewInit(): void {
     //Called after ngAfterContentInit when the component's view has been initialized. Applies to components only.

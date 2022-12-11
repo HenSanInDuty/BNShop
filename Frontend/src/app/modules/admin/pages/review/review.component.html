@@ -45,8 +45,15 @@
           </tds-filter-status-item>
         </ng-template>
       </tds-filter-status>
-      <div class="flex gap-2">
-      </div>
+            <div class="flex gap-2">
+            
+              <tds-form-field>
+                <input class="w-96" tdsInput autocomplete="off" [tdsInputDebounce]="500" (inputKeyup)="search($event)"
+                  placeholder="Tìm kiếm theo mã sản phẩm và tên khách hàng" />
+                <span tdsPrefix><i class="tdsi-search-fill"></i></span>
+              </tds-form-field>
+            
+            </div>
     </div>
     <div class="w-full h-full">
       <tds-table #table showSizeChanger [frontPagination]="false" (queryParams)="onQueryParamsChange($event)"
@@ -55,8 +62,6 @@
         <thead>
           <tr>
             <th width="48px">
-            </th>
-            <th width="48px">
               STT
             </th>
             <th width="100px">
@@ -64,6 +69,9 @@
             </th>
             <th width="100px">
               Tên sản phẩm
+            </th>
+            <th width="100px">
+              Đánh giá
             </th>
             <th width="150px">Khách hàng đánh giá</th>
             <th width="150px">Tại đại lý</th>
@@ -76,7 +84,6 @@
         <tbody>
           <ng-container *ngFor="let data of table.data; let i = index">
             <tr>
-              <td width="48px" [expand]="expandSet.has(data.id)" (expandChange)="onExpandChange(data.id, $event)"></td>
               <td width="48px">
                 {{(pageIndex-1) * pageSize + i + 1}}
               </td>
@@ -85,6 +92,12 @@
               </td>
               <td width="100px">
                 {{data.product_info.name}}
+              </td>
+              <td width="100px">
+               <div class="flex flex-col gap-1">
+                <div class="text-body-2 font-semibold text-neutral-1-900">{{data.title}}</div>
+                <div class="text-body-2 font-regular text-neutral-1-900">{{data.content}}</div>
+               </div>
               </td>
               <td width="150px">
                 <div class="flex flex-col">

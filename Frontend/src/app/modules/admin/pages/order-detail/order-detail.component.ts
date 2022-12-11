@@ -6,7 +6,7 @@ import { AdminService } from 'src/app/services/admin.service';
 import { TDSDestroyService } from 'tds-ui/core/services';
 import { TDSMessageService } from 'tds-ui/message';
 import { TDSModalService } from 'tds-ui/modal';
-import { TDSHelperObject, TDSSafeAny } from 'tds-ui/shared/utility';
+import { TDSHelperObject, TDSHelperString, TDSSafeAny } from 'tds-ui/shared/utility';
 import { ShippersComponent } from '../../components/shippers/shippers.component';
 
 @Component({
@@ -76,6 +76,18 @@ export class OrderDetailComponent implements OnInit {
 
   ngOnInit(): void {
     this.getListAccsetType()
+  }
+
+  search(event: TDSSafeAny): void {
+    if (event.value != null) {
+      this.lstOrderDetail = this.lstOrderDetailBackup;
+      this.lstOrderDetail = this.lstOrderDetail.filter(item => item.order_detail_no.toLowerCase().includes(event.value.toLowerCase()) == true);
+     
+    }
+    if (!TDSHelperString.hasValueString(event.value)) {
+      this.lstOrderDetail = this.lstOrderDetailBackup;
+  
+    }
   }
 
   onExpandChange(id: number, checked: boolean): void {

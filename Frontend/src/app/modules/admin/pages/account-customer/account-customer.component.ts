@@ -9,7 +9,7 @@ import { AdminService } from 'src/app/services/admin.service';
 import { TDSDestroyService } from 'tds-ui/core/services';
 import { TDSMessageService } from 'tds-ui/message';
 import { TDSModalService } from 'tds-ui/modal';
-import { TDSSafeAny } from 'tds-ui/shared/utility';
+import { TDSHelperString, TDSSafeAny } from 'tds-ui/shared/utility';
 import { TDSTableQueryParams } from 'tds-ui/table';
 
 @Component({
@@ -23,6 +23,7 @@ import { TDSTableQueryParams } from 'tds-ui/table';
 export class AccountCustomerComponent implements OnInit {
 
   lstAccount: getCustomerDTO[] = []
+  lstAccountBackup: getCustomerDTO[] = []
   lstData: Array<FilterStatusItemDTO> = [
     {
       name: 'Khách hàng',
@@ -88,7 +89,16 @@ export class AccountCustomerComponent implements OnInit {
     // });
   }
 
+  search(event: TDSSafeAny): void {
+    if (event.value != null) {
+      this.lstAccount = this.lstAccountBackup;
+      this.lstAccount = this.lstAccount.filter(item => item.name.toLowerCase().includes(event.value.toLowerCase()) == true);
 
+    }
+    if (!TDSHelperString.hasValueString(event.value)) {
+      this.lstAccount = this.lstAccountBackup;
+    }
+  }
   // contextMenu($event: MouseEvent, menu: TDSDropdownMenuComponent): void {
   //   this.tdsContextMenuService.create($event, menu);
   // }
@@ -104,6 +114,7 @@ export class AccountCustomerComponent implements OnInit {
       .subscribe({
         next: (res: TDSSafeAny) => {
           this.lstAccount = res;
+          this.lstAccountBackup = res;
           this.loading = false;
           this.cd.detectChanges()
         },

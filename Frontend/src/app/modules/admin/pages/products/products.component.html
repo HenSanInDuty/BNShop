@@ -1,0 +1,95 @@
+<div class="bg-white  w-full pb-2.5 h-full  rounded-lg  overflow-hidden  flex flex-col">
+ <div class="flex items-center  justify-between px-4">
+  <tds-filter-status [(ngModel)]='selected' (selectChange)="onSelectChange($event)">
+   <ng-template ngFor let-item [ngForOf]="lstData" let-i="index">
+    <tds-filter-status-item [name]='item.name' [count]='item.count!' [value]="item.value">
+     <ng-template tds-filter-status-template let-active='active' let-disabled="disabled" let-count='count'
+      let-name='name' let-value>
+      <div class="p-4 flex items-center" [ngClass]="{'border-b-3 border-primary-1':active,'hover:border-b-3
+                  hover:border-primary-1 group':!disabled}">
+       <div class="flex items-center">
+        <div class="text-body-2 mr-2 font-semibold" [ngClass]="{'text-primary-1':active,'text-neutral-1-400
+                      group-hover:text-neutral-1-900':!active}">
+         {{name}}
+        </div>
+        <div class="text-caption-2 font-semibold px-1.5 py-0.5 rounded-10" [ngClass]="{'text-white bg-primary-1':active,'text-neutral-1-400
+                group-hover:text-neutral-1-900 bg-neutral-3-100':!active}">{{count}}</div>
+       </div>
+      </div>
+     </ng-template>
+    </tds-filter-status-item>
+   </ng-template>
+  </tds-filter-status>
+  <div class="flex gap-2">
+   <tds-form-field>
+    <input class="w-96" tdsInput autocomplete="off" [tdsInputDebounce]="500" (inputKeyup)="search($event)"
+     placeholder="Tìm kiếm theo tên sản phẩm" />
+    <span tdsPrefix><i class="tdsi-search-fill"></i></span>
+   </tds-form-field>
+  </div>
+ </div>
+ <div class="w-full h-full">
+  <tds-table #rowSelectionTable showSizeChanger [frontPagination]="false" [listData]="lstResource!"
+   (queryParams)="onQueryParamsChange($event)" (currentPageDataChange)="onCurrentPageDataChange($event)"
+   [scroll]="{y:'auto'}" [total]="lstResource.length" [loading]="loading" [(pageSize)]="pageSize"
+   [(pageIndex)]="pageIndex">
+   <thead>
+    <tr>
+     <th width="48px" [(checked)]="checked" [indeterminate]="indeterminate" (checkedChange)="onAllChecked($event)">
+     </th>
+     <th width="54px">STT</th>
+     <th width="120px">Đại lý</th>
+     <th width="120px">Tên sản phẩm</th>
+     <th width="100px">Hình ảnh</th>
+     <th width="180px">Loại sản phẩm</th>
+     <th width="120px">Giá hiện tại(đ)</th>
+     <th width="280px">Thương hiệu, xuất sứ, nơi sản xuất</th>
+     <th width="220px">Mô tả</th>
+     <th width="100px" [tdsRight]="true">Thao tác</th>
+    </tr>
+   </thead>
+   <tbody>
+    <ng-template ngFor let-data [ngForOf]="rowSelectionTable.data" let-index='index' let-odd='odd'>
+     <tr>
+      <td width="48px" [checked]="setOfCheckedId.has(data)" (checkedChange)="onItemChecked(data, $event)"></td>
+      <td width="54px">{{(pageIndex-1) * pageSize + index + 1}}</td>
+      <td width="120px">{{ data.agency.name }}</td>
+      <td width="120px">{{ data.name }}</td>
+      <td width="100px">
+       <tds-avatar [shape]="'square'" [isAvatar]="false" [size]="'lg'" [tdsSrc]=data.display_image>
+       </tds-avatar>
+      </td>
+      <td width="180px" class="text-body-2 text-neutral-900 font-sans font-normal">{{ data.type }}</td>
+      <td width="120px" class="text-body-2 text-neutral-900 font-sans font-normal">
+       {{ data.last_price.price|currency:'đ':'code'}}
+      </td>
+      <td width="280px" class="flex flex-col gap-2 items-start">
+       <div class="text-body-2 text-neutral-900 font-sans font-normal">Thương hiệu: {{ data.brand.name }}</div>
+       <div class="text-body-2 text-neutral-900 font-sans font-normal">Xuất sứ: {{ data.brand.origin }}</div>
+       <div class="text-body-2 text-neutral-900 font-sans font-normal">Nơi sản xuất: {{ data.brand.origin_brand }}</div>
+      </td>
+      <td width="220px" class="text-body-2 text-neutral-900 font-sans font-normal">
+       
+      </td>
+      <td width="100px" [tdsRight]="true">
+          <div class="flex gap-2">
+           <div class="flex gap-2 justify-center cursor-pointer">
+            <div (click)="onActiveProduct(data)" *ngIf="!data.is_approved" tds-tooltip tooltipTitle="Kích hoạt sản phẩm"
+             class="text-body-2 font-medium text-info-500">
+             Kích hoạt sản phẩm
+            </div>
+           </div>
+           <div class="flex gap-2 justify-center cursor-pointer">
+            <div *ngIf="!data.is_delete" (click)="onDisableProduct(data)" tds-tooltip tooltipTitle="Xóa sản phẩm"
+             class="text-body-2 font-medium text-error-500">
+             Xóa sản phẩm
+            </div>
+           </div>
+          </div>
+      </td>
+     </tr>
+    </ng-template>
+   </tbody>
+  </tds-table>
+ </div>
+</div>

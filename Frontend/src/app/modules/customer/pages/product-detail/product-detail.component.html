@@ -133,7 +133,20 @@
               <!-- <div class="text-base font-regular text-neutral-1-900">
                 {{product?.describe}}
               </div> -->
-              <div [innerHTML]=" product?.describe|tdsSafeHtml"> </div>
+              <ng-container *ngIf="product?.describe; then thenTemplate3; else elseTemplate3"></ng-container>
+              <ng-template #thenTemplate3>
+                <div [innerHTML]=" product?.describe|tdsSafeHtml"> </div>
+              </ng-template>
+              <ng-template #elseTemplate3>
+                  <div class="flex items-center justify-center w-full">
+                    <div class="flex flex-col gap-6 items-center py-6">
+                      <img src="assets//images//dashboard//No data.svg" alt="" srcset="">
+                      <div class="text-body-2 font-regular text-neutral-1-300">Chưa có mô tả nào
+                      </div>
+                    </div>
+                  </div>
+              </ng-template>
+              
             </div>
           </div>
           <div class="w-1/5 bg-white">

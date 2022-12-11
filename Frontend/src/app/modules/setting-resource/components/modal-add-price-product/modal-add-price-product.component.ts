@@ -80,6 +80,7 @@ export class ModalAddPriceProductComponent implements OnInit {
           if (res) {
             // this.getStatus()
             this.lstProduct = res;
+            this.lstProduct = this.lstProduct.filter(item => (item.is_approved === true && item.is_delete === false))
             this.isSubmit = false;
           }
           this.isSubmit = false;
@@ -108,7 +109,7 @@ export class ModalAddPriceProductComponent implements OnInit {
       id: new FormControl('', [Validators.required]),
       change_num: new FormControl('', [Validators.required]),
       price_once: new FormControl('', [Validators.required]),
-      note: new FormControl(''),
+      note: new FormControl('', [Validators.required]),
     })
   }
 

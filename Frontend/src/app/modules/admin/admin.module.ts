@@ -32,6 +32,7 @@ import { OrderDetailComponent } from './pages/order-detail/order-detail.componen
 import { ShippersComponent } from './components/shippers/shippers.component';
 import { TDSToolTipModule } from 'tds-ui/tooltip';
 import { TDSBreadCrumbModule } from 'tds-ui/breadcrumb';
+import { ProductsComponent } from './pages/products/products.component';
 
 
 @NgModule({
@@ -44,6 +45,7 @@ import { TDSBreadCrumbModule } from 'tds-ui/breadcrumb';
     AccountCustomerComponent,
     OrderDetailComponent,
     ShippersComponent,
+    ProductsComponent,
   ],
   imports: [
     CommonModule,
