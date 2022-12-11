@@ -8,7 +8,7 @@
         var ws_scheme = window.location.protocol == "https:" ? "wss://" : "ws://";
         const chatSocket = new WebSocket(
             ws_scheme
-            + 'localhost:8000'
+            + window.location.host
             + '/ws/chat/'
             + 'noan'
             + '/'
