@@ -29,10 +29,12 @@ import { ModalChosenAddressComponent } from '../../modal-chosen-address/modal-ch
 export class ProductDetailComponent implements OnInit {
 
   loading = false;
+  item = true;
   placeholder = "./assets/images/dowload.gif";
   fallback = "./assets/images/default.png";
   product?: getProductDTO
   start: number = 0
+  getReply = 0;
   quantity: number = 1
   paramCreateOrder: OrderDTO = {
     qty: 1,
@@ -140,7 +142,16 @@ export class ProductDetailComponent implements OnInit {
     this.getAddress()
     this.cd.detectChanges()
   }
-
+  changeRating (data: number) {
+    if(this.item){
+      this.item = false;
+      this.getReply = this.rating![data].reply.length
+    }
+    else {
+      this.item = true;
+      this.getReply = 0;
+    }
+  }
   onSelectChangeRating(value: number) {
     this.star = value
     switch (this.star) {
