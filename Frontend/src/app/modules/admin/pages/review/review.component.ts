@@ -29,14 +29,20 @@ export class ReviewComponent implements OnInit {
   lstProduct: getProductDTO[] = []
   lstData: Array<FilterStatusItemDTO> = [
     {
+      name: 'Tất cả',
+      value: null,
+      count: 0,
+      disabled: false
+    },
+    {
       name: 'Kích hoạt',
-      value: 1,
+      value: 2,
       count: 0,
       disabled: false
     },
     {
       name: "Chưa kích hoạt",
-      value: 2,
+      value: 1,
       count: 0,
       disabled: false
     },

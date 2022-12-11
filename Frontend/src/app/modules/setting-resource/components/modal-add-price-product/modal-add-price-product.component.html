@@ -12,14 +12,20 @@
     <tds-label>Nhập số lượng muốn nhập vào</tds-label>
     <div class="flex items-start ">
      <tds-input-number [min]="1" [step]="1" tdsInput autocomplete="off" placeholder="Số lượng sản phẩm" [required]="true"
-      formControlName="quantity"></tds-input-number>
+      formControlName="change_num"></tds-input-number>
     </div>
     <tds-error>Vui lòng nhập số lượng</tds-error>
    </tds-form-field>
+    <tds-form-field>
+      <tds-label>Thay dổi giá của sản phẩm (đ)</tds-label>
+      <tds-input-number [min]="1000" [step]="1000" tdsInput autocomplete="off" [decimal]="'not-zero'"
+        placeholder="Giá lượng sản phẩm" formControlName="price_once"></tds-input-number>
+      <tds-error>Vui lòng nhập giá sản phẩm</tds-error>
+    </tds-form-field>
    <tds-form-field>
     <tds-label>Ghi chú</tds-label>
     <div class="flex items-start h-20">
-     <input tdsInput autocomplete="off" placeholder="Ghi chú"  formControlName="quantity_note" />
+     <input tdsInput autocomplete="off" placeholder="Ghi chú"  formControlName="note" />
     </div>
    </tds-form-field>
   </div>

@@ -11,7 +11,7 @@ import { TDSDestroyService } from 'tds-ui/core/services';
 import { TDSMessageService } from 'tds-ui/message';
 import { TDSModalRef } from 'tds-ui/modal';
 import { TDSSafeAny } from 'tds-ui/shared/utility';
-import { editProductDTO, getProductDTO } from '../../models/product.dto';
+import { editProductDTO, getProductDTO, ProducePriceDTO } from '../../models/product.dto';
 import { ProductService } from '../../services/product.service';
 
 @Component({
@@ -106,8 +106,9 @@ export class ModalAddPriceProductComponent implements OnInit {
   createForm() {
     this.addEditHolidaysForm = this.fb.group({
       id: new FormControl('', [Validators.required]),
-      quantity: new FormControl('', [Validators.required]),
-      quantity_note: new FormControl(''),
+      change_num: new FormControl('', [Validators.required]),
+      price_once: new FormControl('', [Validators.required]),
+      note: new FormControl(''),
     })
   }
 
@@ -131,12 +132,14 @@ export class ModalAddPriceProductComponent implements OnInit {
   onSubmit(): void {
     if (this.addEditHolidaysForm.valid && this.addEditHolidaysForm.dirty) {
       this.isSubmit = true;
-      let param:editProductDTO = {
-        quantity: this.lstProduct.filter(item => item.id == this.addEditHolidaysForm.controls['id'].value)[0].quantity + this.addEditHolidaysForm.controls['quantity'].value,
-        quantity_note: this.addEditHolidaysForm.controls['quantity_note'].value
-
+      let param: ProducePriceDTO = {
+        change_num: this.addEditHolidaysForm.controls['change_num'].value,
+        note: this.addEditHolidaysForm.controls['note'].value,
+        price_once: this.addEditHolidaysForm.controls['price_once'].value,
+        types: 1,
+        product: this.addEditHolidaysForm.controls['id'].value
       }
-      this.productService.editProduct(this.addEditHolidaysForm.controls['id'].value, param)
+      this.productService.editProductQuantity(this.addEditHolidaysForm.controls['id'].value, param)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (res) => {

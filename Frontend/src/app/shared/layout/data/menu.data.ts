@@ -57,8 +57,8 @@ export const DATA_MENU: Array<TDSMenuDTO> = [
         ]
     },
     {
-        "name": "Quản lý giao hàng",
-        "icon": "tdsi-truck-fill",
+        "name": "Quản lý đơn hàng",
+        "icon": "tdsi-order-fill",
         // "background": "bg-info-300",
         // "backgroundHover": "bg-info-400",
         // "roles": ["hr-admin"],
