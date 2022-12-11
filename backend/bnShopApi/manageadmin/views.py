@@ -199,9 +199,9 @@ class RatingViewAll(generics.GenericAPIView):
     type = request.GET.get('type')
     all_rating = Rate.objects.all()
     if not type == None:
-      if type == 1:
+      if type == "1":
         all_rating = all_rating.filter(is_approved=False)
-      elif type == 2:
+      elif type == "2":
         all_rating = all_rating.filter(is_approved=True)
 
     serializer = RateSerializer(all_rating,many=True)
