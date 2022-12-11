@@ -12,11 +12,11 @@ const routes: Routes = [
   {
     path: '',
     component:LayoutComponent,
-    // canActivate:[AdminGuardService],
+    canActivate:[AdminGuardService],
     children:[
       {
         path: '',
-        redirectTo: 'customer',
+        redirectTo: 'dashboard',
         pathMatch: 'full',
       },
       {

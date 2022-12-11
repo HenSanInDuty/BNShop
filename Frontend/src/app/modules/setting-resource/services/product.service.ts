@@ -7,7 +7,7 @@ import { environment } from 'src/environments/environment';
 
 import { TDSSafeAny } from 'tds-ui/shared/utility';
 import { CategoryDTO, getCategoryDTO } from '../models/category.dto';
-import { editProductDTO, getProductDTO, ProductDTO } from '../models/product.dto';
+import { editProductDTO, getProductDTO, ProducePriceDTO, ProductDTO } from '../models/product.dto';
 import { TypeProductDTO } from '../models/typeProduct.dto';
 
 @Injectable({
@@ -72,6 +72,10 @@ export class ProductService {
   editProduct(id: string, data: editProductDTO): Observable<editProductDTO> {
     return this.http.patch<any>(
       environment.apiBNShop + `products/${id}/`, data)
+  }
+  editProductQuantity(id: string, data: ProducePriceDTO): Observable<any> {
+    return this.http.patch<any>(
+      environment.apiBNShop + `products/quantity/${id}/`, data)
   }
   deleteProduct(id: string): Observable<any> {
     return this.http.delete<any>(

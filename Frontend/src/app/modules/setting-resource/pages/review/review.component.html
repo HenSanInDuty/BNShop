@@ -73,8 +73,12 @@
                   <tds-rate size="xl" [ngModel]="data.star || 0" [disabled]="true"></tds-rate>
                 </td>
                 <td width="100px" [tdsRight]="true">
-                  <div (click)="onActiveProduct(data)" class="text-body-2 font-medium text-info-500 cursor-pointer">
+                  <div *ngIf="data.reply.length == 0" (click)="onActiveProduct(data)" class="flex gap-2 items-center text-body-2 font-medium text-info-500 cursor-pointer">
+                    <i class="tdsi-reply-fill"></i>
                     Phản hồi
+                  </div>
+                  <div *ngIf="data.reply.length > 0"  class="text-body-2 font-medium text-info-500">
+                    Đã phản hồi
                   </div>
                 </td>
               </tr>

@@ -91,7 +91,7 @@
           </tr>
           <tr [expand]="expandSet.has(data.id)" class="   border-neutral-2-100 text-neutral-1-900 bg-neutral-3-200 ">
             <div class="bg-white flex flex-col  pt-4 pb-10 border rounded-md w-full overflow-auto tds-custom-scroll">
-              <tds-table #table [title]="title" [showPagination]="false">
+              <tds-table  [title]="title" [showPagination]="false">
                 <thead>
                   <tr>
                     <th width="120px">Tên sản phẩm</th>
@@ -101,10 +101,10 @@
                   </tr>
                 </thead>
       <tbody>
-        <tr>
+        <tr  *ngFor="let item of data.order let i = index; let last = last">
           <td width="120px"></td>
           <td width="100px">
-            {{data.agency.name}}
+            {{item.product.name}}
             <!-- <tds-avatar [shape]="'square'" [isAvatar]="false" [size]="'lg'" [tdsSrc]=data.display_image>
             </tds-avatar> -->
           </td>
