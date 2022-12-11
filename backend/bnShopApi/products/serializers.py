@@ -171,7 +171,7 @@ class ProductUpdateSerializer(serializers.Serializer):
         if validated_data.get('display_image') and validated_data.get('display_image').strip() != '':
             instance.display_image = validated_data.get('display_image')
         #Update category
-        if validated_data.get('category') and validated_data.get('category').strip() != '':
+        if validated_data.get('category') and len(validated_data.get('category')) > 0:
             instance.category.clear()
             for cate in validated_data['category']:
                 try:

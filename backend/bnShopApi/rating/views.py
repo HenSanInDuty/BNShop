@@ -129,7 +129,7 @@ class RatingProductViewAll(generics.GenericAPIView):
         else:
             return per
 
-    def get(self,request,**kwargs):
+    def get(self,request,**kwargs): 
         user = request.user
         if user.is_customer:
             customer = request.user.user.customer
