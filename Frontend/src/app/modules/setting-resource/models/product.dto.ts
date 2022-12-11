@@ -56,3 +56,10 @@ export interface getProductDTO {
  },
  attachment: { id: string, product: number, type: string, url: string }[]
 }
+export interface ProducePriceDTO {
+ change_num: number
+ note: string
+ types: 1
+ price_once: number
+ product: 0
+}

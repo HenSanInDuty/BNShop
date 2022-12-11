@@ -168,34 +168,6 @@ export class ReviewComponent implements OnInit {
     this.cd.detectChanges()
   }
   // Modal kích hoạt tài khoản
-  onActive(data: TDSSafeAny): void {
-    const modal = this.modalService.warning({
-      title: 'Bạn muốn kích hoạt đại lý này',
-      //   content: `<span  class="text-yellow-500">
-      //   Lưu ý: Không thể khôi phục thông tin sản phẩm này sau khi xóa
-      // </span>`,
-      onOk: () => {
-        // this.adminService.ActiveAccount(data.id)
-        //   .pipe(takeUntil(this.destroy$))
-        //   .subscribe(
-        //     {
-        //       next: (res) => {
-        //         modal.destroy(data.id);
-        //         this.message.success("Kích hoạt người dùng thành công")
-        //         this.getAccount(this.selected!)
-        //       },
-        //       error: (err) => {
-        //         this.message.error(err.message)
-        //       }
-        //     })
-      },
-      onCancel: () => { },
-      confirmIcon: 'tdsi-checkbox-check-fill',
-      okText: "Kích hoạt",
-      cancelText: "Hủy"
-    });
-  }
-  // Modal kích hoạt tài khoản
   onActiveProduct(data: TDSSafeAny): void {
     const modalAdd = this.modalService.create({
       title: 'Phản hồi với khách hàng',
@@ -219,65 +191,6 @@ export class ReviewComponent implements OnInit {
       }
     )
   }
-  // Modal kích hoạt tài khoản
-  onDisable(data: TDSSafeAny): void {
-    const modal = this.modalService.warning({
-      title: 'Bạn muốn hủy đánh giá này',
-      //   content: `<span  class="text-yellow-500">
-      //   Lưu ý: Không thể khôi phục thông tin sản phẩm này sau khi xóa
-      // </span>`,
-      onOk: () => {
-        // this.adminService.DisableRating(data.id)
-        //   .pipe(takeUntil(this.destroy$))
-        //   .subscribe(
-        //     {
-        //       next: (res) => {
-        //         this.getAccount(this.selected!)
-        //         this.message.success("Dừng đánh giá thành công thành công")
-        //         modal.destroy(data.id);
-        //       },
-        //       error: (err) => {
-        //         this.message.error(err.message)
-        //       }
-        //     })
-      },
-      onCancel: () => { },
-      confirmIcon: 'tdsi-close-fill',
-      okText: "Ngừng kích hoạt",
-      cancelText: "Hủy"
-    });
-  }
-  // Modal kích hoạt tài khoản
-  onDisableProduct(data: TDSSafeAny): void {
-    const modal = this.modalService.error({
-      title: 'Bạn muốn xóa sản phẩm của đại lý này',
-      content: `<span  class="text-error-500">
-        Lưu ý: Không thể khôi phục thông tin sản phẩm này sau khi xóa
-      </span>`,
-      onOk: () => {
-        // this.adminService.DisableProduct(data.id)
-        //   .pipe(takeUntil(this.destroy$))
-        //   .subscribe(
-        //     {
-        //       next: (res) => {
-        //         this.message.success("Xóa sản phẩm của đại lý thành công")
-        //         let param: getProductDTOAdmin = {
-        //           type: this.selectedStatus.toString(),
-        //           agency: Array.from(this.expandSet)[0],
-        //         }
-        //         this.getProduct(param)
-        //         modal.destroy(data.id);
-        //       },
-        //       error: (err) => {
-        //         this.message.error(err.message)
-        //       }
-        //     })
-      },
-      onCancel: () => { },
-      confirmIcon: 'tdsi-close-fill',
-      okText: "Xóa",
-      cancelText: "Hủy"
-    });
-  }
+
 
 }
