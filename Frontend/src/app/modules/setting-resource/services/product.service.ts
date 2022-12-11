@@ -74,7 +74,7 @@ export class ProductService {
       environment.apiBNShop + `products/${id}/`, data)
   }
   editProductQuantity(id: string, data: ProducePriceDTO): Observable<any> {
-    return this.http.patch<any>(
+    return this.http.post<any>(
       environment.apiBNShop + `products/quantity/${id}/`, data)
   }
   deleteProduct(id: string): Observable<any> {
