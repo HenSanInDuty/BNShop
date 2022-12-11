@@ -204,6 +204,7 @@ export class ProductDetailComponent implements OnInit {
               this.cd.detectChanges()
             }
             this.SumRating = SumRating;
+            console.log(this.SumRating)
             this.loading = false;
             this.cd.detectChanges()
 
