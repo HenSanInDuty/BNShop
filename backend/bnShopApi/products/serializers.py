@@ -168,6 +168,7 @@ class ProductUpdateSerializer(serializers.Serializer):
     def update(self,instance,validated_data):
         TYPES_ATTACHMENT = ('2D','3D','Video')
         agency = self.context.get('request').user.user.agency
+        print(validated_data)
         if validated_data.get('display_image') and validated_data.get('display_image').strip() != '':
             instance.display_image = validated_data.get('display_image')
         #Update category
