@@ -146,7 +146,8 @@ class RatingProductViewAll(generics.GenericAPIView):
                         'content':rp.content,
                         'user':{
                             'name':rp.user.name,
-                            'time_joined':timezone.now() - rp.user.account.date_joined
+                            'time_joined':timezone.now() - rp.user.account.date_joined,
+                            'date_created':rp.date_created
                         }
                     }
                     rp_all.append(rp)
