@@ -22,11 +22,11 @@ class RatingViewAll(generics.GenericAPIView):
     
     def get(self,request,**kwargs):
         customer = request.user.user.customer
-        rates = Rate.objects.filter(customer=customer, is_approved=True).order_by('date_created')
+        rates = Rate.objects.filter(customer=customer, is_approved=True).order_by('-date_created')
         serializer = self.serializer_class(rates,many=True)
         result = []
         for instance in serializer.data:
-            reply_objects = Reply.objects.filter(rate_id = instance.get('id')).all().order_by('date_created')
+            reply_objects = Reply.objects.filter(rate_id = instance.get('id')).all().order_by('-date_created')
             if reply_objects:
                 rp_all = []
                 for rp in reply_objects:
@@ -66,11 +66,11 @@ class RatingViewReplyDetail(generics.GenericAPIView):
             return per
     
     def get(self,request,id,**kwargs):
-        rate = Rate.objects.filter(product_id=id, is_approved=True).order_by('date_created')
+        rate = Rate.objects.filter(product_id=id, is_approved=True).order_by('-date_created')
         serializer = self.serializer_class(rate,many=True)
         result = []
         for instance in serializer.data:
-            reply_objects = Reply.objects.filter(rate_id = instance.get('id')).all().order_by('date_created')
+            reply_objects = Reply.objects.filter(rate_id = instance.get('id')).all().order_by('-date_created')
             if reply_objects:
                 rp_all = []
                 for rp in reply_objects:
@@ -133,11 +133,11 @@ class RatingProductViewAll(generics.GenericAPIView):
         user = request.user
         if user.is_customer:
             customer = request.user.user.customer
-            rates = Rate.objects.filter(customer=customer, is_approved=True).order_by('date_created')
+            rates = Rate.objects.filter(customer=customer, is_approved=True).order_by('-date_created')
         elif user.is_agency:
             agency = request.user.user.agency
             products = Product.objects.filter(agency = agency)
-            rates = Rate.objects.filter(product__in = products, is_approved=True).order_by('date_created')
+            rates = Rate.objects.filter(product__in = products, is_approved=True).order_by('-date_created')
         serializer = self.serializer_class(rates,many=True)
         result = []
         for instance in serializer.data:
