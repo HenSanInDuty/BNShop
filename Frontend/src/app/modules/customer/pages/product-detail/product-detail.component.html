@@ -17,10 +17,10 @@
           <div class="w-3/5  flex flex-col gap-4">
             <div class="flex items-center gap-8">
               <div class="flex items-center gap-2">
-                <tds-rate size="lg" [ngModel]="SumRating[0!]?.rating! || 0" [disabled]="isDisabled"></tds-rate>
+                <tds-rate size="lg" [ngModel]="SumRating[0!]?.rating!/SumRating[0!]?.length! || 0" [disabled]="isDisabled"></tds-rate>
                 <div class="flex gap-2 items-center">
                   <div class="flex items-center gap-1">
-                    <div class="text-heading-3 font-semibold text-primary-1">{{SumRating[0!]?.rating! || 0}}</div>
+                    <div class="text-heading-3 font-semibold text-primary-1">{{SumRating[0!]?.rating!/SumRating[0!]?.length! || 0}}</div>
                     <div class="text-header-1   font-semibold text-neutral-1-400">/5</div>
                   </div>
                 </div>
@@ -150,7 +150,7 @@
               <div class="flex flex-col gap-2">
                 <div class="flex gap-2 items-center">
                   <div class="flex items-center gap-1">
-                    <div class="text-heading-3 font-semibold text-primary-1">{{SumRating[0!]?.rating! || 0}}</div>
+                    <div class="text-heading-3 font-semibold text-primary-1">{{SumRating[0!]?.rating!/SumRating[0!]?.length! || 0}}</div>
                     <div class="text-header-1   font-semibold text-neutral-1-400">/5</div>
                   </div>
                   <tds-divider tdsType="vertical"></tds-divider>
@@ -159,17 +159,18 @@
                     <div class="text-body-1  font-semibold text-neutral-1-400">Đánh giá</div>
                   </div>
                 </div>
-                <tds-rate size="lg" [ngModel]="SumRating[0!]?.rating! || 0" [disabled]="isDisabled"></tds-rate>
+                <tds-rate size="lg" [ngModel]="SumRating[0!]?.rating!/SumRating[0!]?.length! || 0" [disabled]="isDisabled"></tds-rate>
               </div>
               <tds-filter-status [(ngModel)]='star' (selectChange)="onSelectChangeRating($event)">
                 <ng-template ngFor let-item [ngForOf]="lstStar" let-i="index">
                   <tds-filter-status-item [name]='item.name' [count]='item.count!' [value]="item.value">
-                    <ng-template tds-filter-status-template let-active='active' let-disabled="disabled" let-count='count'
-                      let-name='name' let-value>
+                    <ng-template tds-filter-status-template let-active='active' let-disabled="disabled"
+                      let-count='count' let-name='name' let-value>
                       <div class="p-4 mr-2 flex items-center border-b-3 border-transparent text-body-2 font-medium"
                         [ngClass]="{' border-primary-1':active,'
                                                                           hover:border-primary-1 group':!disabled}">
-                        <div class="text-body-2 mr-2 font-semibold" [ngClass]="{'text-neutral-1-900':active,'text-neutral-1-600 
+                        <div class="text-body-2 mr-2 font-semibold"
+                          [ngClass]="{'text-neutral-1-900':active,'text-neutral-1-600 
                                                                               group-hover:text-neutral-1-900':!active}">
                           {{name}}</div>
                         <div>
@@ -184,11 +185,14 @@
             </div>
             <ng-container *ngIf="rating?.length! > 0; then thenTemplate; else elseTemplate"></ng-container>
             <ng-template #thenTemplate>
-              <div *ngFor="let items of rating" class="flex gap-4 items-center p-4">
+              <div *ngFor="let items of rating ;let i = index;" class="flex gap-4 items-center p-4">
                 <div class="h-full">
                   <tds-avatar class="bg-base-orange-500 dark:bg-d-base-orange-500 text-white" [size]="64"
-                    [shape]="'square'" [text]="items.customer.toString()">
+                    [shape]="'square'" [tdsSrc]="items.customer_info.avatar">
                   </tds-avatar>
+                </div>
+                <div class="flex items-start h-full">
+                  <div class="text-body-1 text-primary-1 font-semibold">{{items.customer_info.name}}</div>
                 </div>
                 <div class="flex flex-col gap-4">
                   <div class="flex flex-col gap-2 items-start h-full">
@@ -196,7 +200,30 @@
                       dd/MM/yyyy"}}</div>
                     <tds-rate size="xl" [ngModel]="items.star" [disabled]="isDisabled"></tds-rate>
                   </div>
-                  <div class="text-body-2 text-neutral-1-900 font-semibold">{{items.title}}: {{items.content}}</div>
+                  <div class="flex items-cener gap-8">
+                    <div class="text-body-2 text-neutral-1-900 font-semibold">{{items.title}}: {{items.content}}</div>
+                    <div *ngIf="items?.reply?.length! > 0 " class="flex flex-col gap-2">
+                      <div class="flex gap-4 items-center justify-start">
+                        <i class="tdsi-reply-fill text-neutral-1-500 text-xl"></i>
+                        <div class="flex flex-col gap-3">
+                          <div class="flex flex-col gap-1 items-start text-sm font-normal">
+                            <div class="text-body-1 text-neutral-1-900 font-semibold">{{product?.agency?.name}}</div>
+                          </div>
+                        </div>
+                        <tds-avatar class="bg-base-orange-500 dark:bg-d-base-orange-500 text-white" [size]="32" [shape]="'square'"
+                          [tdsSrc]="product?.agency?.avatar">
+                        </tds-avatar>
+                        <div *ngIf=" items?.reply?.length! >1 && item == true"
+                          class="text-body-1 text-info-500 font-semibold cursor-pointer" (click)="changeRating(i)">Xem
+                          thêm phản hồi</div>
+                        <div *ngIf=" items?.reply?.length! >1 && item == false"
+                          class="text-body-1 text-info-500 font-semibold cursor-pointer" (click)="changeRating(i)">Thu gọn</div>
+                      </div>
+                      <div *ngFor="let item of items.reply | slice: 0:getReply+1" class="flex flex-col gap-1 items-start p-1">
+                        {{item.content}}
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
               <div class="flex justify-end">
