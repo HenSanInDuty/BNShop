@@ -7,7 +7,7 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 from django.contrib.auth import authenticate
 
-from .models import Account, Agency, Customer, Users, Shipper
+from .models import Account, Agency, Customer, SubAgency, Users, Shipper
 
 
 class MyTokenObtainPairViewSerializer(TokenObtainPairSerializer):
@@ -37,6 +37,17 @@ class MyTokenObtainPairViewSerializer(TokenObtainPairSerializer):
         refresh = self.get_token(self.user)
         if self.user.is_agency:
             role = 'Agency'
+            try:
+                if user.user.sub_agency:
+                    sub = user.user.sub_agency
+                    role = 'Sub Agency'
+                    data['agency'] = {
+                        'id': sub.agency.user.id,
+                        'name':sub.agency.user.name,
+                        'phone':sub.agency.user.account.phone
+                    }
+            except:
+                role='Agency'
         if self.user.is_customer:
             role = 'Customer'
         if self.user.is_admin:
@@ -88,7 +99,7 @@ class ChangePasswordSerializer(serializers.Serializer):
 
 
 class AccountSerializer(serializers.Serializer):
-    role_choices = ['Agency','Customer','Shipper']
+    role_choices = ['Agency','Customer','Shipper','Sub Agency']
     model = Account
     
     phone = serializers.CharField(max_length=10,required=True)
@@ -119,6 +130,12 @@ class ShipperSerializer(serializers.ModelSerializer):
     class Meta:
         model = Shipper
         fields = "__all__"
+
+class SubAgencySerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = SubAgency
+        fields = "__all__"
         
 class CustomerRegister(serializers.Serializer):
     phone = serializers.CharField(max_length=10,required=True)
@@ -145,6 +162,19 @@ class AgencyRegister(serializers.Serializer):
     time_visited = serializers.FloatField(default=0,required = False)
     main_industry = serializers.CharField(max_length=100,required=True)
     identify = serializers.CharField(max_length=12,required=True)   
+
+class SubAgencyRegister(serializers.Serializer):
+    phone = serializers.CharField(max_length=10,required=True)
+    password1 = serializers.CharField(max_length=32,required=True)
+    password2 = serializers.CharField(max_length=32,required=True)
+    name = serializers.CharField(max_length=100)
+    email = serializers.EmailField(required = False)
+    avatar = serializers.CharField(max_length=100,required = False,default="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRK_moVUzQH4Cwo38P39N0isb0ohtz6uB7lwDWDVhE&s")
+    nationality = serializers.CharField(max_length=100,required = False)
+    gender = serializers.CharField(max_length=1,required = False,default='M')
+    time_visited = serializers.FloatField(default=0,required = False)
+    agency = serializers.IntegerField(required = True)
+    rolesub = serializers.ListField(required = True)
 
 class ShipperRegister(serializers.Serializer):
     phone = serializers.CharField(max_length=10,required=True)

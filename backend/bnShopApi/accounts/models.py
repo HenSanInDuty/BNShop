@@ -26,6 +26,17 @@ class AccountManager(BaseUserManager):
         user.is_active = False
         user.save(using=self._db)
         return user
+
+    def create_sub_agencyuser(self,phone,password):
+        
+        user = self.create_user(
+            phone,
+            password=password
+        )
+        
+        user.is_agency = True
+        user.save(using=self._db)
+        return user
     
     def create_customeruser(self,phone,password):
         
@@ -106,12 +117,12 @@ class Agency(models.Model):
 
 class RoleAgency(models.Model):
     ROLES = ((1,'Product'),(2,'Rating'),(3,'Order'))
-    role = models.IntegerField(choices=ROLES)
+    rolesub = models.IntegerField(choices=ROLES)
 
 class SubAgency(models.Model):
     user = models.OneToOneField(Users,on_delete=models.CASCADE,related_name='sub_agency')
     agency = models.ForeignKey(Agency,on_delete=models.CASCADE,related_name='sub_agency')
-    role = models.ManyToManyField(RoleAgency, related_name='sub_agency')
+    rolesub = models.ManyToManyField(RoleAgency, related_name='sub_agency')
 
 
 class Customer(models.Model):

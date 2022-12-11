@@ -8,8 +8,8 @@ from drf_yasg.utils import swagger_auto_schema
 
 from permissions.permissions import AgencyPermission
 
-from .models import Account, Agency, Customer, Users
-from .serializers import AgencyRegister, ProfileCustomerUpdateSerializer, AgencySerializer, CustomerRegister, CustomerSerializer, LogoutSerializer, AccountSerializer, ShipperRegister, ShipperSerializer, UserSerializer, ChangePasswordSerializer
+from .models import Account, Agency, Customer, RoleAgency, Users
+from .serializers import AgencyRegister, ProfileCustomerUpdateSerializer, AgencySerializer, SubAgencyRegister, CustomerRegister, CustomerSerializer, LogoutSerializer, AccountSerializer, ShipperRegister, ShipperSerializer, SubAgencySerializer, UserSerializer, ChangePasswordSerializer
 from django.db.utils import IntegrityError
 
 from .utilities import get_tokens_for_user
@@ -39,11 +39,14 @@ def register(request,role):
             if role == 'Customer':
                 new_account = model.objects.create_customeruser(phone = serializer.data.get('phone'), 
                                            password =serializer.data.get('password1'))
-            if role == 'Shipper':
+            elif role == 'Shipper':
                 new_account = model.objects.create_shipperuser(phone = serializer.data.get('phone'), 
                                            password =serializer.data.get('password1'))                                           
             elif role == "Agency":
                 new_account = model.objects.create_agencyuser(phone = serializer.data.get('phone'), 
+                                           password =serializer.data.get('password1'))
+            elif role == "Sub Agency":
+                new_account = model.objects.create_sub_agencyuser(phone = serializer.data.get('phone'), 
                                            password =serializer.data.get('password1'))
         except IntegrityError:
             exist_phone = model.objects.get(phone=serializer.data.get('phone'))
@@ -57,44 +60,58 @@ def register(request,role):
                     'message':"Something wrong"
                 },status=status.HTTP_400_BAD_REQUEST)
         #Create new user
-        try:
-            data['account'] = new_account.id
-            user_serializer = UserSerializer(data = data)
-            if user_serializer.is_valid():
-                new_user = user_serializer.save()
+        # try:
+        data['account'] = new_account.id
+        user_serializer = UserSerializer(data = data)
+        if user_serializer.is_valid():
+            new_user = user_serializer.save()
+        else:
+            new_account.delete()
+            return Response(user_serializer.errors)
+        
+        data['user'] = new_user.id
+        #Create Customer or Agency or Shipper
+        if role == "Customer":
+            customer_serializer = CustomerSerializer(data=data)
+            if customer_serializer.is_valid():
+                customer_serializer.save()
             else:
                 new_account.delete()
-                return Response(user_serializer.errors)
-            
-            data['user'] = new_user.id
-            #Create Customer or Agency or Shipper
-            if role == "Customer":
-                customer_serializer = CustomerSerializer(data=data)
-                if customer_serializer.is_valid():
-                    customer_serializer.save()
-                else:
-                    new_account.delete()
-                    return Response(customer_serializer.errors,status=status.HTTP_400_BAD_REQUEST)
-            elif role == "Agency":
-                agency_serializer = AgencySerializer(data=data)
-                if agency_serializer.is_valid():
-                    agency_serializer.save()
-                else:
-                    new_account.delete()
-                    return Response(agency_serializer.errors,status=status.HTTP_400_BAD_REQUEST)
-            elif role == "Shipper":
-                shipper_serializer = ShipperSerializer(data=data)
-                if shipper_serializer.is_valid():
-                    shipper_serializer.save()
-                else:
-                    new_account.delete()
-                    return Response(shipper_serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+                return Response(customer_serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+        elif role == "Agency":
+            agency_serializer = AgencySerializer(data=data)
+            if agency_serializer.is_valid():
+                agency_serializer.save()
             else:
-                return Response({"role":"Don't have this role now"},status=status.HTTP_400_BAD_REQUEST)
-        except Exception:
-            return Response({
-                    'message':"Something wrong"
-                },status=status.HTTP_400_BAD_REQUEST)
+                new_account.delete()
+                return Response(agency_serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+        elif role == "Shipper":
+            shipper_serializer = ShipperSerializer(data=data)
+            if shipper_serializer.is_valid():
+                shipper_serializer.save()
+            else:
+                new_account.delete()
+                return Response(shipper_serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+        elif role == "Sub Agency":
+            agency = data['agency']
+            user = Users.objects.filter(id=agency).first()
+            user = user.agency.id
+            data['agency'] = user
+            print(data['role'])
+            sub_agency_serializer = SubAgencySerializer(data=data)
+            if sub_agency_serializer.is_valid():
+                sub_agency_serializer.save()
+                print('noan')
+            else:
+                new_account.delete()
+                return Response(sub_agency_serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({"role":"Don't have this role now"},status=status.HTTP_400_BAD_REQUEST)
+        # except Exception:
+        #     new_account.delete()
+        #     return Response({
+        #             'message':"Something wrong"
+        #         },status=status.HTTP_400_BAD_REQUEST)
         #Create token
         token = get_tokens_for_user(new_account)
         return Response({
@@ -119,7 +136,12 @@ def register_customer(request):
 @api_view(['POST'])
 def register_shipper(request):
     return register(request,'Shipper')
-    
+
+@swagger_auto_schema(method='post',request_body=SubAgencyRegister)
+@api_view(['POST'])
+def register_sub_agency(request):
+    return register(request,'Sub Agency')
+
 class LogoutAPIView(generics.GenericAPIView):
     serializer_class = LogoutSerializer
 
@@ -245,3 +267,38 @@ class ProfileViewOne(generics.GenericAPIView):
             return_result = get_profile_user(user)
             return Response(return_result)
         return Response(status=status.HTTP_404_NOT_FOUND)
+
+
+class SubAgencyViewAll(generics.GenericAPIView):
+    permission_classes = [IsAuthenticated, AgencyPermission]
+    
+    def get(self,request):
+        agency = request.user.user.agency
+        all_sub = agency.sub_agency.all()
+        result = []
+        for sub in all_sub:
+            instance = {
+                'id':sub.user.id,
+                'name':sub.user.name,
+                'phone':sub.user.account.phone,
+                'roles':[r.rolesub for r in sub.rolesub.all()] 
+            }
+            result.append(instance)
+        return Response(result)
+
+    
+class SubAgencyViewDetail(generics.GenericAPIView):
+    permission_classes = [IsAuthenticated, AgencyPermission]
+
+    def post(self,request,subid):
+        sub_agency = Users.objects.filter(id=subid).first()
+        roles = request.data['roles']
+        role = RoleAgency.objects.filter(id=roles).first()
+        if role:
+            if role in sub_agency.sub_agency.rolesub.all():
+                sub_agency.sub_agency.rolesub.remove(role)
+            else:
+                sub_agency.sub_agency.rolesub.add(role)
+            return Response({'detail':'Change role success'})
+        else:
+            return Response({"detail":"No have role"},status=status.HTTP_400_BAD_REQUEST)
