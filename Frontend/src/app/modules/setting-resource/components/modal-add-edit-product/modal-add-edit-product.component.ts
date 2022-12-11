@@ -152,8 +152,6 @@ export class ModalAddEditProductComponent implements OnInit, AfterViewInit {
       brand_origin_brand: new FormControl('', [Validators.required]),
       quantity: new FormControl('', [Validators.required]),
       price: new FormControl('', [Validators.required]),
-      title: new FormControl(''),
-      content: new FormControl(''),
     })
   }
 
