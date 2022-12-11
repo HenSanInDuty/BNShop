@@ -287,13 +287,12 @@ class ProductViewDetail(generics.GenericAPIView):
     @swagger_auto_schema(request_body=ProductUpdateSerializer)
     def patch(self,request ,id):
         agency = request.user.user.agency
-        prod = Product.objects.filter(id=id,agency=agency,is_delete=False)
+        prod = Product.objects.filter(id=id,agency=agency,is_delete=False).first()
         if prod:
-            print(prod.first())
-            p = ProductUpdateSerializer(prod[0],data=request.data,context={'request':request})
+            p = ProductUpdateSerializer(prod,data=request.data,context={'request':request})
             if p.is_valid():
                 p.save()
-                return Response(get_info_product(prod[0]))
+                return Response(get_info_product(prod))
             else:
                 return Response(p.errors,status=status.HTTP_400_BAD_REQUEST)
         else:
