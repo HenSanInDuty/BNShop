@@ -77,19 +77,13 @@
                   <tds-rate size="xl" [ngModel]="data.star || 0" [disabled]="true"></tds-rate>
                 </td>
                 <td width="100px" [tdsRight]="true">
-                  <ng-container *ngIf="data?.reply?.length == 0; then thenTemplate1; else elseTemplate1"></ng-container>
-                  <ng-template #thenTemplate1>
-                    <div (click)="onActiveProduct(data)"
+                  <div  *ngIf="data?.reply?.length! === 0 || !data?.reply" (click)="onActiveProduct(data)"
                       class="flex gap-2 items-center text-body-2 font-medium text-info-500 cursor-pointer">
                       <i class="tdsi-reply-fill"></i>
                       Phản hồi
                     </div>
-                  </ng-template>
-                  <ng-template #elseTemplate1>
-                    <div class="text-body-2 font-medium text-info-500">
-                      Đã phản hồi
-                    </div>
-                  </ng-template>
+                 
+               
 
                 </td>
               </tr>
